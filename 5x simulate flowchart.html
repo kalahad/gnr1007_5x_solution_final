@@ -1,0 +1,696 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#faf9f5;color:#141413}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>ผังงานเดินได้</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Kanit:wght@500;600;700&family=Sarabun:wght@400;500;700&family=IBM+Plex+Mono:wght@500&display=swap">
+<style>
+:root{
+  --paper:#EEF2F8; --surface:#FFFFFF; --ink:#14284A; --muted:#5A6A86; --grid:#D8E1EE; --rule:#C9D4E4;
+  --line:#1F3A66; --label:#9A6B00; --accent:#F2B300; --accent-ink:#2F2300; --cur:#FFF1BF;
+  --seen:#E6EEF9; --yes:#1C8656; --no:#C23E2A; --yes-bg:#E3F4EB; --no-bg:#FBE7E3;
+  --term:#0F1B30; --term-ink:#CFE3FF; --term-dim:#7F97BA;
+  --lv0:#2E9E6B; --lv1:#C99700; --lv2:#DD7422; --lv3:#CF3F2B; --lv4:#8E2766;
+  --display:"Kanit","Sarabun",system-ui,sans-serif; --body:"Sarabun",system-ui,sans-serif;
+  --mono:"IBM Plex Mono","Sarabun",ui-monospace,monospace;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  color-scheme:dark;
+  --paper:#0C1422; --surface:#132038; --ink:#E4ECF8; --muted:#94A4BF; --grid:#1B2A42; --rule:#27395A;
+  --line:#AFC4E6; --label:#E8B64A; --accent:#F5C02E; --accent-ink:#241A00; --cur:#4A3C0E;
+  --seen:#1A2C4A; --yes:#46C08A; --no:#F07A64; --yes-bg:#12382A; --no-bg:#40201B;
+  --term:#060B14; --term-ink:#CFE3FF; --term-dim:#6F86A8;
+}}
+:root[data-theme="dark"]{
+  color-scheme:dark;
+  --paper:#0C1422; --surface:#132038; --ink:#E4ECF8; --muted:#94A4BF; --grid:#1B2A42; --rule:#27395A;
+  --line:#AFC4E6; --label:#E8B64A; --accent:#F5C02E; --accent-ink:#241A00; --cur:#4A3C0E;
+  --seen:#1A2C4A; --yes:#46C08A; --no:#F07A64; --yes-bg:#12382A; --no-bg:#40201B;
+  --term:#060B14; --term-ink:#CFE3FF; --term-dim:#6F86A8;
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{background:var(--paper);color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.55;padding-inline:16px;padding-block:18px 40px}
+.wrap{max-width:1320px;margin:0 auto;display:grid;gap:18px}
+header{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:12px}
+.brand small{display:block;font-family:var(--display);font-weight:500;letter-spacing:.08em;color:var(--muted);font-size:13px}
+h1{font-family:var(--display);font-weight:700;font-size:clamp(28px,4vw,42px);line-height:1.1;margin:2px 0 0;text-wrap:balance}
+h1 span{background:linear-gradient(transparent 62%,var(--accent) 62%);padding:0 4px}
+.lede{margin:6px 0 0;color:var(--muted);max-width:62ch}
+.toggles{display:flex;flex-wrap:wrap;gap:8px}
+.tog{display:flex;align-items:center;gap:8px;background:var(--surface);border:1px solid var(--rule);border-radius:999px;padding:6px 12px;font-size:14px;cursor:pointer;user-select:none}
+.tog input{accent-color:var(--line);width:16px;height:16px}
+
+/* missions */
+.missions{display:grid;grid-template-columns:repeat(5,1fr);gap:10px}
+@media (max-width:900px){.missions{grid-template-columns:repeat(auto-fill,minmax(150px,1fr))}}
+.mc{font:inherit;text-align:left;cursor:pointer;background:var(--surface);color:var(--ink);border:1px solid var(--rule);border-radius:10px;padding:10px 12px;display:grid;gap:2px;position:relative}
+.mc b{font-family:var(--display);font-weight:600;font-size:16px;line-height:1.25}
+.mc .g{font-family:var(--mono);font-size:12px;color:var(--muted)}
+.mc .st{font-size:12.5px;color:var(--muted)}
+.mc[aria-selected="true"]{border-color:var(--line);box-shadow:inset 0 -4px 0 var(--accent)}
+.mc.done .st{color:var(--yes);font-weight:700}
+.mc:focus-visible,.btn:focus-visible,.tab:focus-visible,.gb:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+
+/* main grid */
+.main{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr);gap:18px;align-items:start}
+@media (max-width:980px){.main{grid-template-columns:1fr}}
+.stagebox{background:var(--surface);border:1px solid var(--rule);border-radius:12px;overflow:hidden;position:sticky;top:calc(env(safe-area-inset-top,0px) + 10px)}
+@media (max-width:980px){.stagebox{position:relative;top:0}}
+.stagebar{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:8px;padding:8px 10px;border-bottom:1px solid var(--rule)}
+.tabs{display:flex;flex-wrap:wrap;gap:6px}
+.tab{font:inherit;font-size:14px;cursor:pointer;border:1px solid var(--rule);background:transparent;color:var(--muted);border-radius:7px;padding:3px 10px;font-family:var(--mono)}
+.tab[aria-selected="true"]{background:var(--line);color:var(--surface);border-color:var(--line)}
+.tab.live::after{content:"";display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--accent);margin-left:7px;vertical-align:middle}
+.zoom{display:flex;gap:4px;align-items:center;font-size:13px;color:var(--muted)}
+.zoom button{font:inherit;width:30px;height:28px;border-radius:6px;border:1px solid var(--rule);background:transparent;color:var(--ink);cursor:pointer}
+.stage{height:min(74vh,760px);overflow:auto;position:relative;
+  background-color:var(--surface);
+  background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);
+  background-size:24px 24px}
+@media (max-width:980px){.stage{height:58vh}}
+.stage svg{display:block}
+.fnbanner{position:absolute;left:12px;top:10px;z-index:2;background:var(--accent);color:var(--accent-ink);font-family:var(--display);font-weight:600;font-size:14px;border-radius:6px;padding:3px 10px;pointer-events:none}
+/* svg styling */
+.sh{fill:var(--surface);stroke:var(--line);stroke-width:2.2;transition:fill .25s}
+.tx{fill:var(--ink);font-family:var(--body);font-size:19px}
+.lb{fill:var(--label);font-family:var(--body);font-size:17px;font-weight:700}
+.ln{fill:none;stroke:var(--line);stroke-width:2.2}
+.ahp{fill:var(--line)}
+.nd.seen .sh{fill:var(--seen)}
+.nd.cur .sh{fill:var(--cur);stroke:var(--accent);stroke-width:5}
+.nd.cur .tx{font-weight:700}
+@media (prefers-reduced-motion:no-preference){.nd.cur .sh{animation:pulse 1.3s ease-in-out infinite}}
+@keyframes pulse{50%{stroke-width:8}}
+
+/* side panel */
+.side{display:grid;gap:14px}
+.card{background:var(--surface);border:1px solid var(--rule);border-radius:12px;padding:14px 16px}
+.narr{display:grid;gap:10px;border-top:5px solid var(--accent)}
+.meta{display:flex;flex-wrap:wrap;gap:8px;align-items:center;font-size:13px;color:var(--muted)}
+.pill{font-family:var(--mono);font-size:12px;border:1px solid var(--rule);border-radius:999px;padding:1px 9px;background:var(--paper);color:var(--ink)}
+.pill.fn{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+.say{font-size:18px;line-height:1.6;margin:0;min-height:3.2em}
+.say code,.mono{font-family:var(--mono);font-size:.92em}
+.trap{display:flex;gap:10px;align-items:flex-start;background:var(--no-bg);border-radius:8px;padding:8px 12px;font-size:15px}
+.trap b{font-family:var(--display);color:var(--no);white-space:nowrap;font-weight:600}
+.ask{display:grid;gap:8px;background:var(--paper);border:1px dashed var(--line);border-radius:10px;padding:10px 12px}
+.ask .q{font-family:var(--display);font-weight:600;font-size:17px}
+.ask .q code{background:var(--surface);border-radius:5px;padding:1px 6px}
+.gbs{display:flex;gap:8px;flex-wrap:wrap}
+.gb{font:inherit;font-family:var(--display);font-weight:600;font-size:16px;padding:7px 20px;border-radius:8px;cursor:pointer;border:2px solid var(--line);background:var(--surface);color:var(--ink)}
+.gb.y{border-color:var(--yes);color:var(--yes)} .gb.n{border-color:var(--no);color:var(--no)}
+.verdict{border-radius:8px;padding:7px 12px;font-weight:700}
+.verdict.ok{background:var(--yes-bg);color:var(--yes)} .verdict.bad{background:var(--no-bg);color:var(--no)}
+.controls{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.btn{font:inherit;font-size:15px;cursor:pointer;border-radius:8px;padding:8px 14px;border:1px solid var(--rule);background:var(--surface);color:var(--ink)}
+.btn.primary{background:var(--line);color:var(--surface);border-color:var(--line);font-family:var(--display);font-weight:600;padding-inline:20px}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.speed{display:flex;align-items:center;gap:6px;font-size:13px;color:var(--muted)}
+.bar{height:6px;background:var(--paper);border-radius:6px;overflow:hidden}
+.bar i{display:block;height:100%;background:var(--accent);width:0;transition:width .2s}
+.score{display:flex;gap:14px;flex-wrap:wrap;font-size:14px;color:var(--muted)}
+.score b{color:var(--ink);font-family:var(--mono)}
+h2{font-family:var(--display);font-weight:600;font-size:15px;letter-spacing:.04em;margin:0 0 8px;color:var(--muted)}
+.arr{display:flex;gap:6px;flex-wrap:wrap}
+.cell{min-width:58px;border:2px solid var(--rule);border-radius:8px;text-align:center;padding:4px 6px 3px;position:relative;background:var(--surface);transition:transform .2s}
+.cell .ix{font-family:var(--mono);font-size:11px;color:var(--muted)}
+.cell .v{font-family:var(--mono);font-size:15px;font-variant-numeric:tabular-nums}
+.cell .t{font-size:11px;line-height:1.2;min-height:13px}
+.cell.now{border-color:var(--accent);transform:translateY(-4px);box-shadow:0 4px 0 var(--accent)}
+.cell[data-lv]{border-bottom-width:6px}
+.cell[data-lv="0"]{border-bottom-color:var(--lv0)} .cell[data-lv="1"]{border-bottom-color:var(--lv1)}
+.cell[data-lv="2"]{border-bottom-color:var(--lv2)} .cell[data-lv="3"]{border-bottom-color:var(--lv3)} .cell[data-lv="4"]{border-bottom-color:var(--lv4)}
+.cell[data-lv="0"] .t{color:var(--lv0)} .cell[data-lv="1"] .t{color:var(--lv1)} .cell[data-lv="2"] .t{color:var(--lv2)} .cell[data-lv="3"] .t{color:var(--lv3)} .cell[data-lv="4"] .t{color:var(--lv4)}
+.vars{display:grid;grid-template-columns:repeat(auto-fill,minmax(128px,1fr));gap:6px}
+.var{border:1px solid var(--rule);border-radius:8px;padding:4px 9px;display:flex;justify-content:space-between;gap:8px;align-items:baseline;transition:background .3s}
+.var .k{font-family:var(--mono);font-size:13px;color:var(--muted)}
+.var .v{font-family:var(--mono);font-size:14.5px;font-variant-numeric:tabular-nums;text-align:right;overflow-wrap:anywhere}
+.var.chg{background:var(--cur);border-color:var(--accent)}
+.fnvars{margin-top:10px;padding-top:10px;border-top:1px dashed var(--rule)}
+.fnvars[hidden]{display:none!important}
+.term{background:var(--term);color:var(--term-ink);border-radius:12px;padding:12px 14px;font-family:var(--mono);font-size:13.5px;min-height:120px;max-height:260px;overflow:auto;white-space:pre-wrap}
+.term .p{color:var(--term-dim)}
+.term .new{color:#FFD65C}
+.done-card{background:var(--yes-bg);border:1px solid var(--yes);border-radius:10px;padding:10px 14px;display:grid;gap:6px}
+.done-card b{font-family:var(--display);font-size:20px;color:var(--yes)}
+.legend{display:flex;flex-wrap:wrap;gap:10px;font-size:12.5px;color:var(--muted)}
+.legend span::before{content:"";display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:5px;vertical-align:-1px;background:var(--c)}
+footer{color:var(--muted);font-size:13px}
+kbd{font-family:var(--mono);font-size:12px;border:1px solid var(--rule);border-bottom-width:2px;border-radius:4px;padding:0 5px;background:var(--surface)}
+</style>
+
+<div class="wrap">
+  <header>
+    <div class="brand">
+      <small>GNR1007 · ภาษา C สำหรับวิศวกร · 5 ภารกิจโยธา</small>
+      <h1>ผังงาน<span>เดินได้</span></h1>
+      <p class="lede">กดถัดไปทีละก้าว แล้วดูว่าคอมพิวเตอร์ทำอะไรในแต่ละกล่อง เจอขนมเปียกปูนเมื่อไร ลองทายก่อนว่าจะไปทาง "ใช่" หรือ "ไม่ใช่"</p>
+    </div>
+    <div class="toggles">
+      <label class="tog" for="optGuess"><input type="checkbox" id="optGuess" checked> ทายก่อนเฉลย</label>
+      <label class="tog" for="optInto"><input type="checkbox" id="optInto" checked> เข้าไปดูในฟังก์ชัน</label>
+    </div>
+  </header>
+
+  <nav class="missions" role="tablist" aria-label="เลือกภารกิจ" id="missions"></nav>
+
+  <div class="main">
+    <section class="stagebox" aria-label="ผังงาน">
+      <div class="stagebar">
+        <div class="tabs" id="tabs" role="tablist" aria-label="เลือกผัง"></div>
+        <div class="zoom"><button id="zOut" aria-label="ย่อ">−</button><span id="zVal">80%</span><button id="zIn" aria-label="ขยาย">+</button></div>
+      </div>
+      <div class="stage" id="stage"><div class="fnbanner" id="fnBanner" hidden></div><div id="svgs"></div></div>
+    </section>
+
+    <aside class="side">
+      <div class="card narr" aria-live="polite">
+        <div class="meta"><span class="pill" id="pStep">ก้าวที่ 1</span><span class="pill" id="pIter" hidden>รอบ i = 0</span><span class="pill fn" id="pFn" hidden></span></div>
+        <div class="bar"><i id="prog"></i></div>
+        <p class="say" id="say"></p>
+        <div class="trap" id="trap" hidden><b>จุดหลอก</b><span id="trapT"></span></div>
+        <div class="ask" id="ask" hidden>
+          <div class="q" id="askQ"></div>
+          <div class="gbs" id="askBtns"><button class="gb y" id="gYes">ใช่</button><button class="gb n" id="gNo">ไม่ใช่</button></div>
+          <div class="verdict" id="verdict" hidden></div>
+        </div>
+        <div class="done-card" id="doneCard" hidden></div>
+        <div class="controls">
+          <button class="btn" id="bPrev" aria-label="ย้อนกลับ">ย้อน</button>
+          <button class="btn primary" id="bNext">ถัดไป</button>
+          <button class="btn" id="bPlay">เล่นอัตโนมัติ</button>
+          <button class="btn" id="bIter">ข้ามไปรอบถัดไป</button>
+          <button class="btn" id="bReset">เริ่มใหม่</button>
+          <label class="speed" for="spd">ช้า <input type="range" id="spd" min="300" max="2200" step="100" value="1300" style="direction:rtl;width:90px"> เร็ว</label>
+        </div>
+        <div class="score"><span>ทายถูก <b id="sOk">0</b> / <b id="sAll">0</b></span><span>ถูกติดกัน <b id="sStreak">0</b></span><span>คีย์ลัด <kbd>→</kbd> ถัดไป <kbd>←</kbd> ย้อน <kbd>Y</kbd>/<kbd>N</kbd> ทาย</span></div>
+      </div>
+
+      <div class="card">
+        <h2 id="arrTitle">อาร์เรย์ข้อมูล</h2>
+        <div class="arr" id="arr"></div>
+        <div class="legend" id="legend" style="margin-top:10px"></div>
+      </div>
+
+      <div class="card">
+        <h2>สมุดตัวแปร (ผังหลัก)</h2>
+        <div class="vars" id="vars"></div>
+        <div class="fnvars" id="fnBox" hidden><h2 id="fnTitle">ตัวแปรภายในฟังก์ชัน</h2><div class="vars" id="fnVars"></div></div>
+      </div>
+
+      <div>
+        <h2>หน้าจอผลลัพธ์ (printf)</h2>
+        <div class="term" id="term"></div>
+      </div>
+    </aside>
+  </div>
+  <footer>ผศ.ดร.กุลวลัญช์ วรุณสิน · สาขาวิศวกรรมคอมพิวเตอร์ คณะวิศวกรรมศาสตร์ มหาวิทยาลัยรามคำแหง · ตัวเลขทุกค่าตรงกับผลรันโค้ด Civil Lab จริง · เปิดตรงภารกิจด้วย #lab1 ถึง #lab5</footer>
+</div>
+
+<script>
+const CH = {"lab1_main": {"svg": "<svg viewBox=\"-20 20 1511 1067\" data-w=\"1511\" xmlns=\"http://www.w3.org/2000/svg\"><defs><marker id=\"ah-lab1_main\" viewBox=\"0 0 10 10\" refX=\"9\" refY=\"5\" markerWidth=\"7\" markerHeight=\"7\" orient=\"auto-start-reverse\"><path class=\"ahp\" d=\"M0,0 L10,5 L0,10 z\"/></marker></defs><g class=\"nd term\" id=\"lab1_main-n0\"><rect class=\"sh\" x=\"205.0\" y=\"70\" width=\"190\" height=\"47\" rx=\"23.5\"/><text class=\"tx\" x=\"300.0\" y=\"93.5\" text-anchor=\"middle\" dominant-baseline=\"central\">เริ่มต้น</text></g><polyline class=\"ln\" points=\"300.0,117.0 300.0,151.0\" marker-end=\"url(#ah-lab1_main)\"/><g class=\"nd io\" id=\"lab1_main-n1\"><polygon class=\"sh\" points=\"173.5625,151 478.4375,151 426.4375,198 121.5625,198\"/><text class=\"tx\" x=\"300.0\" y=\"174.5\" text-anchor=\"middle\" dominant-baseline=\"central\">รับค่า defl[0..6] , span = 24</text></g><polyline class=\"ln\" points=\"300.0,198.0 300.0,232.0\" marker-end=\"url(#ah-lab1_main)\"/><g class=\"nd proc\" id=\"lab1_main-n2\"><rect class=\"sh\" x=\"169.6171875\" y=\"232\" width=\"260.765625\" height=\"47\"/><text class=\"tx\" x=\"300.0\" y=\"255.5\" text-anchor=\"middle\" dominant-baseline=\"central\">allow = span * 1000 / 800</text></g><polyline class=\"ln\" points=\"300.0,279.0 300.0,313.0\" marker-end=\"url(#ah-lab1_main)\"/><g class=\"nd proc\" id=\"lab1_main-n3\"><rect class=\"sh\" x=\"162.4140625\" y=\"313\" width=\"275.171875\" height=\"47\"/><text class=\"tx\" x=\"300.0\" y=\"336.5\" text-anchor=\"middle\" dominant-baseline=\"central\">maxD = 0 , n[0..3] = 0 , i = 0</text></g><polyline class=\"ln\" points=\"300.0,360.0 300.0,394.0\" marker-end=\"url(#ah-lab1_main)\"/><g class=\"nd dec\" id=\"lab1_main-n4\"><polygon class=\"sh\" points=\"300,394 395.0,437.0 300,480 205.0,437.0\"/><text class=\"tx\" x=\"300.0\" y=\"437.0\" text-anchor=\"middle\" dominant-baseline=\"central\">i &lt; 7 ?</text></g><polyline class=\"ln\" points=\"300.0,480.0 300.0,514.0\" marker-end=\"url(#ah-lab1_main)\"/><text class=\"lb\" x=\"310.0\" y=\"492.0\" text-anchor=\"start\" dominant-baseline=\"central\">ใช่</text><g class=\"nd proc\" id=\"lab1_main-n5\"><rect class=\"sh\" x=\"185.28125\" y=\"514\" width=\"229.4375\" height=\"47\"/><text class=\"tx\" x=\"300.0\" y=\"537.5\" text-anchor=\"middle\" dominant-baseline=\"central\">r = ratio(defl[i], allow)</text></g><polyline class=\"ln\" points=\"300.0,561.0 300.0,595.0\" marker-end=\"url(#ah-lab1_main)\"/><g class=\"nd proc\" id=\"lab1_main-n6\"><rect class=\"sh\" x=\"205.0\" y=\"595\" width=\"190\" height=\"47\"/><text class=\"tx\" x=\"300.0\" y=\"618.5\" text-anchor=\"middle\" dominant-baseline=\"central\">lv = level(r)</text></g><polyline class=\"ln\" points=\"300.0,642.0 300.0,676.0\" marker-end=\"url(#ah-lab1_main)\"/><g class=\"nd dec\" id=\"lab1_main-n7\"><polygon class=\"sh\" points=\"300,676 424.234375,719.0 300,762 175.765625,719.0\"/><text class=\"tx\" x=\"300.0\" y=\"719.0\" text-anchor=\"middle\" dominant-baseline=\"central\">defl[i] &gt; maxD ?</text></g><g class=\"nd proc\" id=\"lab1_main-n8\"><rect class=\"sh\" x=\"484.234375\" y=\"695.5\" width=\"190\" height=\"47\"/><text class=\"tx\" x=\"579.2\" y=\"719.0\" text-anchor=\"middle\" dominant-baseline=\"central\">maxD = defl[i]</text></g><polyline class=\"ln\" points=\"424.2,719.0 484.2,719.0\" marker-end=\"url(#ah-lab1_main)\"/><text class=\"lb\" x=\"432.2\" y=\"703.0\" text-anchor=\"start\" dominant-baseline=\"central\">ใช่</text><polyline class=\"ln\" points=\"579.2,742.5 579.2,798.0 300.0,798.0\"/><polyline class=\"ln\" points=\"300.0,762.0 300.0,798.0\"/><text class=\"lb\" x=\"310.0\" y=\"774.0\" text-anchor=\"start\" dominant-baseline=\"central\">ไม่ใช่</text><polyline class=\"ln\" points=\"300.0,798.0 300.0,832.0\" marker-end=\"url(#ah-lab1_main)\"/><g class=\"nd proc\" id=\"lab1_main-n9\"><rect class=\"sh\" x=\"205.0\" y=\"832\" width=\"190\" height=\"47\"/><text class=\"tx\" x=\"300.0\" y=\"855.5\" text-anchor=\"middle\" dominant-baseline=\"central\">n[lv] = n[lv] + 1</text></g><polyline class=\"ln\" points=\"300.0,879.0 300.0,913.0\" marker-end=\"url(#ah-lab1_main)\"/><g class=\"nd io\" id=\"lab1_main-n10\"><polygon class=\"sh\" points=\"177.1796875,913 474.8203125,913 422.8203125,960 125.1796875,960\"/><text class=\"tx\" x=\"300.0\" y=\"936.5\" text-anchor=\"middle\" dominant-baseline=\"central\">พิมพ์ จุด i+1 , defl[i] , r , lv</text></g><polyline class=\"ln\" points=\"300.0,960.0 300.0,994.0\" marker-end=\"url(#ah-lab1_main)\"/><g class=\"nd proc\" id=\"lab1_main-n11\"><rect class=\"sh\" x=\"205.0\" y=\"994\" width=\"190\" height=\"47\"/><text class=\"tx\" x=\"300.0\" y=\"1017.5\" text-anchor=\"middle\" dominant-baseline=\"central\">i = i + 1</text></g><polyline class=\"ln\" points=\"300.0,1041.0 300.0,1067.0 81.6,1067.0 81.6,437.0 205.0,437.0\" marker-end=\"url(#ah-lab1_main)\"/><text class=\"lb\" x=\"403.0\" y=\"421.0\" text-anchor=\"start\" dominant-baseline=\"central\">ไม่ใช่</text><polyline class=\"ln\" points=\"395.0,437.0 776.2,437.0 776.2,30.0 965.5,30.0 965.5,70.0\" marker-end=\"url(#ah-lab1_main)\"/><g class=\"nd io\" id=\"lab1_main-n12\"><polygon class=\"sh\" points=\"868.234375,70 1114.796875,70 1062.796875,117 816.234375,117\"/><text class=\"tx\" x=\"965.5\" y=\"93.5\" text-anchor=\"middle\" dominant-baseline=\"central\">พิมพ์ n[0..3] , maxD</text></g><polyline class=\"ln\" points=\"965.5,117.0 965.5,151.0\" marker-end=\"url(#ah-lab1_main)\"/><g class=\"nd dec\" id=\"lab1_main-n13\"><polygon class=\"sh\" points=\"965.515625,151 1064.0390625,194.0 965.515625,237 866.9921875,194.0\"/><text class=\"tx\" x=\"965.5\" y=\"194.0\" text-anchor=\"middle\" dominant-baseline=\"central\">n[3] &gt; 0 ?</text></g><g class=\"nd io\" id=\"lab1_main-n14\"><polygon class=\"sh\" points=\"1186.0390625,158.0 1445.0703125,158.0 1393.0703125,230.0 1134.0390625,230.0\"/><text class=\"tx\" x=\"1289.6\" y=\"181.5\" text-anchor=\"middle\" dominant-baseline=\"central\">พิมพ์ &quot;จำกัดน้ำหนักรถ</text><text class=\"tx\" x=\"1289.6\" y=\"206.5\" text-anchor=\"middle\" dominant-baseline=\"central\">ส่งวิศวกรตรวจทันที&quot;</text></g><polyline class=\"ln\" points=\"1064.0,194.0 1160.0,194.0\" marker-end=\"url(#ah-lab1_main)\"/><text class=\"lb\" x=\"1072.0\" y=\"178.0\" text-anchor=\"start\" dominant-baseline=\"central\">ใช่</text><polyline class=\"ln\" points=\"1419.1,194.0 1471.1,194.0\"/><polyline class=\"ln\" points=\"965.5,237.0 965.5,271.0\" marker-end=\"url(#ah-lab1_main)\"/><text class=\"lb\" x=\"975.5\" y=\"249.0\" text-anchor=\"start\" dominant-baseline=\"central\">ไม่ใช่</text><g class=\"nd dec\" id=\"lab1_main-n15\"><polygon class=\"sh\" points=\"965.515625,271 1064.0390625,314.0 965.515625,357 866.9921875,314.0\"/><text class=\"tx\" x=\"965.5\" y=\"314.0\" text-anchor=\"middle\" dominant-baseline=\"central\">n[2] &gt; 0 ?</text></g><g class=\"nd io\" id=\"lab1_main-n16\"><polygon class=\"sh\" points=\"1197.25,278.0 1433.859375,278.0 1381.859375,350.0 1145.25,350.0\"/><text class=\"tx\" x=\"1289.6\" y=\"301.5\" text-anchor=\"middle\" dominant-baseline=\"central\">พิมพ์ &quot;ตรวจติดตาม</text><text class=\"tx\" x=\"1289.6\" y=\"326.5\" text-anchor=\"middle\" dominant-baseline=\"central\">รายสัปดาห์&quot;</text></g><polyline class=\"ln\" points=\"1064.0,314.0 1171.2,314.0\" marker-end=\"url(#ah-lab1_main)\"/><text class=\"lb\" x=\"1072.0\" y=\"298.0\" text-anchor=\"start\" dominant-baseline=\"central\">ใช่</text><polyline class=\"ln\" points=\"1407.9,314.0 1471.1,314.0\"/><polyline class=\"ln\" points=\"965.5,357.0 965.5,391.0\" marker-end=\"url(#ah-lab1_main)\"/><text class=\"lb\" x=\"975.5\" y=\"369.0\" text-anchor=\"start\" dominant-baseline=\"central\">ไม่ใช่</text><g class=\"nd io\" id=\"lab1_main-n17\"><polygon class=\"sh\" points=\"850.6484375,391 1132.3828125,391 1080.3828125,438 798.6484375,438\"/><text class=\"tx\" x=\"965.5\" y=\"414.5\" text-anchor=\"middle\" dominant-baseline=\"central\">พิมพ์ &quot;ใช้งานได้ตามปกติ&quot;</text></g><polyline class=\"ln\" points=\"965.5,438.0 965.5,462.0\"/><polyline class=\"ln\" points=\"1471.1,194.0 1471.1,462.0 965.5,462.0\"/><polyline class=\"ln\" points=\"965.5,462.0 965.5,496.0\" marker-end=\"url(#ah-lab1_main)\"/><g class=\"nd term\" id=\"lab1_main-n18\"><rect class=\"sh\" x=\"870.515625\" y=\"496\" width=\"190\" height=\"47\" rx=\"23.5\"/><text class=\"tx\" x=\"965.5\" y=\"519.5\" text-anchor=\"middle\" dominant-baseline=\"central\">สิ้นสุด</text></g></svg>", "map": {"เริ่มต้น": "lab1_main-n0", "รับค่า defl[0..6] , span = 24": "lab1_main-n1", "allow = span * 1000 / 800": "lab1_main-n2", "maxD = 0 , n[0..3] = 0 , i = 0": "lab1_main-n3", "i < 7 ?": "lab1_main-n4", "r = ratio(defl[i], allow)": "lab1_main-n5", "lv = level(r)": "lab1_main-n6", "defl[i] > maxD ?": "lab1_main-n7", "maxD = defl[i]": "lab1_main-n8", "n[lv] = n[lv] + 1": "lab1_main-n9", "พิมพ์ จุด i+1 , defl[i] , r , lv": "lab1_main-n10", "i = i + 1": "lab1_main-n11", "พิมพ์ n[0..3] , maxD": "lab1_main-n12", "n[3] > 0 ?": "lab1_main-n13", "พิมพ์ \"จำกัดน้ำหนักรถ\nส่งวิศวกรตรวจทันที\"": "lab1_main-n14", "n[2] > 0 ?": "lab1_main-n15", "พิมพ์ \"ตรวจติดตาม\nรายสัปดาห์\"": "lab1_main-n16", "พิมพ์ \"ใช้งานได้ตามปกติ\"": "lab1_main-n17", "สิ้นสุด": "lab1_main-n18"}, "title": "ผังงานหลัก"}, "lab1_f1": {"svg": "<svg viewBox=\"-20 20 427 279\" data-w=\"427\" xmlns=\"http://www.w3.org/2000/svg\"><defs><marker id=\"ah-lab1_f1\" viewBox=\"0 0 10 10\" refX=\"9\" refY=\"5\" markerWidth=\"7\" markerHeight=\"7\" orient=\"auto-start-reverse\"><path class=\"ahp\" d=\"M0,0 L10,5 L0,10 z\"/></marker></defs><g class=\"nd term\" id=\"lab1_f1-n0\"><rect class=\"sh\" x=\"152.25\" y=\"70\" width=\"215.5\" height=\"47\" rx=\"23.5\"/><text class=\"tx\" x=\"260.0\" y=\"93.5\" text-anchor=\"middle\" dominant-baseline=\"central\">เริ่ม ratio(d, allow)</text></g><polyline class=\"ln\" points=\"260.0,117.0 260.0,151.0\" marker-end=\"url(#ah-lab1_f1)\"/><g class=\"nd proc\" id=\"lab1_f1-n1\"><rect class=\"sh\" x=\"133.3359375\" y=\"151\" width=\"253.328125\" height=\"47\"/><text class=\"tx\" x=\"260.0\" y=\"174.5\" text-anchor=\"middle\" dominant-baseline=\"central\">r = (float) d / allow * 100</text></g><polyline class=\"ln\" points=\"260.0,198.0 260.0,232.0\" marker-end=\"url(#ah-lab1_f1)\"/><g class=\"nd term\" id=\"lab1_f1-n2\"><rect class=\"sh\" x=\"165.0\" y=\"232\" width=\"190\" height=\"47\" rx=\"23.5\"/><text class=\"tx\" x=\"260.0\" y=\"255.5\" text-anchor=\"middle\" dominant-baseline=\"central\">คืนค่า r</text></g></svg>", "map": {"เริ่ม ratio(d, allow)": "lab1_f1-n0", "r = (float) d / allow * 100": "lab1_f1-n1", "คืนค่า r": "lab1_f1-n2"}, "title": "ฟังก์ชัน ratio(d, allow)"}, "lab1_f2": {"svg": "<svg viewBox=\"-20 20 682 663\" data-w=\"682\" xmlns=\"http://www.w3.org/2000/svg\"><defs><marker id=\"ah-lab1_f2\" viewBox=\"0 0 10 10\" refX=\"9\" refY=\"5\" markerWidth=\"7\" markerHeight=\"7\" orient=\"auto-start-reverse\"><path class=\"ahp\" d=\"M0,0 L10,5 L0,10 z\"/></marker></defs><g class=\"nd term\" id=\"lab1_f2-n0\"><rect class=\"sh\" x=\"165.0\" y=\"70\" width=\"190\" height=\"47\" rx=\"23.5\"/><text class=\"tx\" x=\"260.0\" y=\"93.5\" text-anchor=\"middle\" dominant-baseline=\"central\">เริ่ม level(r)</text></g><polyline class=\"ln\" points=\"260.0,117.0 260.0,151.0\" marker-end=\"url(#ah-lab1_f2)\"/><g class=\"nd dec\" id=\"lab1_f2-n1\"><polygon class=\"sh\" points=\"260,151 356.0,194.0 260,237 164.0,194.0\"/><text class=\"tx\" x=\"260.0\" y=\"194.0\" text-anchor=\"middle\" dominant-baseline=\"central\">r &gt; 100 ?</text></g><g class=\"nd proc\" id=\"lab1_f2-n2\"><rect class=\"sh\" x=\"426.0\" y=\"170.5\" width=\"190\" height=\"47\"/><text class=\"tx\" x=\"521.0\" y=\"194.0\" text-anchor=\"middle\" dominant-baseline=\"central\">lv = 3</text></g><polyline class=\"ln\" points=\"356.0,194.0 426.0,194.0\" marker-end=\"url(#ah-lab1_f2)\"/><text class=\"lb\" x=\"364.0\" y=\"178.0\" text-anchor=\"start\" dominant-baseline=\"central\">ใช่</text><polyline class=\"ln\" points=\"616.0,194.0 642.0,194.0\"/><polyline class=\"ln\" points=\"260.0,237.0 260.0,271.0\" marker-end=\"url(#ah-lab1_f2)\"/><text class=\"lb\" x=\"270.0\" y=\"249.0\" text-anchor=\"start\" dominant-baseline=\"central\">ไม่ใช่</text><g class=\"nd dec\" id=\"lab1_f2-n3\"><polygon class=\"sh\" points=\"260,271 355.0,314.0 260,357 165.0,314.0\"/><text class=\"tx\" x=\"260.0\" y=\"314.0\" text-anchor=\"middle\" dominant-baseline=\"central\">r &gt; 80 ?</text></g><g class=\"nd proc\" id=\"lab1_f2-n4\"><rect class=\"sh\" x=\"426.0\" y=\"290.5\" width=\"190\" height=\"47\"/><text class=\"tx\" x=\"521.0\" y=\"314.0\" text-anchor=\"middle\" dominant-baseline=\"central\">lv = 2</text></g><polyline class=\"ln\" points=\"355.0,314.0 426.0,314.0\" marker-end=\"url(#ah-lab1_f2)\"/><text class=\"lb\" x=\"363.0\" y=\"298.0\" text-anchor=\"start\" dominant-baseline=\"central\">ใช่</text><polyline class=\"ln\" points=\"616.0,314.0 642.0,314.0\"/><polyline class=\"ln\" points=\"260.0,357.0 260.0,391.0\" marker-end=\"url(#ah-lab1_f2)\"/><text class=\"lb\" x=\"270.0\" y=\"369.0\" text-anchor=\"start\" dominant-baseline=\"central\">ไม่ใช่</text><g class=\"nd dec\" id=\"lab1_f2-n5\"><polygon class=\"sh\" points=\"260,391 355.0,434.0 260,477 165.0,434.0\"/><text class=\"tx\" x=\"260.0\" y=\"434.0\" text-anchor=\"middle\" dominant-baseline=\"central\">r &gt; 50 ?</text></g><g class=\"nd proc\" id=\"lab1_f2-n6\"><rect class=\"sh\" x=\"426.0\" y=\"410.5\" width=\"190\" height=\"47\"/><text class=\"tx\" x=\"521.0\" y=\"434.0\" text-anchor=\"middle\" dominant-baseline=\"central\">lv = 1</text></g><polyline class=\"ln\" points=\"355.0,434.0 426.0,434.0\" marker-end=\"url(#ah-lab1_f2)\"/><text class=\"lb\" x=\"363.0\" y=\"418.0\" text-anchor=\"start\" dominant-baseline=\"central\">ใช่</text><polyline class=\"ln\" points=\"616.0,434.0 642.0,434.0\"/><polyline class=\"ln\" points=\"260.0,477.0 260.0,511.0\" marker-end=\"url(#ah-lab1_f2)\"/><text class=\"lb\" x=\"270.0\" y=\"489.0\" text-anchor=\"start\" dominant-baseline=\"central\">ไม่ใช่</text><g class=\"nd proc\" id=\"lab1_f2-n7\"><rect class=\"sh\" x=\"165.0\" y=\"511\" width=\"190\" height=\"47\"/><text class=\"tx\" x=\"260.0\" y=\"534.5\" text-anchor=\"middle\" dominant-baseline=\"central\">lv = 0</text></g><polyline class=\"ln\" points=\"260.0,558.0 260.0,582.0\"/><polyline class=\"ln\" points=\"642.0,194.0 642.0,582.0 260.0,582.0\"/><polyline class=\"ln\" points=\"260.0,582.0 260.0,616.0\" marker-end=\"url(#ah-lab1_f2)\"/><g class=\"nd term\" id=\"lab1_f2-n8\"><rect class=\"sh\" x=\"165.0\" y=\"616\" width=\"190\" height=\"47\" rx=\"23.5\"/><text class=\"tx\" x=\"260.0\" y=\"639.5\" text-anchor=\"middle\" dominant-baseline=\"central\">คืนค่า lv</text></g></svg>", "map": {"เริ่ม level(r)": "lab1_f2-n0", "r > 100 ?": "lab1_f2-n1", "lv = 3": "lab1_f2-n2", "r > 80 ?": "lab1_f2-n3", "lv = 2": "lab1_f2-n4", "r > 50 ?": "lab1_f2-n5", "lv = 1": "lab1_f2-n6", "lv = 0": "lab1_f2-n7", "คืนค่า lv": "lab1_f2-n8"}, "title": "ฟังก์ชัน level(r)"}, "lab2_main": {"svg": "<svg viewBox=\"-20 20 1214 774\" data-w=\"1214\" xmlns=\"http://www.w3.org/2000/svg\"><defs><marker id=\"ah-lab2_main\" viewBox=\"0 0 10 10\" refX=\"9\" refY=\"5\" markerWidth=\"7\" markerHeight=\"7\" orient=\"auto-start-reverse\"><path class=\"ahp\" d=\"M0,0 L10,5 L0,10 z\"/></marker></defs><g class=\"nd term\" id=\"lab2_main-n0\"><rect class=\"sh\" x=\"205.0\" y=\"70\" width=\"190\" height=\"47\" rx=\"23.5\"/><text class=\"tx\" x=\"300.0\" y=\"93.5\" text-anchor=\"middle\" dominant-baseline=\"central\">เริ่มต้น</text></g><polyline class=\"ln\" points=\"300.0,117.0 300.0,151.0\" marker-end=\"url(#ah-lab2_main)\"/><g class=\"nd io\" id=\"lab2_main-n1\"><polygon class=\"sh\" points=\"183.1640625,151 468.8359375,151 416.8359375,198 131.1640625,198\"/><text class=\"tx\" x=\"300.0\" y=\"174.5\" text-anchor=\"middle\" dominant-baseline=\"central\">รับค่า ksc[0..5] , fc = 240</text></g><polyline class=\"ln\" points=\"300.0,198.0 300.0,232.0\" marker-end=\"url(#ah-lab2_main)\"/><g class=\"nd proc\" id=\"lab2_main-n2\"><rect class=\"sh\" x=\"168.390625\" y=\"232\" width=\"263.21875\" height=\"47\"/><text class=\"tx\" x=\"300.0\" y=\"255.5\" text-anchor=\"middle\" dominant-baseline=\"central\">sum = 0 , n[0..2] = 0 , i = 0</text></g><polyline class=\"ln\" points=\"300.0,279.0 300.0,313.0\" marker-end=\"url(#ah-lab2_main)\"/><g class=\"nd dec\" id=\"lab2_main-n3\"><polygon class=\"sh\" points=\"300,313 395.0,356.0 300,399 205.0,356.0\"/><text class=\"tx\" x=\"300.0\" y=\"356.0\" text-anchor=\"middle\" dominant-baseline=\"central\">i &lt; 6 ?</text></g><polyline class=\"ln\" points=\"300.0,399.0 300.0,433.0\" marker-end=\"url(#ah-lab2_main)\"/><text class=\"lb\" x=\"310.0\" y=\"411.0\" text-anchor=\"start\" dominant-baseline=\"central\">ใช่</text><g class=\"nd proc\" id=\"lab2_main-n4\"><rect class=\"sh\" x=\"200.234375\" y=\"433\" width=\"199.53125\" height=\"47\"/><text class=\"tx\" x=\"300.0\" y=\"456.5\" text-anchor=\"middle\" dominant-baseline=\"central\">j = judge(ksc[i], fc)</text></g><polyline class=\"ln\" points=\"300.0,480.0 300.0,514.0\" marker-end=\"url(#ah-lab2_main)\"/><g class=\"nd proc\" id=\"lab2_main-n5\"><rect class=\"sh\" x=\"198.6640625\" y=\"514\" width=\"202.671875\" height=\"72\"/><text class=\"tx\" x=\"300.0\" y=\"537.5\" text-anchor=\"middle\" dominant-baseline=\"central\">sum = sum + ksc[i]</text><text class=\"tx\" x=\"300.0\" y=\"562.5\" text-anchor=\"middle\" dominant-baseline=\"central\">n[j] = n[j] + 1</text></g><polyline class=\"ln\" points=\"300.0,586.0 300.0,620.0\" marker-end=\"url(#ah-lab2_main)\"/><g class=\"nd io\" id=\"lab2_main-n6\"><polygon class=\"sh\" points=\"182.6015625,620 469.3984375,620 417.3984375,667 130.6015625,667\"/><text class=\"tx\" x=\"300.0\" y=\"643.5\" text-anchor=\"middle\" dominant-baseline=\"central\">พิมพ์ ก้อนที่ i+1 , ksc[i] , j</text></g><polyline class=\"ln\" points=\"300.0,667.0 300.0,701.0\" marker-end=\"url(#ah-lab2_main)\"/><g class=\"nd proc\" id=\"lab2_main-n7\"><rect class=\"sh\" x=\"205.0\" y=\"701\" width=\"190\" height=\"47\"/><text class=\"tx\" x=\"300.0\" y=\"724.5\" text-anchor=\"middle\" dominant-baseline=\"central\">i = i + 1</text></g><polyline class=\"ln\" points=\"300.0,748.0 300.0,774.0 90.6,774.0 90.6,356.0 205.0,356.0\" marker-end=\"url(#ah-lab2_main)\"/><text class=\"lb\" x=\"403.0\" y=\"340.0\" text-anchor=\"start\" dominant-baseline=\"central\">ไม่ใช่</text><polyline class=\"ln\" points=\"395.0,356.0 519.4,356.0 519.4,30.0 699.9,30.0 699.9,70.0\" marker-end=\"url(#ah-lab2_main)\"/><g class=\"nd proc\" id=\"lab2_main-n8\"><rect class=\"sh\" x=\"591.2734375\" y=\"70\" width=\"217.296875\" height=\"47\"/><text class=\"tx\" x=\"699.9\" y=\"93.5\" text-anchor=\"middle\" dominant-baseline=\"central\">avg = (float) sum / 6</text></g><polyline class=\"ln\" points=\"699.9,117.0 699.9,151.0\" marker-end=\"url(#ah-lab2_main)\"/><g class=\"nd io\" id=\"lab2_main-n9\"><polygon class=\"sh\" points=\"611.3984375,151 840.4453125,151 788.4453125,198 559.3984375,198\"/><text class=\"tx\" x=\"699.9\" y=\"174.5\" text-anchor=\"middle\" dominant-baseline=\"central\">พิมพ์ n[0..2] , avg</text></g><polyline class=\"ln\" points=\"699.9,198.0 699.9,232.0\" marker-end=\"url(#ah-lab2_main)\"/><g class=\"nd dec\" id=\"lab2_main-n10\"><polygon class=\"sh\" points=\"699.921875,232 816.078125,285.0 699.921875,338 583.765625,285.0\"/><text class=\"tx\" x=\"699.9\" y=\"272.5\" text-anchor=\"middle\" dominant-baseline=\"central\">avg &gt;= fc และ</text><text class=\"tx\" x=\"699.9\" y=\"297.5\" text-anchor=\"middle\" dominant-baseline=\"central\">n[2] == 0 ?</text></g><g class=\"nd io\" id=\"lab2_main-n11\"><polygon class=\"sh\" points=\"938.734375,249.0 1147.65625,249.0 1095.65625,321.0 886.734375,321.0\"/><text class=\"tx\" x=\"1017.2\" y=\"272.5\" text-anchor=\"middle\" dominant-baseline=\"central\">พิมพ์ &quot;ยอมรับ</text><text class=\"tx\" x=\"1017.2\" y=\"297.5\" text-anchor=\"middle\" dominant-baseline=\"central\">คอนกรีตล็อตนี้&quot;</text></g><polyline class=\"ln\" points=\"816.1,285.0 912.7,285.0\" marker-end=\"url(#ah-lab2_main)\"/><text class=\"lb\" x=\"824.1\" y=\"269.0\" text-anchor=\"start\" dominant-baseline=\"central\">ใช่</text><polyline class=\"ln\" points=\"1121.7,285.0 1174.3,285.0\"/><polyline class=\"ln\" points=\"699.9,338.0 699.9,372.0\" marker-end=\"url(#ah-lab2_main)\"/><text class=\"lb\" x=\"709.9\" y=\"350.0\" text-anchor=\"start\" dominant-baseline=\"central\">ไม่ใช่</text><g class=\"nd dec\" id=\"lab2_main-n12\"><polygon class=\"sh\" points=\"699.921875,372 804.3125,415.0 699.921875,458 595.53125,415.0\"/><text class=\"tx\" x=\"699.9\" y=\"415.0\" text-anchor=\"middle\" dominant-baseline=\"central\">avg &gt;= fc ?</text></g><g class=\"nd io\" id=\"lab2_main-n13\"><polygon class=\"sh\" points=\"938.078125,379.0 1148.3125,379.0 1096.3125,451.0 886.078125,451.0\"/><text class=\"tx\" x=\"1017.2\" y=\"402.5\" text-anchor=\"middle\" dominant-baseline=\"central\">พิมพ์ &quot;เจาะแกน</text><text class=\"tx\" x=\"1017.2\" y=\"427.5\" text-anchor=\"middle\" dominant-baseline=\"central\">ตรวจเฉพาะจุด&quot;</text></g><polyline class=\"ln\" points=\"804.3,415.0 912.1,415.0\" marker-end=\"url(#ah-lab2_main)\"/><text class=\"lb\" x=\"812.3\" y=\"399.0\" text-anchor=\"start\" dominant-baseline=\"central\">ใช่</text><polyline class=\"ln\" points=\"1122.3,415.0 1174.3,415.0\"/><polyline class=\"ln\" points=\"699.9,458.0 699.9,492.0\" marker-end=\"url(#ah-lab2_main)\"/><text class=\"lb\" x=\"709.9\" y=\"470.0\" text-anchor=\"start\" dominant-baseline=\"central\">ไม่ใช่</text><g class=\"nd io\" id=\"lab2_main-n14\"><polygon class=\"sh\" points=\"550.9921875,492 900.8515625,492 848.8515625,564 498.9921875,564\"/><text class=\"tx\" x=\"699.9\" y=\"515.5\" text-anchor=\"middle\" dominant-baseline=\"central\">พิมพ์ &quot;ค่าเฉลี่ยไม่ถึงเกณฑ์</text><text class=\"tx\" x=\"699.9\" y=\"540.5\" text-anchor=\"middle\" dominant-baseline=\"central\">เจาะแกนทดสอบเพิ่ม (Core Test)&quot;</text></g><polyline class=\"ln\" points=\"699.9,564.0 699.9,588.0\"/><polyline class=\"ln\" points=\"1174.3,285.0 1174.3,588.0 699.9,588.0\"/><polyline class=\"ln\" points=\"699.9,588.0 699.9,622.0\" marker-end=\"url(#ah-lab2_main)\"/><g class=\"nd term\" id=\"lab2_main-n15\"><rect class=\"sh\" x=\"604.921875\" y=\"622\" width=\"190\" height=\"47\" rx=\"23.5\"/><text class=\"tx\" x=\"699.9\" y=\"645.5\" text-anchor=\"middle\" dominant-baseline=\"central\">สิ้นสุด</text></g></svg>", "map": {"เริ่มต้น": "lab2_main-n0", "รับค่า ksc[0..5] , fc = 240": "lab2_main-n1", "sum = 0 , n[0..2] = 0 , i = 0": "lab2_main-n2", "i < 6 ?": "lab2_main-n3", "j = judge(ksc[i], fc)": "lab2_main-n4", "sum = sum + ksc[i]\nn[j] = n[j] + 1": "lab2_main-n5", "พิมพ์ ก้อนที่ i+1 , ksc[i] , j": "lab2_main-n6", "i = i + 1": "lab2_main-n7", "avg = (float) sum / 6": "lab2_main-n8", "พิมพ์ n[0..2] , avg": "lab2_main-n9", "avg >= fc และ\nn[2] == 0 ?": "lab2_main-n10", "พิมพ์ \"ยอมรับ\nคอนกรีตล็อตนี้\"": "lab2_main-n11", "avg >= fc ?": "lab2_main-n12", "พิมพ์ \"เจาะแกน\nตรวจเฉพาะจุด\"": "lab2_main-n13", "พิมพ์ \"ค่าเฉลี่ยไม่ถึงเกณฑ์\nเจาะแกนทดสอบเพิ่ม (Core Test)\"": "lab2_main-n14", "สิ้นสุด": "lab2_main-n15"}, "title": "ผังงานหลัก"}, "lab2_f1": {"svg": "<svg viewBox=\"-20 20 699 543\" data-w=\"699\" xmlns=\"http://www.w3.org/2000/svg\"><defs><marker id=\"ah-lab2_f1\" viewBox=\"0 0 10 10\" refX=\"9\" refY=\"5\" markerWidth=\"7\" markerHeight=\"7\" orient=\"auto-start-reverse\"><path class=\"ahp\" d=\"M0,0 L10,5 L0,10 z\"/></marker></defs><g class=\"nd term\" id=\"lab2_f1-n0\"><rect class=\"sh\" x=\"163.8984375\" y=\"70\" width=\"192.203125\" height=\"47\" rx=\"23.5\"/><text class=\"tx\" x=\"260.0\" y=\"93.5\" text-anchor=\"middle\" dominant-baseline=\"central\">เริ่ม judge(k, fc)</text></g><polyline class=\"ln\" points=\"260.0,117.0 260.0,151.0\" marker-end=\"url(#ah-lab2_f1)\"/><g class=\"nd dec\" id=\"lab2_f1-n1\"><polygon class=\"sh\" points=\"260,151 355.0,194.0 260,237 165.0,194.0\"/><text class=\"tx\" x=\"260.0\" y=\"194.0\" text-anchor=\"middle\" dominant-baseline=\"central\">k &gt;= fc ?</text></g><g class=\"nd proc\" id=\"lab2_f1-n2\"><rect class=\"sh\" x=\"442.921875\" y=\"170.5\" width=\"190\" height=\"47\"/><text class=\"tx\" x=\"537.9\" y=\"194.0\" text-anchor=\"middle\" dominant-baseline=\"central\">j = 0 (ผ่าน)</text></g><polyline class=\"ln\" points=\"355.0,194.0 442.9,194.0\" marker-end=\"url(#ah-lab2_f1)\"/><text class=\"lb\" x=\"363.0\" y=\"178.0\" text-anchor=\"start\" dominant-baseline=\"central\">ใช่</text><polyline class=\"ln\" points=\"632.9,194.0 658.9,194.0\"/><polyline class=\"ln\" points=\"260.0,237.0 260.0,271.0\" marker-end=\"url(#ah-lab2_f1)\"/><text class=\"lb\" x=\"270.0\" y=\"249.0\" text-anchor=\"start\" dominant-baseline=\"central\">ไม่ใช่</text><g class=\"nd dec\" id=\"lab2_f1-n3\"><polygon class=\"sh\" points=\"260,271 372.921875,314.0 260,357 147.078125,314.0\"/><text class=\"tx\" x=\"260.0\" y=\"314.0\" text-anchor=\"middle\" dominant-baseline=\"central\">k &gt;= fc - 35 ?</text></g><g class=\"nd proc\" id=\"lab2_f1-n4\"><rect class=\"sh\" x=\"442.921875\" y=\"290.5\" width=\"190\" height=\"47\"/><text class=\"tx\" x=\"537.9\" y=\"314.0\" text-anchor=\"middle\" dominant-baseline=\"central\">j = 1 (พอรับได้)</text></g><polyline class=\"ln\" points=\"372.9,314.0 442.9,314.0\" marker-end=\"url(#ah-lab2_f1)\"/><text class=\"lb\" x=\"380.9\" y=\"298.0\" text-anchor=\"start\" dominant-baseline=\"central\">ใช่</text><polyline class=\"ln\" points=\"632.9,314.0 658.9,314.0\"/><polyline class=\"ln\" points=\"260.0,357.0 260.0,391.0\" marker-end=\"url(#ah-lab2_f1)\"/><text class=\"lb\" x=\"270.0\" y=\"369.0\" text-anchor=\"start\" dominant-baseline=\"central\">ไม่ใช่</text><g class=\"nd proc\" id=\"lab2_f1-n5\"><rect class=\"sh\" x=\"165.0\" y=\"391\" width=\"190\" height=\"47\"/><text class=\"tx\" x=\"260.0\" y=\"414.5\" text-anchor=\"middle\" dominant-baseline=\"central\">j = 2 (ไม่ผ่าน)</text></g><polyline class=\"ln\" points=\"260.0,438.0 260.0,462.0\"/><polyline class=\"ln\" points=\"658.9,194.0 658.9,462.0 260.0,462.0\"/><polyline class=\"ln\" points=\"260.0,462.0 260.0,496.0\" marker-end=\"url(#ah-lab2_f1)\"/><g class=\"nd term\" id=\"lab2_f1-n6\"><rect class=\"sh\" x=\"165.0\" y=\"496\" width=\"190\" height=\"47\" rx=\"23.5\"/><text class=\"tx\" x=\"260.0\" y=\"519.5\" text-anchor=\"middle\" dominant-baseline=\"central\">คืนค่า j</text></g></svg>", "map": {"เริ่ม judge(k, fc)": "lab2_f1-n0", "k >= fc ?": "lab2_f1-n1", "j = 0 (ผ่าน)": "lab2_f1-n2", "k >= fc - 35 ?": "lab2_f1-n3", "j = 1 (พอรับได้)": "lab2_f1-n4", "j = 2 (ไม่ผ่าน)": "lab2_f1-n5", "คืนค่า j": "lab2_f1-n6"}, "title": "ฟังก์ชัน judge(k, fc)"}, "lab3_main": {"svg": "<svg viewBox=\"-20 20 1285 1011\" data-w=\"1285\" xmlns=\"http://www.w3.org/2000/svg\"><defs><marker id=\"ah-lab3_main\" viewBox=\"0 0 10 10\" refX=\"9\" refY=\"5\" markerWidth=\"7\" markerHeight=\"7\" orient=\"auto-start-reverse\"><path class=\"ahp\" d=\"M0,0 L10,5 L0,10 z\"/></marker></defs><g class=\"nd term\" id=\"lab3_main-n0\"><rect class=\"sh\" x=\"205.0\" y=\"70\" width=\"190\" height=\"47\" rx=\"23.5\"/><text class=\"tx\" x=\"300.0\" y=\"93.5\" text-anchor=\"middle\" dominant-baseline=\"central\">เริ่มต้น</text></g><polyline class=\"ln\" points=\"300.0,117.0 300.0,151.0\" marker-end=\"url(#ah-lab3_main)\"/><g class=\"nd io\" id=\"lab3_main-n1\"><polygon class=\"sh\" points=\"182.671875,151 469.328125,151 417.328125,223 130.671875,223\"/><text class=\"tx\" x=\"300.0\" y=\"174.5\" text-anchor=\"middle\" dominant-baseline=\"central\">รับค่า len[0..4] , qty[0..4]</text><text class=\"tx\" x=\"300.0\" y=\"199.5\" text-anchor=\"middle\" dominant-baseline=\"central\">bar = 1000</text></g><polyline class=\"ln\" points=\"300.0,223.0 300.0,257.0\" marker-end=\"url(#ah-lab3_main)\"/><g class=\"nd proc\" id=\"lab3_main-n2\"><rect class=\"sh\" x=\"165.7421875\" y=\"257\" width=\"268.515625\" height=\"47\"/><text class=\"tx\" x=\"300.0\" y=\"280.5\" text-anchor=\"middle\" dominant-baseline=\"central\">total = 0 , n[0..3] = 0 , i = 0</text></g><polyline class=\"ln\" points=\"300.0,304.0 300.0,338.0\" marker-end=\"url(#ah-lab3_main)\"/><g class=\"nd dec\" id=\"lab3_main-n3\"><polygon class=\"sh\" points=\"300,338 395.0,381.0 300,424 205.0,381.0\"/><text class=\"tx\" x=\"300.0\" y=\"381.0\" text-anchor=\"middle\" dominant-baseline=\"central\">i &lt; 5 ?</text></g><polyline class=\"ln\" points=\"300.0,424.0 300.0,458.0\" marker-end=\"url(#ah-lab3_main)\"/><text class=\"lb\" x=\"310.0\" y=\"436.0\" text-anchor=\"start\" dominant-baseline=\"central\">ใช่</text><g class=\"nd proc\" id=\"lab3_main-n4\"><rect class=\"sh\" x=\"193.5859375\" y=\"458\" width=\"212.828125\" height=\"72\"/><text class=\"tx\" x=\"300.0\" y=\"481.5\" text-anchor=\"middle\" dominant-baseline=\"central\">per = bar / len[i]</text><text class=\"tx\" x=\"300.0\" y=\"506.5\" text-anchor=\"middle\" dominant-baseline=\"central\">waste = bar % len[i]</text></g><polyline class=\"ln\" points=\"300.0,530.0 300.0,564.0\" marker-end=\"url(#ah-lab3_main)\"/><g class=\"nd proc\" id=\"lab3_main-n5\"><rect class=\"sh\" x=\"158.1796875\" y=\"564\" width=\"283.640625\" height=\"47\"/><text class=\"tx\" x=\"300.0\" y=\"587.5\" text-anchor=\"middle\" dominant-baseline=\"central\">need = (qty[i] + per - 1) / per</text></g><polyline class=\"ln\" points=\"300.0,611.0 300.0,645.0\" marker-end=\"url(#ah-lab3_main)\"/><g class=\"nd proc\" id=\"lab3_main-n6\"><rect class=\"sh\" x=\"175.03125\" y=\"645\" width=\"249.9375\" height=\"72\"/><text class=\"tx\" x=\"300.0\" y=\"668.5\" text-anchor=\"middle\" dominant-baseline=\"central\">p = wastePct(waste, bar)</text><text class=\"tx\" x=\"300.0\" y=\"693.5\" text-anchor=\"middle\" dominant-baseline=\"central\">g = grade(p)</text></g><polyline class=\"ln\" points=\"300.0,717.0 300.0,751.0\" marker-end=\"url(#ah-lab3_main)\"/><g class=\"nd proc\" id=\"lab3_main-n7\"><rect class=\"sh\" x=\"194.4140625\" y=\"751\" width=\"211.171875\" height=\"72\"/><text class=\"tx\" x=\"300.0\" y=\"774.5\" text-anchor=\"middle\" dominant-baseline=\"central\">total = total + need</text><text class=\"tx\" x=\"300.0\" y=\"799.5\" text-anchor=\"middle\" dominant-baseline=\"central\">n[g] = n[g] + 1</text></g><polyline class=\"ln\" points=\"300.0,823.0 300.0,857.0\" marker-end=\"url(#ah-lab3_main)\"/><g class=\"nd io\" id=\"lab3_main-n8\"><polygon class=\"sh\" points=\"135.71875,857 516.28125,857 464.28125,904 83.71875,904\"/><text class=\"tx\" x=\"300.0\" y=\"880.5\" text-anchor=\"middle\" dominant-baseline=\"central\">พิมพ์ len[i] , per , waste , p , need , g</text></g><polyline class=\"ln\" points=\"300.0,904.0 300.0,938.0\" marker-end=\"url(#ah-lab3_main)\"/><g class=\"nd proc\" id=\"lab3_main-n9\"><rect class=\"sh\" x=\"205.0\" y=\"938\" width=\"190\" height=\"47\"/><text class=\"tx\" x=\"300.0\" y=\"961.5\" text-anchor=\"middle\" dominant-baseline=\"central\">i = i + 1</text></g><polyline class=\"ln\" points=\"300.0,985.0 300.0,1011.0 43.7,1011.0 43.7,381.0 205.0,381.0\" marker-end=\"url(#ah-lab3_main)\"/><text class=\"lb\" x=\"403.0\" y=\"365.0\" text-anchor=\"start\" dominant-baseline=\"central\">ไม่ใช่</text><polyline class=\"ln\" points=\"395.0,381.0 566.3,381.0 566.3,30.0 732.3,30.0 732.3,70.0\" marker-end=\"url(#ah-lab3_main)\"/><g class=\"nd io\" id=\"lab3_main-n10\"><polygon class=\"sh\" points=\"658.28125,70 858.28125,70 806.28125,117 606.28125,117\"/><text class=\"tx\" x=\"732.3\" y=\"93.5\" text-anchor=\"middle\" dominant-baseline=\"central\">พิมพ์ total</text></g><polyline class=\"ln\" points=\"732.3,117.0 732.3,151.0\" marker-end=\"url(#ah-lab3_main)\"/><g class=\"nd dec\" id=\"lab3_main-n11\"><polygon class=\"sh\" points=\"732.28125,151 830.8046875,194.0 732.28125,237 633.7578125,194.0\"/><text class=\"tx\" x=\"732.3\" y=\"194.0\" text-anchor=\"middle\" dominant-baseline=\"central\">n[3] &gt; 0 ?</text></g><g class=\"nd io\" id=\"lab3_main-n12\"><polygon class=\"sh\" points=\"965.671875,158.0 1211.84375,158.0 1159.84375,230.0 913.671875,230.0\"/><text class=\"tx\" x=\"1062.8\" y=\"181.5\" text-anchor=\"middle\" dominant-baseline=\"central\">พิมพ์ &quot;ปรับความยาว</text><text class=\"tx\" x=\"1062.8\" y=\"206.5\" text-anchor=\"middle\" dominant-baseline=\"central\">ท่อนใหม่&quot;</text></g><polyline class=\"ln\" points=\"830.8,194.0 939.7,194.0\" marker-end=\"url(#ah-lab3_main)\"/><text class=\"lb\" x=\"838.8\" y=\"178.0\" text-anchor=\"start\" dominant-baseline=\"central\">ใช่</text><polyline class=\"ln\" points=\"1185.8,194.0 1244.9,194.0\"/><polyline class=\"ln\" points=\"732.3,237.0 732.3,271.0\" marker-end=\"url(#ah-lab3_main)\"/><text class=\"lb\" x=\"742.3\" y=\"249.0\" text-anchor=\"start\" dominant-baseline=\"central\">ไม่ใช่</text><g class=\"nd dec\" id=\"lab3_main-n13\"><polygon class=\"sh\" points=\"732.28125,271 836.5703125,314.0 732.28125,357 627.9921875,314.0\"/><text class=\"tx\" x=\"732.3\" y=\"314.0\" text-anchor=\"middle\" dominant-baseline=\"central\">n[2] &gt;= 2 ?</text></g><g class=\"nd io\" id=\"lab3_main-n14\"><polygon class=\"sh\" points=\"958.5703125,278.0 1218.9453125,278.0 1166.9453125,350.0 906.5703125,350.0\"/><text class=\"tx\" x=\"1062.8\" y=\"301.5\" text-anchor=\"middle\" dominant-baseline=\"central\">พิมพ์ &quot;พิจารณาเปลี่ยน</text><text class=\"tx\" x=\"1062.8\" y=\"326.5\" text-anchor=\"middle\" dominant-baseline=\"central\">ความยาวเหล็กที่สั่ง&quot;</text></g><polyline class=\"ln\" points=\"836.6,314.0 932.6,314.0\" marker-end=\"url(#ah-lab3_main)\"/><text class=\"lb\" x=\"844.6\" y=\"298.0\" text-anchor=\"start\" dominant-baseline=\"central\">ใช่</text><polyline class=\"ln\" points=\"1192.9,314.0 1244.9,314.0\"/><polyline class=\"ln\" points=\"732.3,357.0 732.3,391.0\" marker-end=\"url(#ah-lab3_main)\"/><text class=\"lb\" x=\"742.3\" y=\"369.0\" text-anchor=\"start\" dominant-baseline=\"central\">ไม่ใช่</text><g class=\"nd io\" id=\"lab3_main-n15\"><polygon class=\"sh\" points=\"617.2578125,391 899.3046875,391 847.3046875,438 565.2578125,438\"/><text class=\"tx\" x=\"732.3\" y=\"414.5\" text-anchor=\"middle\" dominant-baseline=\"central\">พิมพ์ &quot;ใช้แผนตัดนี้ได้เลย&quot;</text></g><polyline class=\"ln\" points=\"732.3,438.0 732.3,462.0\"/><polyline class=\"ln\" points=\"1244.9,194.0 1244.9,462.0 732.3,462.0\"/><polyline class=\"ln\" points=\"732.3,462.0 732.3,496.0\" marker-end=\"url(#ah-lab3_main)\"/><g class=\"nd term\" id=\"lab3_main-n16\"><rect class=\"sh\" x=\"637.28125\" y=\"496\" width=\"190\" height=\"47\" rx=\"23.5\"/><text class=\"tx\" x=\"732.3\" y=\"519.5\" text-anchor=\"middle\" dominant-baseline=\"central\">สิ้นสุด</text></g></svg>", "map": {"เริ่มต้น": "lab3_main-n0", "รับค่า len[0..4] , qty[0..4]\nbar = 1000": "lab3_main-n1", "total = 0 , n[0..3] = 0 , i = 0": "lab3_main-n2", "i < 5 ?": "lab3_main-n3", "per = bar / len[i]\nwaste = bar % len[i]": "lab3_main-n4", "need = (qty[i] + per - 1) / per": "lab3_main-n5", "p = wastePct(waste, bar)\ng = grade(p)": "lab3_main-n6", "total = total + need\nn[g] = n[g] + 1": "lab3_main-n7", "พิมพ์ len[i] , per , waste , p , need , g": "lab3_main-n8", "i = i + 1": "lab3_main-n9", "พิมพ์ total": "lab3_main-n10", "n[3] > 0 ?": "lab3_main-n11", "พิมพ์ \"ปรับความยาว\nท่อนใหม่\"": "lab3_main-n12", "n[2] >= 2 ?": "lab3_main-n13", "พิมพ์ \"พิจารณาเปลี่ยน\nความยาวเหล็กที่สั่ง\"": "lab3_main-n14", "พิมพ์ \"ใช้แผนตัดนี้ได้เลย\"": "lab3_main-n15", "สิ้นสุด": "lab3_main-n16"}, "title": "ผังงานหลัก"}, "lab3_f1": {"svg": "<svg viewBox=\"-20 20 421 279\" data-w=\"421\" xmlns=\"http://www.w3.org/2000/svg\"><defs><marker id=\"ah-lab3_f1\" viewBox=\"0 0 10 10\" refX=\"9\" refY=\"5\" markerWidth=\"7\" markerHeight=\"7\" orient=\"auto-start-reverse\"><path class=\"ahp\" d=\"M0,0 L10,5 L0,10 z\"/></marker></defs><g class=\"nd term\" id=\"lab3_f1-n0\"><rect class=\"sh\" x=\"141.953125\" y=\"70\" width=\"236.09375\" height=\"47\" rx=\"23.5\"/><text class=\"tx\" x=\"260.0\" y=\"93.5\" text-anchor=\"middle\" dominant-baseline=\"central\">เริ่ม wastePct(w, bar)</text></g><polyline class=\"ln\" points=\"260.0,117.0 260.0,151.0\" marker-end=\"url(#ah-lab3_f1)\"/><g class=\"nd proc\" id=\"lab3_f1-n1\"><rect class=\"sh\" x=\"138.6953125\" y=\"151\" width=\"242.609375\" height=\"47\"/><text class=\"tx\" x=\"260.0\" y=\"174.5\" text-anchor=\"middle\" dominant-baseline=\"central\">p = (float) w / bar * 100</text></g><polyline class=\"ln\" points=\"260.0,198.0 260.0,232.0\" marker-end=\"url(#ah-lab3_f1)\"/><g class=\"nd term\" id=\"lab3_f1-n2\"><rect class=\"sh\" x=\"165.0\" y=\"232\" width=\"190\" height=\"47\" rx=\"23.5\"/><text class=\"tx\" x=\"260.0\" y=\"255.5\" text-anchor=\"middle\" dominant-baseline=\"central\">คืนค่า p</text></g></svg>", "map": {"เริ่ม wastePct(w, bar)": "lab3_f1-n0", "p = (float) w / bar * 100": "lab3_f1-n1", "คืนค่า p": "lab3_f1-n2"}, "title": "ฟังก์ชัน wastePct(w, bar)"}, "lab3_f2": {"svg": "<svg viewBox=\"-20 20 684 663\" data-w=\"684\" xmlns=\"http://www.w3.org/2000/svg\"><defs><marker id=\"ah-lab3_f2\" viewBox=\"0 0 10 10\" refX=\"9\" refY=\"5\" markerWidth=\"7\" markerHeight=\"7\" orient=\"auto-start-reverse\"><path class=\"ahp\" d=\"M0,0 L10,5 L0,10 z\"/></marker></defs><g class=\"nd term\" id=\"lab3_f2-n0\"><rect class=\"sh\" x=\"165.0\" y=\"70\" width=\"190\" height=\"47\" rx=\"23.5\"/><text class=\"tx\" x=\"260.0\" y=\"93.5\" text-anchor=\"middle\" dominant-baseline=\"central\">เริ่ม grade(p)</text></g><polyline class=\"ln\" points=\"260.0,117.0 260.0,151.0\" marker-end=\"url(#ah-lab3_f2)\"/><g class=\"nd dec\" id=\"lab3_f2-n1\"><polygon class=\"sh\" points=\"260,151 355.0,194.0 260,237 165.0,194.0\"/><text class=\"tx\" x=\"260.0\" y=\"194.0\" text-anchor=\"middle\" dominant-baseline=\"central\">p &lt;= 5 ?</text></g><g class=\"nd proc\" id=\"lab3_f2-n2\"><rect class=\"sh\" x=\"428.390625\" y=\"170.5\" width=\"190\" height=\"47\"/><text class=\"tx\" x=\"523.4\" y=\"194.0\" text-anchor=\"middle\" dominant-baseline=\"central\">g = 0 (ดีเยี่ยม)</text></g><polyline class=\"ln\" points=\"355.0,194.0 428.4,194.0\" marker-end=\"url(#ah-lab3_f2)\"/><text class=\"lb\" x=\"363.0\" y=\"178.0\" text-anchor=\"start\" dominant-baseline=\"central\">ใช่</text><polyline class=\"ln\" points=\"618.4,194.0 644.4,194.0\"/><polyline class=\"ln\" points=\"260.0,237.0 260.0,271.0\" marker-end=\"url(#ah-lab3_f2)\"/><text class=\"lb\" x=\"270.0\" y=\"249.0\" text-anchor=\"start\" dominant-baseline=\"central\">ไม่ใช่</text><g class=\"nd dec\" id=\"lab3_f2-n3\"><polygon class=\"sh\" points=\"260,271 355.0,314.0 260,357 165.0,314.0\"/><text class=\"tx\" x=\"260.0\" y=\"314.0\" text-anchor=\"middle\" dominant-baseline=\"central\">p &lt;= 9 ?</text></g><g class=\"nd proc\" id=\"lab3_f2-n4\"><rect class=\"sh\" x=\"428.390625\" y=\"290.5\" width=\"190\" height=\"47\"/><text class=\"tx\" x=\"523.4\" y=\"314.0\" text-anchor=\"middle\" dominant-baseline=\"central\">g = 1 (ดี)</text></g><polyline class=\"ln\" points=\"355.0,314.0 428.4,314.0\" marker-end=\"url(#ah-lab3_f2)\"/><text class=\"lb\" x=\"363.0\" y=\"298.0\" text-anchor=\"start\" dominant-baseline=\"central\">ใช่</text><polyline class=\"ln\" points=\"618.4,314.0 644.4,314.0\"/><polyline class=\"ln\" points=\"260.0,357.0 260.0,391.0\" marker-end=\"url(#ah-lab3_f2)\"/><text class=\"lb\" x=\"270.0\" y=\"369.0\" text-anchor=\"start\" dominant-baseline=\"central\">ไม่ใช่</text><g class=\"nd dec\" id=\"lab3_f2-n5\"><polygon class=\"sh\" points=\"260,391 358.390625,434.0 260,477 161.609375,434.0\"/><text class=\"tx\" x=\"260.0\" y=\"434.0\" text-anchor=\"middle\" dominant-baseline=\"central\">p &lt;= 12 ?</text></g><g class=\"nd proc\" id=\"lab3_f2-n6\"><rect class=\"sh\" x=\"428.390625\" y=\"410.5\" width=\"190\" height=\"47\"/><text class=\"tx\" x=\"523.4\" y=\"434.0\" text-anchor=\"middle\" dominant-baseline=\"central\">g = 2 (พอใช้)</text></g><polyline class=\"ln\" points=\"358.4,434.0 428.4,434.0\" marker-end=\"url(#ah-lab3_f2)\"/><text class=\"lb\" x=\"366.4\" y=\"418.0\" text-anchor=\"start\" dominant-baseline=\"central\">ใช่</text><polyline class=\"ln\" points=\"618.4,434.0 644.4,434.0\"/><polyline class=\"ln\" points=\"260.0,477.0 260.0,511.0\" marker-end=\"url(#ah-lab3_f2)\"/><text class=\"lb\" x=\"270.0\" y=\"489.0\" text-anchor=\"start\" dominant-baseline=\"central\">ไม่ใช่</text><g class=\"nd proc\" id=\"lab3_f2-n7\"><rect class=\"sh\" x=\"162.28125\" y=\"511\" width=\"195.4375\" height=\"47\"/><text class=\"tx\" x=\"260.0\" y=\"534.5\" text-anchor=\"middle\" dominant-baseline=\"central\">g = 3 (เปลี่ยนแผน)</text></g><polyline class=\"ln\" points=\"260.0,558.0 260.0,582.0\"/><polyline class=\"ln\" points=\"644.4,194.0 644.4,582.0 260.0,582.0\"/><polyline class=\"ln\" points=\"260.0,582.0 260.0,616.0\" marker-end=\"url(#ah-lab3_f2)\"/><g class=\"nd term\" id=\"lab3_f2-n8\"><rect class=\"sh\" x=\"165.0\" y=\"616\" width=\"190\" height=\"47\" rx=\"23.5\"/><text class=\"tx\" x=\"260.0\" y=\"639.5\" text-anchor=\"middle\" dominant-baseline=\"central\">คืนค่า g</text></g></svg>", "map": {"เริ่ม grade(p)": "lab3_f2-n0", "p <= 5 ?": "lab3_f2-n1", "g = 0 (ดีเยี่ยม)": "lab3_f2-n2", "p <= 9 ?": "lab3_f2-n3", "g = 1 (ดี)": "lab3_f2-n4", "p <= 12 ?": "lab3_f2-n5", "g = 2 (พอใช้)": "lab3_f2-n6", "g = 3 (เปลี่ยนแผน)": "lab3_f2-n7", "คืนค่า g": "lab3_f2-n8"}, "title": "ฟังก์ชัน grade(p)"}, "lab4_main": {"svg": "<svg viewBox=\"-20 20 1235 936\" data-w=\"1235\" xmlns=\"http://www.w3.org/2000/svg\"><defs><marker id=\"ah-lab4_main\" viewBox=\"0 0 10 10\" refX=\"9\" refY=\"5\" markerWidth=\"7\" markerHeight=\"7\" orient=\"auto-start-reverse\"><path class=\"ahp\" d=\"M0,0 L10,5 L0,10 z\"/></marker></defs><g class=\"nd term\" id=\"lab4_main-n0\"><rect class=\"sh\" x=\"205.0\" y=\"70\" width=\"190\" height=\"47\" rx=\"23.5\"/><text class=\"tx\" x=\"300.0\" y=\"93.5\" text-anchor=\"middle\" dominant-baseline=\"central\">เริ่มต้น</text></g><polyline class=\"ln\" points=\"300.0,117.0 300.0,151.0\" marker-end=\"url(#ah-lab4_main)\"/><g class=\"nd io\" id=\"lab4_main-n1\"><polygon class=\"sh\" points=\"167.71875,151 484.28125,151 432.28125,198 115.71875,198\"/><text class=\"tx\" x=\"300.0\" y=\"174.5\" text-anchor=\"middle\" dominant-baseline=\"central\">รับค่า w[0..7] , limit = 25000</text></g><polyline class=\"ln\" points=\"300.0,198.0 300.0,232.0\" marker-end=\"url(#ah-lab4_main)\"/><g class=\"nd proc\" id=\"lab4_main-n2\"><rect class=\"sh\" x=\"205.0\" y=\"232\" width=\"190\" height=\"47\"/><text class=\"tx\" x=\"300.0\" y=\"255.5\" text-anchor=\"middle\" dominant-baseline=\"central\">n[0..3] = 0 , i = 0</text></g><polyline class=\"ln\" points=\"300.0,279.0 300.0,313.0\" marker-end=\"url(#ah-lab4_main)\"/><g class=\"nd dec\" id=\"lab4_main-n3\"><polygon class=\"sh\" points=\"300,313 395.0,356.0 300,399 205.0,356.0\"/><text class=\"tx\" x=\"300.0\" y=\"356.0\" text-anchor=\"middle\" dominant-baseline=\"central\">i &lt; 8 ?</text></g><polyline class=\"ln\" points=\"300.0,399.0 300.0,433.0\" marker-end=\"url(#ah-lab4_main)\"/><text class=\"lb\" x=\"310.0\" y=\"411.0\" text-anchor=\"start\" dominant-baseline=\"central\">ใช่</text><g class=\"nd proc\" id=\"lab4_main-n4\"><rect class=\"sh\" x=\"188.6640625\" y=\"433\" width=\"222.671875\" height=\"47\"/><text class=\"tx\" x=\"300.0\" y=\"456.5\" text-anchor=\"middle\" dominant-baseline=\"central\">e = excess(w[i], limit)</text></g><polyline class=\"ln\" points=\"300.0,480.0 300.0,514.0\" marker-end=\"url(#ah-lab4_main)\"/><g class=\"nd proc\" id=\"lab4_main-n5\"><rect class=\"sh\" x=\"205.0\" y=\"514\" width=\"190\" height=\"72\"/><text class=\"tx\" x=\"300.0\" y=\"537.5\" text-anchor=\"middle\" dominant-baseline=\"central\">t = w[i] / 1000</text><text class=\"tx\" x=\"300.0\" y=\"562.5\" text-anchor=\"middle\" dominant-baseline=\"central\">kg = w[i] % 1000</text></g><polyline class=\"ln\" points=\"300.0,586.0 300.0,620.0\" marker-end=\"url(#ah-lab4_main)\"/><g class=\"nd proc\" id=\"lab4_main-n6\"><rect class=\"sh\" x=\"179.8984375\" y=\"620\" width=\"240.203125\" height=\"47\"/><text class=\"tx\" x=\"300.0\" y=\"643.5\" text-anchor=\"middle\" dominant-baseline=\"central\">lv = check(w[i], limit, e)</text></g><polyline class=\"ln\" points=\"300.0,667.0 300.0,701.0\" marker-end=\"url(#ah-lab4_main)\"/><g class=\"nd proc\" id=\"lab4_main-n7\"><rect class=\"sh\" x=\"205.0\" y=\"701\" width=\"190\" height=\"47\"/><text class=\"tx\" x=\"300.0\" y=\"724.5\" text-anchor=\"middle\" dominant-baseline=\"central\">n[lv] = n[lv] + 1</text></g><polyline class=\"ln\" points=\"300.0,748.0 300.0,782.0\" marker-end=\"url(#ah-lab4_main)\"/><g class=\"nd io\" id=\"lab4_main-n8\"><polygon class=\"sh\" points=\"163.1796875,782 488.8203125,782 436.8203125,829 111.1796875,829\"/><text class=\"tx\" x=\"300.0\" y=\"805.5\" text-anchor=\"middle\" dominant-baseline=\"central\">พิมพ์ คันที่ i+1 , t ตัน kg , e , lv</text></g><polyline class=\"ln\" points=\"300.0,829.0 300.0,863.0\" marker-end=\"url(#ah-lab4_main)\"/><g class=\"nd proc\" id=\"lab4_main-n9\"><rect class=\"sh\" x=\"205.0\" y=\"863\" width=\"190\" height=\"47\"/><text class=\"tx\" x=\"300.0\" y=\"886.5\" text-anchor=\"middle\" dominant-baseline=\"central\">i = i + 1</text></g><polyline class=\"ln\" points=\"300.0,910.0 300.0,936.0 71.2,936.0 71.2,356.0 205.0,356.0\" marker-end=\"url(#ah-lab4_main)\"/><text class=\"lb\" x=\"403.0\" y=\"340.0\" text-anchor=\"start\" dominant-baseline=\"central\">ไม่ใช่</text><polyline class=\"ln\" points=\"395.0,356.0 538.8,356.0 538.8,30.0 704.8,30.0 704.8,70.0\" marker-end=\"url(#ah-lab4_main)\"/><g class=\"nd io\" id=\"lab4_main-n10\"><polygon class=\"sh\" points=\"630.8203125,70 830.8203125,70 778.8203125,117 578.8203125,117\"/><text class=\"tx\" x=\"704.8\" y=\"93.5\" text-anchor=\"middle\" dominant-baseline=\"central\">พิมพ์ n[0..3]</text></g><polyline class=\"ln\" points=\"704.8,117.0 704.8,151.0\" marker-end=\"url(#ah-lab4_main)\"/><g class=\"nd dec\" id=\"lab4_main-n11\"><polygon class=\"sh\" points=\"704.8203125,151 803.34375,194.0 704.8203125,237 606.296875,194.0\"/><text class=\"tx\" x=\"704.8\" y=\"194.0\" text-anchor=\"middle\" dominant-baseline=\"central\">n[3] &gt; 0 ?</text></g><g class=\"nd io\" id=\"lab4_main-n12\"><polygon class=\"sh\" points=\"925.34375,158.0 1168.59375,158.0 1116.59375,230.0 873.34375,230.0\"/><text class=\"tx\" x=\"1021.0\" y=\"181.5\" text-anchor=\"middle\" dominant-baseline=\"central\">พิมพ์ &quot;ส่งรายงาน</text><text class=\"tx\" x=\"1021.0\" y=\"206.5\" text-anchor=\"middle\" dominant-baseline=\"central\">หน่วยงานทางหลวง&quot;</text></g><polyline class=\"ln\" points=\"803.3,194.0 899.3,194.0\" marker-end=\"url(#ah-lab4_main)\"/><text class=\"lb\" x=\"811.3\" y=\"178.0\" text-anchor=\"start\" dominant-baseline=\"central\">ใช่</text><polyline class=\"ln\" points=\"1142.6,194.0 1194.6,194.0\"/><polyline class=\"ln\" points=\"704.8,237.0 704.8,271.0\" marker-end=\"url(#ah-lab4_main)\"/><text class=\"lb\" x=\"714.8\" y=\"249.0\" text-anchor=\"start\" dominant-baseline=\"central\">ไม่ใช่</text><g class=\"nd dec\" id=\"lab4_main-n13\"><polygon class=\"sh\" points=\"704.8203125,271 803.34375,314.0 704.8203125,357 606.296875,314.0\"/><text class=\"tx\" x=\"704.8\" y=\"314.0\" text-anchor=\"middle\" dominant-baseline=\"central\">n[2] &gt; 2 ?</text></g><g class=\"nd io\" id=\"lab4_main-n14\"><polygon class=\"sh\" points=\"939.796875,278.0 1154.140625,278.0 1102.140625,350.0 887.796875,350.0\"/><text class=\"tx\" x=\"1021.0\" y=\"301.5\" text-anchor=\"middle\" dominant-baseline=\"central\">พิมพ์ &quot;เพิ่มรอบ</text><text class=\"tx\" x=\"1021.0\" y=\"326.5\" text-anchor=\"middle\" dominant-baseline=\"central\">ตรวจชั่งน้ำหนัก&quot;</text></g><polyline class=\"ln\" points=\"803.3,314.0 913.8,314.0\" marker-end=\"url(#ah-lab4_main)\"/><text class=\"lb\" x=\"811.3\" y=\"298.0\" text-anchor=\"start\" dominant-baseline=\"central\">ใช่</text><polyline class=\"ln\" points=\"1128.1,314.0 1194.6,314.0\"/><polyline class=\"ln\" points=\"704.8,357.0 704.8,391.0\" marker-end=\"url(#ah-lab4_main)\"/><text class=\"lb\" x=\"714.8\" y=\"369.0\" text-anchor=\"start\" dominant-baseline=\"central\">ไม่ใช่</text><g class=\"nd io\" id=\"lab4_main-n15\"><polygon class=\"sh\" points=\"600.765625,391 860.875,391 808.875,438 548.765625,438\"/><text class=\"tx\" x=\"704.8\" y=\"414.5\" text-anchor=\"middle\" dominant-baseline=\"central\">พิมพ์ &quot;การจราจรปกติ&quot;</text></g><polyline class=\"ln\" points=\"704.8,438.0 704.8,462.0\"/><polyline class=\"ln\" points=\"1194.6,194.0 1194.6,462.0 704.8,462.0\"/><polyline class=\"ln\" points=\"704.8,462.0 704.8,496.0\" marker-end=\"url(#ah-lab4_main)\"/><g class=\"nd term\" id=\"lab4_main-n16\"><rect class=\"sh\" x=\"609.8203125\" y=\"496\" width=\"190\" height=\"47\" rx=\"23.5\"/><text class=\"tx\" x=\"704.8\" y=\"519.5\" text-anchor=\"middle\" dominant-baseline=\"central\">สิ้นสุด</text></g></svg>", "map": {"เริ่มต้น": "lab4_main-n0", "รับค่า w[0..7] , limit = 25000": "lab4_main-n1", "n[0..3] = 0 , i = 0": "lab4_main-n2", "i < 8 ?": "lab4_main-n3", "e = excess(w[i], limit)": "lab4_main-n4", "t = w[i] / 1000\nkg = w[i] % 1000": "lab4_main-n5", "lv = check(w[i], limit, e)": "lab4_main-n6", "n[lv] = n[lv] + 1": "lab4_main-n7", "พิมพ์ คันที่ i+1 , t ตัน kg , e , lv": "lab4_main-n8", "i = i + 1": "lab4_main-n9", "พิมพ์ n[0..3]": "lab4_main-n10", "n[3] > 0 ?": "lab4_main-n11", "พิมพ์ \"ส่งรายงาน\nหน่วยงานทางหลวง\"": "lab4_main-n12", "n[2] > 2 ?": "lab4_main-n13", "พิมพ์ \"เพิ่มรอบ\nตรวจชั่งน้ำหนัก\"": "lab4_main-n14", "พิมพ์ \"การจราจรปกติ\"": "lab4_main-n15", "สิ้นสุด": "lab4_main-n16"}, "title": "ผังงานหลัก"}, "lab4_f1": {"svg": "<svg viewBox=\"-20 20 457 279\" data-w=\"457\" xmlns=\"http://www.w3.org/2000/svg\"><defs><marker id=\"ah-lab4_f1\" viewBox=\"0 0 10 10\" refX=\"9\" refY=\"5\" markerWidth=\"7\" markerHeight=\"7\" orient=\"auto-start-reverse\"><path class=\"ahp\" d=\"M0,0 L10,5 L0,10 z\"/></marker></defs><g class=\"nd term\" id=\"lab4_f1-n0\"><rect class=\"sh\" x=\"146.4609375\" y=\"70\" width=\"227.078125\" height=\"47\" rx=\"23.5\"/><text class=\"tx\" x=\"260.0\" y=\"93.5\" text-anchor=\"middle\" dominant-baseline=\"central\">เริ่ม excess(w, limit)</text></g><polyline class=\"ln\" points=\"260.0,117.0 260.0,151.0\" marker-end=\"url(#ah-lab4_f1)\"/><g class=\"nd proc\" id=\"lab4_f1-n1\"><rect class=\"sh\" x=\"102.796875\" y=\"151\" width=\"314.40625\" height=\"47\"/><text class=\"tx\" x=\"260.0\" y=\"174.5\" text-anchor=\"middle\" dominant-baseline=\"central\">e = (float)(w - limit) / limit * 100</text></g><polyline class=\"ln\" points=\"260.0,198.0 260.0,232.0\" marker-end=\"url(#ah-lab4_f1)\"/><g class=\"nd term\" id=\"lab4_f1-n2\"><rect class=\"sh\" x=\"165.0\" y=\"232\" width=\"190\" height=\"47\" rx=\"23.5\"/><text class=\"tx\" x=\"260.0\" y=\"255.5\" text-anchor=\"middle\" dominant-baseline=\"central\">คืนค่า e</text></g></svg>", "map": {"เริ่ม excess(w, limit)": "lab4_f1-n0", "e = (float)(w - limit) / limit * 100": "lab4_f1-n1", "คืนค่า e": "lab4_f1-n2"}, "title": "ฟังก์ชัน excess(w, limit)"}, "lab4_f2": {"svg": "<svg viewBox=\"-20 20 694 663\" data-w=\"694\" xmlns=\"http://www.w3.org/2000/svg\"><defs><marker id=\"ah-lab4_f2\" viewBox=\"0 0 10 10\" refX=\"9\" refY=\"5\" markerWidth=\"7\" markerHeight=\"7\" orient=\"auto-start-reverse\"><path class=\"ahp\" d=\"M0,0 L10,5 L0,10 z\"/></marker></defs><g class=\"nd term\" id=\"lab4_f2-n0\"><rect class=\"sh\" x=\"139.8046875\" y=\"70\" width=\"240.390625\" height=\"47\" rx=\"23.5\"/><text class=\"tx\" x=\"260.0\" y=\"93.5\" text-anchor=\"middle\" dominant-baseline=\"central\">เริ่ม check(w, limit, e)</text></g><polyline class=\"ln\" points=\"260.0,117.0 260.0,151.0\" marker-end=\"url(#ah-lab4_f2)\"/><g class=\"nd dec\" id=\"lab4_f2-n1\"><polygon class=\"sh\" points=\"260,151 368.0703125,194.0 260,237 151.9296875,194.0\"/><text class=\"tx\" x=\"260.0\" y=\"194.0\" text-anchor=\"middle\" dominant-baseline=\"central\">w &lt;= limit ?</text></g><g class=\"nd proc\" id=\"lab4_f2-n2\"><rect class=\"sh\" x=\"438.0703125\" y=\"170.5\" width=\"190\" height=\"47\"/><text class=\"tx\" x=\"533.1\" y=\"194.0\" text-anchor=\"middle\" dominant-baseline=\"central\">lv = 0 (ผ่าน)</text></g><polyline class=\"ln\" points=\"368.1,194.0 438.1,194.0\" marker-end=\"url(#ah-lab4_f2)\"/><text class=\"lb\" x=\"376.1\" y=\"178.0\" text-anchor=\"start\" dominant-baseline=\"central\">ใช่</text><polyline class=\"ln\" points=\"628.1,194.0 654.1,194.0\"/><polyline class=\"ln\" points=\"260.0,237.0 260.0,271.0\" marker-end=\"url(#ah-lab4_f2)\"/><text class=\"lb\" x=\"270.0\" y=\"249.0\" text-anchor=\"start\" dominant-baseline=\"central\">ไม่ใช่</text><g class=\"nd dec\" id=\"lab4_f2-n3\"><polygon class=\"sh\" points=\"260,271 355.0,314.0 260,357 165.0,314.0\"/><text class=\"tx\" x=\"260.0\" y=\"314.0\" text-anchor=\"middle\" dominant-baseline=\"central\">e &lt;= 2 ?</text></g><g class=\"nd proc\" id=\"lab4_f2-n4\"><rect class=\"sh\" x=\"438.0703125\" y=\"290.5\" width=\"190\" height=\"47\"/><text class=\"tx\" x=\"533.1\" y=\"314.0\" text-anchor=\"middle\" dominant-baseline=\"central\">lv = 1 (เตือน)</text></g><polyline class=\"ln\" points=\"355.0,314.0 438.1,314.0\" marker-end=\"url(#ah-lab4_f2)\"/><text class=\"lb\" x=\"363.0\" y=\"298.0\" text-anchor=\"start\" dominant-baseline=\"central\">ใช่</text><polyline class=\"ln\" points=\"628.1,314.0 654.1,314.0\"/><polyline class=\"ln\" points=\"260.0,357.0 260.0,391.0\" marker-end=\"url(#ah-lab4_f2)\"/><text class=\"lb\" x=\"270.0\" y=\"369.0\" text-anchor=\"start\" dominant-baseline=\"central\">ไม่ใช่</text><g class=\"nd dec\" id=\"lab4_f2-n5\"><polygon class=\"sh\" points=\"260,391 358.1328125,434.0 260,477 161.8671875,434.0\"/><text class=\"tx\" x=\"260.0\" y=\"434.0\" text-anchor=\"middle\" dominant-baseline=\"central\">e &lt;= 10 ?</text></g><g class=\"nd proc\" id=\"lab4_f2-n6\"><rect class=\"sh\" x=\"438.0703125\" y=\"410.5\" width=\"190\" height=\"47\"/><text class=\"tx\" x=\"533.1\" y=\"434.0\" text-anchor=\"middle\" dominant-baseline=\"central\">lv = 2 (ขนถ่าย)</text></g><polyline class=\"ln\" points=\"358.1,434.0 438.1,434.0\" marker-end=\"url(#ah-lab4_f2)\"/><text class=\"lb\" x=\"366.1\" y=\"418.0\" text-anchor=\"start\" dominant-baseline=\"central\">ใช่</text><polyline class=\"ln\" points=\"628.1,434.0 654.1,434.0\"/><polyline class=\"ln\" points=\"260.0,477.0 260.0,511.0\" marker-end=\"url(#ah-lab4_f2)\"/><text class=\"lb\" x=\"270.0\" y=\"489.0\" text-anchor=\"start\" dominant-baseline=\"central\">ไม่ใช่</text><g class=\"nd proc\" id=\"lab4_f2-n7\"><rect class=\"sh\" x=\"147.75\" y=\"511\" width=\"224.5\" height=\"47\"/><text class=\"tx\" x=\"260.0\" y=\"534.5\" text-anchor=\"middle\" dominant-baseline=\"central\">lv = 3 (ห้ามขึ้นสะพาน)</text></g><polyline class=\"ln\" points=\"260.0,558.0 260.0,582.0\"/><polyline class=\"ln\" points=\"654.1,194.0 654.1,582.0 260.0,582.0\"/><polyline class=\"ln\" points=\"260.0,582.0 260.0,616.0\" marker-end=\"url(#ah-lab4_f2)\"/><g class=\"nd term\" id=\"lab4_f2-n8\"><rect class=\"sh\" x=\"165.0\" y=\"616\" width=\"190\" height=\"47\" rx=\"23.5\"/><text class=\"tx\" x=\"260.0\" y=\"639.5\" text-anchor=\"middle\" dominant-baseline=\"central\">คืนค่า lv</text></g></svg>", "map": {"เริ่ม check(w, limit, e)": "lab4_f2-n0", "w <= limit ?": "lab4_f2-n1", "lv = 0 (ผ่าน)": "lab4_f2-n2", "e <= 2 ?": "lab4_f2-n3", "lv = 1 (เตือน)": "lab4_f2-n4", "e <= 10 ?": "lab4_f2-n5", "lv = 2 (ขนถ่าย)": "lab4_f2-n6", "lv = 3 (ห้ามขึ้นสะพาน)": "lab4_f2-n7", "คืนค่า lv": "lab4_f2-n8"}, "title": "ฟังก์ชัน check(w, limit, e)"}, "lab5_main": {"svg": "<svg viewBox=\"-20 20 1513 1111\" data-w=\"1513\" xmlns=\"http://www.w3.org/2000/svg\"><defs><marker id=\"ah-lab5_main\" viewBox=\"0 0 10 10\" refX=\"9\" refY=\"5\" markerWidth=\"7\" markerHeight=\"7\" orient=\"auto-start-reverse\"><path class=\"ahp\" d=\"M0,0 L10,5 L0,10 z\"/></marker></defs><g class=\"nd term\" id=\"lab5_main-n0\"><rect class=\"sh\" x=\"205.0\" y=\"70\" width=\"190\" height=\"47\" rx=\"23.5\"/><text class=\"tx\" x=\"300.0\" y=\"93.5\" text-anchor=\"middle\" dominant-baseline=\"central\">เริ่มต้น</text></g><polyline class=\"ln\" points=\"300.0,117.0 300.0,151.0\" marker-end=\"url(#ah-lab5_main)\"/><g class=\"nd io\" id=\"lab5_main-n1\"><polygon class=\"sh\" points=\"178.859375,151 473.140625,151 421.140625,198 126.859375,198\"/><text class=\"tx\" x=\"300.0\" y=\"174.5\" text-anchor=\"middle\" dominant-baseline=\"central\">รับค่า rain[0..6] , start = 5</text></g><polyline class=\"ln\" points=\"300.0,198.0 300.0,232.0\" marker-end=\"url(#ah-lab5_main)\"/><g class=\"nd proc\" id=\"lab5_main-n2\"><rect class=\"sh\" x=\"195.390625\" y=\"232\" width=\"209.21875\" height=\"72\"/><text class=\"tx\" x=\"300.0\" y=\"255.5\" text-anchor=\"middle\" dominant-baseline=\"central\">sum = 0 , nPour = 0</text><text class=\"tx\" x=\"300.0\" y=\"280.5\" text-anchor=\"middle\" dominant-baseline=\"central\">nHeavy = 0 , i = 0</text></g><polyline class=\"ln\" points=\"300.0,304.0 300.0,338.0\" marker-end=\"url(#ah-lab5_main)\"/><g class=\"nd dec\" id=\"lab5_main-n3\"><polygon class=\"sh\" points=\"300,338 395.0,381.0 300,424 205.0,381.0\"/><text class=\"tx\" x=\"300.0\" y=\"381.0\" text-anchor=\"middle\" dominant-baseline=\"central\">i &lt; 7 ?</text></g><polyline class=\"ln\" points=\"300.0,424.0 300.0,458.0\" marker-end=\"url(#ah-lab5_main)\"/><text class=\"lb\" x=\"310.0\" y=\"436.0\" text-anchor=\"start\" dominant-baseline=\"central\">ใช่</text><g class=\"nd proc\" id=\"lab5_main-n4\"><rect class=\"sh\" x=\"193.71875\" y=\"458\" width=\"212.5625\" height=\"47\"/><text class=\"tx\" x=\"300.0\" y=\"481.5\" text-anchor=\"middle\" dominant-baseline=\"central\">day = (start + i) % 7</text></g><polyline class=\"ln\" points=\"300.0,505.0 300.0,539.0\" marker-end=\"url(#ah-lab5_main)\"/><g class=\"nd proc\" id=\"lab5_main-n5\"><rect class=\"sh\" x=\"190.140625\" y=\"539\" width=\"219.71875\" height=\"72\"/><text class=\"tx\" x=\"300.0\" y=\"562.5\" text-anchor=\"middle\" dominant-baseline=\"central\">lv = rainLevel(rain[i])</text><text class=\"tx\" x=\"300.0\" y=\"587.5\" text-anchor=\"middle\" dominant-baseline=\"central\">sum = sum + rain[i]</text></g><polyline class=\"ln\" points=\"300.0,611.0 300.0,645.0\" marker-end=\"url(#ah-lab5_main)\"/><g class=\"nd dec\" id=\"lab5_main-n6\"><polygon class=\"sh\" points=\"300,645 395.015625,688.0 300,731 204.984375,688.0\"/><text class=\"tx\" x=\"300.0\" y=\"688.0\" text-anchor=\"middle\" dominant-baseline=\"central\">lv &lt;= 1 ?</text></g><g class=\"nd proc\" id=\"lab5_main-n7\"><rect class=\"sh\" x=\"455.015625\" y=\"664.5\" width=\"198.921875\" height=\"47\"/><text class=\"tx\" x=\"554.5\" y=\"688.0\" text-anchor=\"middle\" dominant-baseline=\"central\">nPour = nPour + 1</text></g><polyline class=\"ln\" points=\"395.0,688.0 455.0,688.0\" marker-end=\"url(#ah-lab5_main)\"/><text class=\"lb\" x=\"403.0\" y=\"672.0\" text-anchor=\"start\" dominant-baseline=\"central\">ใช่</text><polyline class=\"ln\" points=\"554.5,711.5 554.5,767.0 300.0,767.0\"/><polyline class=\"ln\" points=\"300.0,731.0 300.0,767.0\"/><text class=\"lb\" x=\"310.0\" y=\"743.0\" text-anchor=\"start\" dominant-baseline=\"central\">ไม่ใช่</text><polyline class=\"ln\" points=\"300.0,767.0 300.0,801.0\" marker-end=\"url(#ah-lab5_main)\"/><g class=\"nd dec\" id=\"lab5_main-n8\"><polygon class=\"sh\" points=\"300,801 395.015625,844.0 300,887 204.984375,844.0\"/><text class=\"tx\" x=\"300.0\" y=\"844.0\" text-anchor=\"middle\" dominant-baseline=\"central\">lv == 4 ?</text></g><g class=\"nd proc\" id=\"lab5_main-n9\"><rect class=\"sh\" x=\"455.015625\" y=\"820.5\" width=\"223.546875\" height=\"47\"/><text class=\"tx\" x=\"566.8\" y=\"844.0\" text-anchor=\"middle\" dominant-baseline=\"central\">nHeavy = nHeavy + 1</text></g><polyline class=\"ln\" points=\"395.0,844.0 455.0,844.0\" marker-end=\"url(#ah-lab5_main)\"/><text class=\"lb\" x=\"403.0\" y=\"828.0\" text-anchor=\"start\" dominant-baseline=\"central\">ใช่</text><polyline class=\"ln\" points=\"566.8,867.5 566.8,923.0 300.0,923.0\"/><polyline class=\"ln\" points=\"300.0,887.0 300.0,923.0\"/><text class=\"lb\" x=\"310.0\" y=\"899.0\" text-anchor=\"start\" dominant-baseline=\"central\">ไม่ใช่</text><polyline class=\"ln\" points=\"300.0,923.0 300.0,957.0\" marker-end=\"url(#ah-lab5_main)\"/><g class=\"nd io\" id=\"lab5_main-n10\"><polygon class=\"sh\" points=\"199.7734375,957 452.2265625,957 400.2265625,1004 147.7734375,1004\"/><text class=\"tx\" x=\"300.0\" y=\"980.5\" text-anchor=\"middle\" dominant-baseline=\"central\">พิมพ์ day , rain[i] , lv</text></g><polyline class=\"ln\" points=\"300.0,1004.0 300.0,1038.0\" marker-end=\"url(#ah-lab5_main)\"/><g class=\"nd proc\" id=\"lab5_main-n11\"><rect class=\"sh\" x=\"205.0\" y=\"1038\" width=\"190\" height=\"47\"/><text class=\"tx\" x=\"300.0\" y=\"1061.5\" text-anchor=\"middle\" dominant-baseline=\"central\">i = i + 1</text></g><polyline class=\"ln\" points=\"300.0,1085.0 300.0,1111.0 86.9,1111.0 86.9,381.0 205.0,381.0\" marker-end=\"url(#ah-lab5_main)\"/><text class=\"lb\" x=\"403.0\" y=\"365.0\" text-anchor=\"start\" dominant-baseline=\"central\">ไม่ใช่</text><polyline class=\"ln\" points=\"395.0,381.0 780.6,381.0 780.6,30.0 983.2,30.0 983.2,70.0\" marker-end=\"url(#ah-lab5_main)\"/><g class=\"nd proc\" id=\"lab5_main-n12\"><rect class=\"sh\" x=\"874.53125\" y=\"70\" width=\"217.296875\" height=\"47\"/><text class=\"tx\" x=\"983.2\" y=\"93.5\" text-anchor=\"middle\" dominant-baseline=\"central\">avg = (float) sum / 7</text></g><polyline class=\"ln\" points=\"983.2,117.0 983.2,151.0\" marker-end=\"url(#ah-lab5_main)\"/><g class=\"nd io\" id=\"lab5_main-n13\"><polygon class=\"sh\" points=\"872.5625,151 1145.796875,151 1093.796875,198 820.5625,198\"/><text class=\"tx\" x=\"983.2\" y=\"174.5\" text-anchor=\"middle\" dominant-baseline=\"central\">พิมพ์ sum , avg , nPour</text></g><polyline class=\"ln\" points=\"983.2,198.0 983.2,232.0\" marker-end=\"url(#ah-lab5_main)\"/><g class=\"nd dec\" id=\"lab5_main-n14\"><polygon class=\"sh\" points=\"983.1796875,232 1095.40625,275.0 983.1796875,318 870.953125,275.0\"/><text class=\"tx\" x=\"983.2\" y=\"275.0\" text-anchor=\"middle\" dominant-baseline=\"central\">nPour &gt;= 3 ?</text></g><g class=\"nd io\" id=\"lab5_main-n15\"><polygon class=\"sh\" points=\"1219.5078125,239.0 1444.6484375,239.0 1392.6484375,311.0 1167.5078125,311.0\"/><text class=\"tx\" x=\"1306.1\" y=\"262.5\" text-anchor=\"middle\" dominant-baseline=\"central\">พิมพ์ &quot;เทคอนกรีต</text><text class=\"tx\" x=\"1306.1\" y=\"287.5\" text-anchor=\"middle\" dominant-baseline=\"central\">ได้ตามแผน&quot;</text></g><polyline class=\"ln\" points=\"1095.4,275.0 1193.5,275.0\" marker-end=\"url(#ah-lab5_main)\"/><text class=\"lb\" x=\"1103.4\" y=\"259.0\" text-anchor=\"start\" dominant-baseline=\"central\">ใช่</text><polyline class=\"ln\" points=\"1418.6,275.0 1472.8,275.0\"/><polyline class=\"ln\" points=\"983.2,318.0 983.2,352.0\" marker-end=\"url(#ah-lab5_main)\"/><text class=\"lb\" x=\"993.2\" y=\"330.0\" text-anchor=\"start\" dominant-baseline=\"central\">ไม่ใช่</text><g class=\"nd dec\" id=\"lab5_main-n16\"><polygon class=\"sh\" points=\"983.1796875,352 1095.40625,395.0 983.1796875,438 870.953125,395.0\"/><text class=\"tx\" x=\"983.2\" y=\"395.0\" text-anchor=\"middle\" dominant-baseline=\"central\">nPour &gt;= 1 ?</text></g><g class=\"nd io\" id=\"lab5_main-n17\"><polygon class=\"sh\" points=\"1217.40625,359.0 1446.75,359.0 1394.75,431.0 1165.40625,431.0\"/><text class=\"tx\" x=\"1306.1\" y=\"382.5\" text-anchor=\"middle\" dominant-baseline=\"central\">พิมพ์ &quot;เทได้บางวัน</text><text class=\"tx\" x=\"1306.1\" y=\"407.5\" text-anchor=\"middle\" dominant-baseline=\"central\">เตรียมผ้าใบ&quot;</text></g><polyline class=\"ln\" points=\"1095.4,395.0 1191.4,395.0\" marker-end=\"url(#ah-lab5_main)\"/><text class=\"lb\" x=\"1103.4\" y=\"379.0\" text-anchor=\"start\" dominant-baseline=\"central\">ใช่</text><polyline class=\"ln\" points=\"1420.8,395.0 1472.8,395.0\"/><polyline class=\"ln\" points=\"983.2,438.0 983.2,472.0\" marker-end=\"url(#ah-lab5_main)\"/><text class=\"lb\" x=\"993.2\" y=\"450.0\" text-anchor=\"start\" dominant-baseline=\"central\">ไม่ใช่</text><g class=\"nd io\" id=\"lab5_main-n18\"><polygon class=\"sh\" points=\"852.828125,472 1165.53125,472 1113.53125,519 800.828125,519\"/><text class=\"tx\" x=\"983.2\" y=\"495.5\" text-anchor=\"middle\" dominant-baseline=\"central\">พิมพ์ &quot;เลื่อนงานเททั้งสัปดาห์&quot;</text></g><polyline class=\"ln\" points=\"983.2,519.0 983.2,543.0\"/><polyline class=\"ln\" points=\"1472.8,275.0 1472.8,543.0 983.2,543.0\"/><polyline class=\"ln\" points=\"983.2,543.0 983.2,577.0\" marker-end=\"url(#ah-lab5_main)\"/><g class=\"nd dec\" id=\"lab5_main-n19\"><polygon class=\"sh\" points=\"983.1796875,577 1095.796875,620.0 983.1796875,663 870.5625,620.0\"/><text class=\"tx\" x=\"983.2\" y=\"620.0\" text-anchor=\"middle\" dominant-baseline=\"central\">nHeavy &gt; 0 ?</text></g><g class=\"nd io\" id=\"lab5_main-n20\"><polygon class=\"sh\" points=\"1207.796875,584.0 1442.640625,584.0 1390.640625,656.0 1155.796875,656.0\"/><text class=\"tx\" x=\"1299.2\" y=\"607.5\" text-anchor=\"middle\" dominant-baseline=\"central\">พิมพ์ &quot;เตือน เตรียม</text><text class=\"tx\" x=\"1299.2\" y=\"632.5\" text-anchor=\"middle\" dominant-baseline=\"central\">ระบบระบายน้ำ&quot;</text></g><polyline class=\"ln\" points=\"1095.8,620.0 1181.8,620.0\" marker-end=\"url(#ah-lab5_main)\"/><text class=\"lb\" x=\"1103.8\" y=\"604.0\" text-anchor=\"start\" dominant-baseline=\"central\">ใช่</text><polyline class=\"ln\" points=\"1299.2,656.0 1299.2,699.0 983.2,699.0\"/><polyline class=\"ln\" points=\"983.2,663.0 983.2,699.0\"/><text class=\"lb\" x=\"993.2\" y=\"675.0\" text-anchor=\"start\" dominant-baseline=\"central\">ไม่ใช่</text><polyline class=\"ln\" points=\"983.2,699.0 983.2,733.0\" marker-end=\"url(#ah-lab5_main)\"/><g class=\"nd term\" id=\"lab5_main-n21\"><rect class=\"sh\" x=\"888.1796875\" y=\"733\" width=\"190\" height=\"47\" rx=\"23.5\"/><text class=\"tx\" x=\"983.2\" y=\"756.5\" text-anchor=\"middle\" dominant-baseline=\"central\">สิ้นสุด</text></g></svg>", "map": {"เริ่มต้น": "lab5_main-n0", "รับค่า rain[0..6] , start = 5": "lab5_main-n1", "sum = 0 , nPour = 0\nnHeavy = 0 , i = 0": "lab5_main-n2", "i < 7 ?": "lab5_main-n3", "day = (start + i) % 7": "lab5_main-n4", "lv = rainLevel(rain[i])\nsum = sum + rain[i]": "lab5_main-n5", "lv <= 1 ?": "lab5_main-n6", "nPour = nPour + 1": "lab5_main-n7", "lv == 4 ?": "lab5_main-n8", "nHeavy = nHeavy + 1": "lab5_main-n9", "พิมพ์ day , rain[i] , lv": "lab5_main-n10", "i = i + 1": "lab5_main-n11", "avg = (float) sum / 7": "lab5_main-n12", "พิมพ์ sum , avg , nPour": "lab5_main-n13", "nPour >= 3 ?": "lab5_main-n14", "พิมพ์ \"เทคอนกรีต\nได้ตามแผน\"": "lab5_main-n15", "nPour >= 1 ?": "lab5_main-n16", "พิมพ์ \"เทได้บางวัน\nเตรียมผ้าใบ\"": "lab5_main-n17", "พิมพ์ \"เลื่อนงานเททั้งสัปดาห์\"": "lab5_main-n18", "nHeavy > 0 ?": "lab5_main-n19", "พิมพ์ \"เตือน เตรียม\nระบบระบายน้ำ\"": "lab5_main-n20", "สิ้นสุด": "lab5_main-n21"}, "title": "ผังงานหลัก"}, "lab5_f1": {"svg": "<svg viewBox=\"-20 20 683 783\" data-w=\"683\" xmlns=\"http://www.w3.org/2000/svg\"><defs><marker id=\"ah-lab5_f1\" viewBox=\"0 0 10 10\" refX=\"9\" refY=\"5\" markerWidth=\"7\" markerHeight=\"7\" orient=\"auto-start-reverse\"><path class=\"ahp\" d=\"M0,0 L10,5 L0,10 z\"/></marker></defs><g class=\"nd term\" id=\"lab5_f1-n0\"><rect class=\"sh\" x=\"162.4765625\" y=\"70\" width=\"195.046875\" height=\"47\" rx=\"23.5\"/><text class=\"tx\" x=\"260.0\" y=\"93.5\" text-anchor=\"middle\" dominant-baseline=\"central\">เริ่ม rainLevel(r)</text></g><polyline class=\"ln\" points=\"260.0,117.0 260.0,151.0\" marker-end=\"url(#ah-lab5_f1)\"/><g class=\"nd dec\" id=\"lab5_f1-n1\"><polygon class=\"sh\" points=\"260,151 355.0,194.0 260,237 165.0,194.0\"/><text class=\"tx\" x=\"260.0\" y=\"194.0\" text-anchor=\"middle\" dominant-baseline=\"central\">r == 0 ?</text></g><g class=\"nd proc\" id=\"lab5_f1-n2\"><rect class=\"sh\" x=\"426.5390625\" y=\"170.5\" width=\"190\" height=\"47\"/><text class=\"tx\" x=\"521.5\" y=\"194.0\" text-anchor=\"middle\" dominant-baseline=\"central\">lv = 0 ไม่มีฝน</text></g><polyline class=\"ln\" points=\"355.0,194.0 426.5,194.0\" marker-end=\"url(#ah-lab5_f1)\"/><text class=\"lb\" x=\"363.0\" y=\"178.0\" text-anchor=\"start\" dominant-baseline=\"central\">ใช่</text><polyline class=\"ln\" points=\"616.5,194.0 642.5,194.0\"/><polyline class=\"ln\" points=\"260.0,237.0 260.0,271.0\" marker-end=\"url(#ah-lab5_f1)\"/><text class=\"lb\" x=\"270.0\" y=\"249.0\" text-anchor=\"start\" dominant-baseline=\"central\">ไม่ใช่</text><g class=\"nd dec\" id=\"lab5_f1-n3\"><polygon class=\"sh\" points=\"260,271 356.5390625,314.0 260,357 163.4609375,314.0\"/><text class=\"tx\" x=\"260.0\" y=\"314.0\" text-anchor=\"middle\" dominant-baseline=\"central\">r &lt;= 10 ?</text></g><g class=\"nd proc\" id=\"lab5_f1-n4\"><rect class=\"sh\" x=\"426.5390625\" y=\"290.5\" width=\"190\" height=\"47\"/><text class=\"tx\" x=\"521.5\" y=\"314.0\" text-anchor=\"middle\" dominant-baseline=\"central\">lv = 1 เล็กน้อย</text></g><polyline class=\"ln\" points=\"356.5,314.0 426.5,314.0\" marker-end=\"url(#ah-lab5_f1)\"/><text class=\"lb\" x=\"364.5\" y=\"298.0\" text-anchor=\"start\" dominant-baseline=\"central\">ใช่</text><polyline class=\"ln\" points=\"616.5,314.0 642.5,314.0\"/><polyline class=\"ln\" points=\"260.0,357.0 260.0,391.0\" marker-end=\"url(#ah-lab5_f1)\"/><text class=\"lb\" x=\"270.0\" y=\"369.0\" text-anchor=\"start\" dominant-baseline=\"central\">ไม่ใช่</text><g class=\"nd dec\" id=\"lab5_f1-n5\"><polygon class=\"sh\" points=\"260,391 356.5390625,434.0 260,477 163.4609375,434.0\"/><text class=\"tx\" x=\"260.0\" y=\"434.0\" text-anchor=\"middle\" dominant-baseline=\"central\">r &lt;= 35 ?</text></g><g class=\"nd proc\" id=\"lab5_f1-n6\"><rect class=\"sh\" x=\"426.5390625\" y=\"410.5\" width=\"190\" height=\"47\"/><text class=\"tx\" x=\"521.5\" y=\"434.0\" text-anchor=\"middle\" dominant-baseline=\"central\">lv = 2 ปานกลาง</text></g><polyline class=\"ln\" points=\"356.5,434.0 426.5,434.0\" marker-end=\"url(#ah-lab5_f1)\"/><text class=\"lb\" x=\"364.5\" y=\"418.0\" text-anchor=\"start\" dominant-baseline=\"central\">ใช่</text><polyline class=\"ln\" points=\"616.5,434.0 642.5,434.0\"/><polyline class=\"ln\" points=\"260.0,477.0 260.0,511.0\" marker-end=\"url(#ah-lab5_f1)\"/><text class=\"lb\" x=\"270.0\" y=\"489.0\" text-anchor=\"start\" dominant-baseline=\"central\">ไม่ใช่</text><g class=\"nd dec\" id=\"lab5_f1-n7\"><polygon class=\"sh\" points=\"260,511 356.5390625,554.0 260,597 163.4609375,554.0\"/><text class=\"tx\" x=\"260.0\" y=\"554.0\" text-anchor=\"middle\" dominant-baseline=\"central\">r &lt;= 90 ?</text></g><g class=\"nd proc\" id=\"lab5_f1-n8\"><rect class=\"sh\" x=\"426.5390625\" y=\"530.5\" width=\"190\" height=\"47\"/><text class=\"tx\" x=\"521.5\" y=\"554.0\" text-anchor=\"middle\" dominant-baseline=\"central\">lv = 3 หนัก</text></g><polyline class=\"ln\" points=\"356.5,554.0 426.5,554.0\" marker-end=\"url(#ah-lab5_f1)\"/><text class=\"lb\" x=\"364.5\" y=\"538.0\" text-anchor=\"start\" dominant-baseline=\"central\">ใช่</text><polyline class=\"ln\" points=\"616.5,554.0 642.5,554.0\"/><polyline class=\"ln\" points=\"260.0,597.0 260.0,631.0\" marker-end=\"url(#ah-lab5_f1)\"/><text class=\"lb\" x=\"270.0\" y=\"609.0\" text-anchor=\"start\" dominant-baseline=\"central\">ไม่ใช่</text><g class=\"nd proc\" id=\"lab5_f1-n9\"><rect class=\"sh\" x=\"165.0\" y=\"631\" width=\"190\" height=\"47\"/><text class=\"tx\" x=\"260.0\" y=\"654.5\" text-anchor=\"middle\" dominant-baseline=\"central\">lv = 4 หนักมาก</text></g><polyline class=\"ln\" points=\"260.0,678.0 260.0,702.0\"/><polyline class=\"ln\" points=\"642.5,194.0 642.5,702.0 260.0,702.0\"/><polyline class=\"ln\" points=\"260.0,702.0 260.0,736.0\" marker-end=\"url(#ah-lab5_f1)\"/><g class=\"nd term\" id=\"lab5_f1-n10\"><rect class=\"sh\" x=\"165.0\" y=\"736\" width=\"190\" height=\"47\" rx=\"23.5\"/><text class=\"tx\" x=\"260.0\" y=\"759.5\" text-anchor=\"middle\" dominant-baseline=\"central\">คืนค่า lv</text></g></svg>", "map": {"เริ่ม rainLevel(r)": "lab5_f1-n0", "r == 0 ?": "lab5_f1-n1", "lv = 0 ไม่มีฝน": "lab5_f1-n2", "r <= 10 ?": "lab5_f1-n3", "lv = 1 เล็กน้อย": "lab5_f1-n4", "r <= 35 ?": "lab5_f1-n5", "lv = 2 ปานกลาง": "lab5_f1-n6", "r <= 90 ?": "lab5_f1-n7", "lv = 3 หนัก": "lab5_f1-n8", "lv = 4 หนักมาก": "lab5_f1-n9", "คืนค่า lv": "lab5_f1-n10"}, "title": "ฟังก์ชัน rainLevel(r)"}};
+const f1 = x => (Math.round(x * 10) / 10).toFixed(1);
+const f2 = x => x.toFixed(2);
+
+class Rec {
+  constructor(lab) { this.lab = lab; this.steps = []; this.out = []; this.M = {}; this.F = null; this.fname = null; this.arr = null; this.iter = null; }
+  id(chart, key) {
+    const m = CH[this.lab + '_' + chart].map;
+    if (m[key]) return m[key];
+    const k = Object.keys(m).find(x => x.startsWith(key));
+    if (!k) console.warn('missing node', this.lab, chart, key);
+    return k ? m[k] : null;
+  }
+  cp(o) { const r = {}; for (const k in o) r[k] = Array.isArray(o[k]) ? o[k].slice() : o[k]; return r; }
+  s(chart, key, msg, o = {}) {
+    this.steps.push({ chart: this.lab + '_' + chart, id: this.id(chart, key), msg, depth: chart === 'main' ? 0 : 1,
+      iter: this.iter, out: this.out.slice(), M: this.cp(this.M), F: this.F ? this.cp(this.F) : null, fname: this.fname,
+      arr: this.arr ? { ...this.arr, lv: this.arr.lv.slice() } : null, ask: o.ask || null, trap: o.trap || null, loop: !!o.loop, done: o.done || null });
+  }
+  q(chart, key, expr, t, o = {}) {
+    this.s(chart, key, o.msg || '', { ...o, ask: { expr, ans: t ? 'ใช่' : 'ไม่ใช่', ex: o.ex || (t ? `${expr} เป็นจริง ไปทาง "ใช่"` : `${expr} เป็นเท็จ ไปทาง "ไม่ใช่"`) } });
+    return t;
+  }
+  enter(n, loc) { this.fname = n; this.F = loc; }
+  leave() { this.fname = null; this.F = null; }
+  chain(chart, items, elseKey, elseVal, v) {
+    for (const it of items) {
+      if (this.q(chart, it.key, it.expr, it.t, { msg: 'แทนค่าจริงลงในเงื่อนไขของกล่องนี้ แล้วตัดสินว่าจริงหรือเท็จ', ex: it.t ? `${it.expr} เป็นจริง ไปทาง "ใช่" ${it.say || ''}` : `${it.expr} เป็นเท็จ ลงไปถามข้อถัดไป`, trap: it.trap })) {
+        this.F[v] = it.val; this.s(chart, it.yes, it.msg || `ได้ ${v} = ${it.val}`); return it.val;
+      }
+    }
+    this.F[v] = elseVal; this.s(chart, elseKey, `ไม่เข้าเงื่อนไขไหนเลย จึงตกมาที่ else ได้ ${v} = ${elseVal}`); return elseVal;
+  }
+  loopQ(i, n, first) {
+    return this.q('main', `i < ${n} ?`, `${i} < ${n}`, i < n, { loop: true,
+      msg: first ? `ถึงประตูลูปแล้ว ขนมเปียกปูนนี้ถามว่า i ยังน้อยกว่า ${n} ไหม ถ้าใช่ก็เข้าไปทำงานกับข้อมูลช่องที่ i` : (i < n ? `วนกลับมาที่ประตูลูปอีกครั้ง ตอนนี้ i = ${i}` : `i ขึ้นมาเป็น ${n} แล้ว ลองคิดดูว่าประตูลูปจะเปิดให้เข้าอีกไหม`),
+      ex: i < n ? `${i} < ${n} เป็นจริง เข้าลูปทำงานกับช่องที่ ${i}` : `${i} < ${n} เป็นเท็จ ออกจากลูปทางขวา ไปส่วนสรุปผล` });
+  }
+}
+
+/* ---------------- Lab 1 ---------------- */
+function lab1() {
+  const R = new Rec('lab1'), d = [12, 18, 25, 31, 22, 15, 9], NM = ['ปลอดภัย', 'เฝ้าระวัง', 'ใกล้ขีดจำกัด', 'เกินพิกัด'];
+  R.s('main', 'เริ่มต้น', 'ภารกิจแรกเริ่มแล้ว ใต้สะพานยาว 24 เมตรมีเซนเซอร์ 7 ตัวคอยวัดว่าพื้นสะพานแอ่นลงกี่มิลลิเมตร งานของเราคือเดินตามผังทีละกล่อง แล้วตอบให้ได้ว่าสะพานยังไหวไหม');
+  R.arr = { name: 'defl', unit: 'mm', vals: d, i: null, lv: d.map(() => null), names: NM };
+  R.M.span = 24;
+  R.s('main', 'รับค่า defl', 'กล่องด้านขนานคือการรับข้อมูล อาร์เรย์ defl เก็บค่าแอ่น 7 จุด ดูได้ในแถบอาร์เรย์ด้านขวา และ span = 24 เมตร');
+  R.M.allow = 30;
+  R.s('main', 'allow = span', 'แปลงเมตรเป็นมิลลิเมตร แล้วหารด้วย 800 ตามเกณฑ์ L/800 ได้ 24 × 1000 / 800 = 30 แปลว่าสะพานนี้แอ่นได้ไม่เกิน 30 mm');
+  R.M.maxD = 0; R.M.n = [0, 0, 0, 0]; R.M.i = 0;
+  R.s('main', 'maxD = 0', 'ตั้งตัวแปรก่อนเข้าลูป maxD เก็บค่าแอ่นมากสุด n[0..3] คือตัวนับ 4 ช่อง และ i เริ่มที่ 0 ทุกตัวต้องเป็น 0 ก่อนเริ่มนับ');
+  for (let i = 0; ; i++) {
+    R.iter = i < 7 ? i : null; R.M.i = i; R.arr.i = i < 7 ? i : null;
+    if (!R.loopQ(i, 7, i === 0)) break;
+    const r = d[i] / 30 * 100;
+    R.s('main', 'r = ratio', `เรียกฟังก์ชัน ratio ส่ง defl[${i}] = ${d[i]} และ allow = 30 เข้าไป`);
+    R.enter('ratio(d, allow)', { d: d[i], allow: 30 });
+    R.s('f1', 'เริ่ม ratio', 'เข้ามาในฟังก์ชัน ratio แล้ว พารามิเตอร์ d กับ allow รับค่าจากผังหลักมาเรียบร้อย');
+    R.F.r = f1(r);
+    R.s('f1', 'r = (float)', i === 0 ? `(float) 12 / 30 × 100 = 40.0 ตัวแปลง (float) ทำให้ได้ทศนิยม` : `(float) ${d[i]} / 30 × 100 = ${f1(r)}`,
+      i === 0 ? { trap: 'ถ้าลืม (float) ภาษา C จะหาร 12 / 30 แบบจำนวนเต็มได้ 0 ทันที ทุกจุดจะกลายเป็น "ปลอดภัย" ทั้งที่จุดที่ 4 เกินพิกัด' } : {});
+    R.s('f1', 'คืนค่า r', `ส่งค่า ${f1(r)} กลับไปที่ผังหลัก`);
+    R.leave(); R.M.r = f1(r);
+    R.s('main', 'r = ratio', `กลับมาที่ผังหลัก ได้ r = ${f1(r)} หมายถึงแอ่นไป ${f1(r)}% ของเพดาน`);
+    R.s('main', 'lv = level', 'ส่ง r ต่อให้ฟังก์ชัน level ช่วยตัดสินว่าเป็นระดับไหน');
+    R.enter('level(r)', { r: f1(r) });
+    R.s('f2', 'เริ่ม level', i === 0 ? 'ฟังก์ชัน level ตรวจจากระดับรุนแรงที่สุดลงมา ถ้าตรวจจากเบาไปหนัก จุดที่เกินพิกัดจะถูกจัดผิดระดับ' : `เข้าฟังก์ชัน level ด้วย r = ${f1(r)}`);
+    const lv = R.chain('f2', [
+      { key: 'r > 100 ?', expr: `${f1(r)} > 100`, t: r > 100, yes: 'lv = 3', val: 3, msg: 'เกินพิกัด ได้ lv = 3 นี่คือจุดที่ต้องส่งวิศวกรตรวจ' },
+      { key: 'r > 80 ?', expr: `${f1(r)} > 80`, t: r > 80, yes: 'lv = 2', val: 2 },
+      { key: 'r > 50 ?', expr: `${f1(r)} > 50`, t: r > 50, yes: 'lv = 1', val: 1,
+        trap: i === 5 ? 'r = 50.0 พอดี เงื่อนไข r > 50 จึงเป็นเท็จ จุดนี้ตกไปเป็นระดับ 0 นี่คือค่าขอบที่ข้อสอบชอบถาม' : null },
+    ], 'lv = 0', 0, 'lv');
+    R.s('f2', 'คืนค่า lv', `ส่ง lv = ${lv} กลับไป`);
+    R.leave(); R.M.lv = lv;
+    R.s('main', 'lv = level', `ได้ระดับ ${lv} คือ "${NM[lv]}"`);
+    const mx = R.M.maxD;
+    if (R.q('main', 'defl[i] > maxD ?', `${d[i]} > ${mx}`, d[i] > mx, { msg: 'ขนมเปียกปูนนี้คอยจับสถิติค่าแอ่นสูงสุด' })) {
+      R.M.maxD = d[i]; R.s('main', 'maxD = defl[i]', `สถิติใหม่ maxD = ${d[i]} mm`);
+    }
+    R.M.n[lv]++; R.arr.lv[i] = lv;
+    R.s('main', 'n[lv] = n[lv] + 1', `นับเพิ่มในช่อง n[${lv}] ตอนนี้ n = [${R.M.n.join(', ')}]`);
+    R.out.push(`จุด ${i + 1} : ${String(d[i]).padStart(2)} mm  ${f1(r).padStart(5)}%  ${NM[lv]}`);
+    R.s('main', 'พิมพ์ จุด', `พิมพ์ผลจุดที่ ${i + 1} ออกหน้าจอ`);
+    R.M.i = i + 1;
+    R.s('main', 'i = i + 1', i === 0 ? 'เพิ่ม i เป็น 1 แล้วเดินตามเส้นวนกลับไปที่ประตูลูป ถ้าลืมกล่องนี้ ลูปจะวนไม่รู้จบ' : `i = ${i + 1} แล้ววนกลับ`);
+  }
+  R.iter = null;
+  R.out.push('-----------------------------------', `ปลอดภัย ${R.M.n[0]} | เฝ้าระวัง ${R.M.n[1]} | ใกล้ขีดจำกัด ${R.M.n[2]} | เกินพิกัด ${R.M.n[3]}`, `แอ่นมากที่สุด : ${R.M.maxD} mm`);
+  R.s('main', 'พิมพ์ n[0..3]', 'ครบ 7 จุดแล้ว พิมพ์สรุปจำนวนแต่ละระดับและค่าแอ่นสูงสุด');
+  if (R.q('main', 'n[3] > 0 ?', `n[3] = ${R.M.n[3]} > 0`, R.M.n[3] > 0, { msg: 'ถึงเวลาคำตัดสิน มีจุดเกินพิกัดบ้างไหม' })) {
+    R.out.push('คำสั่ง : จำกัดน้ำหนักรถ และส่งวิศวกรตรวจทันที');
+    R.s('main', 'พิมพ์ "จำกัด', 'จุดที่ 4 แอ่น 31 mm เกิน 30 mm จึงต้องจำกัดน้ำหนักรถ และส่งวิศวกรตรวจทันที');
+  }
+  R.s('main', 'สิ้นสุด', 'จบผังงาน', { done: { title: 'สะพานต้องจำกัดน้ำหนักรถ', body: 'ปลอดภัย 3 · เฝ้าระวัง 2 · ใกล้ขีดจำกัด 1 · เกินพิกัด 1 · แอ่นมากสุด 31 mm' } });
+  return R;
+}
+
+/* ---------------- Lab 2 ---------------- */
+function lab2() {
+  const R = new Rec('lab2'), k = [262, 248, 231, 199, 255, 244], NM = ['ผ่าน', 'พอรับได้', 'ไม่ผ่าน'];
+  R.s('main', 'เริ่มต้น', 'ห้องแล็บส่งผลทดสอบก้อนคอนกรีต 6 ก้อนมาแล้ว ถ้าตัดสินผิด อาจต้องทุบโครงสร้างทิ้ง มาช่วยกันตัดสินทีละก้อน');
+  R.arr = { name: 'ksc', unit: 'ksc', vals: k, i: null, lv: k.map(() => null), names: NM, lvMap: [0, 2, 3] };
+  R.M.fc = 240;
+  R.s('main', 'รับค่า ksc', 'รับกำลังอัด 6 ก้อน หน่วย ksc และกำลังออกแบบ fc = 240 ksc');
+  R.M.sum = 0; R.M.n = [0, 0, 0]; R.M.i = 0;
+  R.s('main', 'sum = 0', 'ตั้ง sum สำหรับสะสมผลรวม ตัวนับ n 3 ช่อง (ผ่าน / พอรับได้ / ไม่ผ่าน) และ i = 0');
+  for (let i = 0; ; i++) {
+    R.iter = i < 6 ? i : null; R.M.i = i; R.arr.i = i < 6 ? i : null;
+    if (!R.loopQ(i, 6, i === 0)) break;
+    R.s('main', 'j = judge', `ส่งก้อนที่ ${i + 1} (${k[i]} ksc) ไปให้ผู้พิพากษา judge`);
+    R.enter('judge(k, fc)', { k: k[i], fc: 240 });
+    R.s('f1', 'เริ่ม judge', `ฟังก์ชัน judge รับ k = ${k[i]} และ fc = 240`);
+    const j = R.chain('f1', [
+      { key: 'k >= fc ?', expr: `${k[i]} >= 240`, t: k[i] >= 240, yes: 'j = 0', val: 0, msg: 'ถึงกำลังออกแบบ ผ่าน ได้ j = 0' },
+      { key: 'k >= fc - 35 ?', expr: `${k[i]} >= 205`, t: k[i] >= 205, yes: 'j = 1', val: 1,
+        trap: i === 2 ? '231 ต่ำกว่า 240 ก็จริง แต่ยังไม่ต่ำกว่า fc − 35 = 205 จึงเป็น "พอรับได้" ไม่ใช่ "ไม่ผ่าน"' : null },
+    ], 'j = 2', 2, 'j');
+    R.s('f1', 'คืนค่า j', `ส่ง j = ${j} กลับไป`);
+    R.leave(); R.M.j = j;
+    R.s('main', 'j = judge', `ผลตัดสินก้อนที่ ${i + 1} คือ "${NM[j]}"`);
+    R.M.sum += k[i]; R.M.n[j]++; R.arr.lv[i] = j;
+    R.s('main', 'sum = sum + ksc[i]', `สะสม sum = ${R.M.sum} และนับเพิ่ม n[${j}] ได้ n = [${R.M.n.join(', ')}]`);
+    R.out.push(`ก้อนที่ ${i + 1} : ${k[i]} ksc  ${NM[j]}`);
+    R.s('main', 'พิมพ์ ก้อนที่', `พิมพ์ผลก้อนที่ ${i + 1}`);
+    R.M.i = i + 1;
+    R.s('main', 'i = i + 1', `i = ${i + 1} แล้ววนกลับไปก้อนถัดไป`);
+  }
+  R.iter = null;
+  R.M.avg = f2(R.M.sum / 6);
+  R.s('main', 'avg = (float)', 'หาค่าเฉลี่ย (float) 1439 / 6 = 239.83 ksc ต่ำกว่า 240 อยู่นิดเดียว',
+    { trap: 'ถ้าลืม (float) จะได้ 239 และถ้าพิมพ์ด้วย %.0f จะเห็นเป็น 240 ชวนให้เข้าใจผิดว่าผ่าน' });
+  R.out.push('-----------------------------------', 'ผ่าน 4 | พอรับได้ 1 | ไม่ผ่าน 1', 'ค่าเฉลี่ย : 239.83 ksc');
+  R.s('main', 'พิมพ์ n[0..2]', 'พิมพ์สรุปจำนวนและค่าเฉลี่ย');
+  R.q('main', 'avg >= fc และ', '239.83 >= 240 และ n[2] == 0', false, { msg: 'คำตัดสินข้อแรกต้องผ่านทั้งสองเงื่อนไขพร้อมกัน', ex: '239.83 >= 240 เป็นเท็จ แค่นี้ก็ตกแล้ว ไปทาง "ไม่ใช่"' });
+  R.q('main', 'avg >= fc ?', '239.83 >= 240', false, { msg: 'ถามอีกครั้ง ค่าเฉลี่ยถึง 240 ไหม' });
+  R.out.push('คำตัดสิน : ค่าเฉลี่ยไม่ถึงเกณฑ์ ให้เจาะแกนทดสอบเพิ่ม (Core Test)');
+  R.s('main', 'พิมพ์ "ค่าเฉลี่ย', 'ค่าเฉลี่ยขาดไป 0.17 ksc จึงต้องเจาะแกนทดสอบเพิ่ม (Core Test)');
+  R.s('main', 'สิ้นสุด', 'จบผังงาน', { done: { title: 'ต้องเจาะแกนทดสอบ (Core Test)', body: 'ผ่าน 4 · พอรับได้ 1 · ไม่ผ่าน 1 · ค่าเฉลี่ย 239.83 ksc ต่ำกว่า fc = 240' } });
+  return R;
+}
+
+/* ---------------- Lab 3 ---------------- */
+function lab3() {
+  const R = new Rec('lab3'), L = [230, 310, 180, 450, 125], Q = [12, 8, 20, 6, 16], NM = ['ดีเยี่ยม', 'ดี', 'พอใช้', 'เปลี่ยนแผน'];
+  R.s('main', 'เริ่มต้น', 'โฟร์แมนต้องสั่งเหล็กเส้นยาว 10 เมตรมาตัดเป็นท่อน 5 ขนาด สั่งน้อยไปงานหยุด สั่งมากไปเงินจม มาคำนวณให้พอดี');
+  R.arr = { name: 'len', unit: 'cm', vals: L, sub: Q.map(q => `× ${q}`), i: null, lv: L.map(() => null), names: NM };
+  R.M.bar = 1000;
+  R.s('main', 'รับค่า len', 'len เก็บความยาวท่อนตามแบบ (cm) qty เก็บจำนวนท่อนที่ต้องใช้ และเหล็กที่สั่งยาว bar = 1000 cm');
+  R.M.total = 0; R.M.n = [0, 0, 0, 0]; R.M.i = 0;
+  R.s('main', 'total = 0', 'ตั้ง total สะสมจำนวนเส้นที่ต้องสั่ง ตัวนับเกรด n 4 ช่อง และ i = 0');
+  for (let i = 0; ; i++) {
+    R.iter = i < 5 ? i : null; R.M.i = i; R.arr.i = i < 5 ? i : null;
+    if (!R.loopQ(i, 5, i === 0)) break;
+    const per = Math.floor(1000 / L[i]), waste = 1000 % L[i], need = Math.floor((Q[i] + per - 1) / per), p = waste / 1000 * 100;
+    R.M.per = per; R.M.waste = waste;
+    R.s('main', 'per = bar', `เหล็ก 1 เส้นตัดท่อน ${L[i]} cm ได้ 1000 / ${L[i]} = ${per} ท่อน เหลือเศษ 1000 % ${L[i]} = ${waste} cm`,
+      i === 4 ? { trap: '1000 % 125 = 0 ตัดได้พอดีไม่เหลือเศษ เป็นค่าขอบที่ทำให้ได้เกรดดีเยี่ยม' } : {});
+    R.M.need = need;
+    R.s('main', 'need = ', `ต้องใช้ ${Q[i]} ท่อน เส้นละ ${per} ท่อน ปัดขึ้นด้วย (${Q[i]} + ${per} − 1) / ${per} = ${need} เส้น`,
+      i === 1 ? { trap: 'ถ้าเขียนแค่ 8 / 3 จะได้ 2 เส้น ตัดได้ 6 ท่อน ขาดไป 2 ท่อน สูตรปัดขึ้นให้ 3 เส้นซึ่งถูกต้อง' } : {});
+    R.s('main', 'p = wastePct', 'เรียก wastePct หาร้อยละเศษ แล้วส่งต่อให้ grade ตัดเกรด');
+    R.enter('wastePct(w, bar)', { w: waste, bar: 1000 });
+    R.s('f1', 'เริ่ม wastePct', `wastePct รับ w = ${waste} และ bar = 1000`);
+    R.F.p = f1(p);
+    R.s('f1', 'p = (float)', `(float) ${waste} / 1000 × 100 = ${f1(p)}%`);
+    R.s('f1', 'คืนค่า p', `ส่ง p = ${f1(p)} กลับไป`);
+    R.leave(); R.M.p = f1(p);
+    R.enter('grade(p)', { p: f1(p) });
+    R.s('f2', 'เริ่ม grade', `ต่อด้วย grade รับ p = ${f1(p)}`);
+    const g = R.chain('f2', [
+      { key: 'p <= 5 ?', expr: `${f1(p)} <= 5`, t: p <= 5, yes: 'g = 0', val: 0 },
+      { key: 'p <= 9 ?', expr: `${f1(p)} <= 9`, t: p <= 9, yes: 'g = 1', val: 1 },
+      { key: 'p <= 12 ?', expr: `${f1(p)} <= 12`, t: p <= 12, yes: 'g = 2', val: 2 },
+    ], 'g = 3', 3, 'g');
+    R.s('f2', 'คืนค่า g', `ส่ง g = ${g} กลับไป`);
+    R.leave(); R.M.g = g;
+    R.s('main', 'p = wastePct', `ท่อน ${L[i]} cm เศษ ${f1(p)}% ได้เกรด "${NM[g]}"`);
+    R.M.total += need; R.M.n[g]++; R.arr.lv[i] = g;
+    R.s('main', 'total = total + need', `สะสม total = ${R.M.total} เส้น และนับ n[${g}] ได้ n = [${R.M.n.join(', ')}]`);
+    R.out.push(`${L[i]} cm : ${per} ท่อน/เส้น  เศษ ${String(waste).padStart(3)} cm (${f1(p).padStart(4)}%)  สั่ง ${need} เส้น  ${NM[g]}`);
+    R.s('main', 'พิมพ์ len', 'พิมพ์แผนตัดของขนาดนี้');
+    R.M.i = i + 1;
+    R.s('main', 'i = i + 1', `i = ${i + 1} แล้ววนกลับ`);
+  }
+  R.iter = null;
+  R.out.push('-----------------------------------', 'ต้องสั่งเหล็กทั้งหมด : 15 เส้น');
+  R.s('main', 'พิมพ์ total', 'ครบทุกขนาด ต้องสั่งเหล็กทั้งหมด 15 เส้น');
+  R.q('main', 'n[3] > 0 ?', `n[3] = ${R.M.n[3]} > 0`, false, { msg: 'มีขนาดไหนเศษเกิน 12% ต้องเปลี่ยนแผนไหม' });
+  R.q('main', 'n[2] >= 2 ?', `n[2] = ${R.M.n[2]} >= 2`, true, { msg: 'มีเกรดพอใช้กี่รายการ',
+    trap: 'ท่อน 180 และ 450 cm ได้เศษ 10% ทั้งคู่ n[2] = 2 พอดี ถ้าเขียน > 2 คำสั่งจะเปลี่ยนไปทันที' });
+  R.out.push('คำสั่ง : พิจารณาเปลี่ยนความยาวเหล็กที่สั่ง');
+  R.s('main', 'พิมพ์ "พิจารณา', 'มีเกรดพอใช้ 2 รายการ แนะนำให้พิจารณาเปลี่ยนความยาวเหล็กที่สั่ง');
+  R.s('main', 'สิ้นสุด', 'จบผังงาน', { done: { title: 'สั่งเหล็ก 15 เส้น', body: 'ดีเยี่ยม 1 · ดี 2 · พอใช้ 2 · คำสั่ง: พิจารณาเปลี่ยนความยาวเหล็กที่สั่ง' } });
+  return R;
+}
+
+/* ---------------- Lab 4 ---------------- */
+function lab4() {
+  const R = new Rec('lab4'), w = [23800, 25000, 26100, 24500, 27900, 25900, 21000, 25400], NM = ['ผ่าน', 'เตือน', 'ขนถ่าย', 'ห้ามขึ้น'];
+  R.s('main', 'เริ่มต้น', 'รถบรรทุก 8 คันต่อแถวรอขึ้นสะพาน เราคือด่านชั่งน้ำหนัก คันไหนหนักเกินต้องถูกคัดออกก่อนสะพานพัง');
+  R.arr = { name: 'w', unit: 'kg', vals: w, i: null, lv: w.map(() => null), names: NM };
+  R.M.limit = 25000;
+  R.s('main', 'รับค่า w', 'รับน้ำหนักรถ 8 คัน (kg) และพิกัด limit = 25000 kg');
+  R.M.n = [0, 0, 0, 0]; R.M.i = 0;
+  R.s('main', 'n[0..3] = 0', 'ตั้งตัวนับ 4 ช่อง (ผ่าน / เตือน / ขนถ่าย / ห้ามขึ้น) และ i = 0');
+  for (let i = 0; ; i++) {
+    R.iter = i < 8 ? i : null; R.M.i = i; R.arr.i = i < 8 ? i : null;
+    if (!R.loopQ(i, 8, i === 0)) break;
+    const e = (w[i] - 25000) / 25000 * 100;
+    R.s('main', 'e = excess', `รถคันที่ ${i + 1} หนัก ${w[i]} kg ส่งไปให้ excess คิดร้อยละที่เกิน`);
+    R.enter('excess(w, limit)', { w: w[i], limit: 25000 });
+    R.s('f1', 'เริ่ม excess', `excess รับ w = ${w[i]} และ limit = 25000`);
+    R.F.e = f1(e);
+    R.s('f1', 'e = (float)', `(float)(${w[i]} − 25000) / 25000 × 100 = ${f1(e)}%`,
+      i === 2 ? { trap: 'ถ้าไม่ cast จะเป็น 1100 / 25000 แบบจำนวนเต็มได้ 0 รถที่เกินทุกคันจะโดนแค่ "เตือน"' } : (i === 0 ? { trap: 'รถเบากว่าพิกัดได้ e ติดลบ (−4.8) จำค่านี้ไว้ จะเห็นว่าทำไมต้องตรวจ w <= limit ก่อน' } : {}));
+    R.s('f1', 'คืนค่า e', `ส่ง e = ${f1(e)} กลับไป`);
+    R.leave(); R.M.e = f1(e);
+    R.M.t = Math.floor(w[i] / 1000); R.M.kg = w[i] % 1000;
+    R.s('main', 't = w[i]', `แยกหน่วยให้อ่านง่าย ${w[i]} / 1000 = ${R.M.t} ตัน และ ${w[i]} % 1000 = ${R.M.kg} kg`);
+    R.s('main', 'lv = check', 'ส่งข้อมูลให้ฟังก์ชัน check จัดระดับ');
+    R.enter('check(w, limit, e)', { w: w[i], limit: 25000, e: f1(e) });
+    R.s('f2', 'เริ่ม check', `check รับ w = ${w[i]}, limit = 25000, e = ${f1(e)}`);
+    const lv = R.chain('f2', [
+      { key: 'w <= limit ?', expr: `${w[i]} <= 25000`, t: w[i] <= 25000, yes: 'lv = 0', val: 0,
+        trap: i === 1 ? 'หนัก 25,000 kg เท่าพิกัดพอดี ต้องใช้ <= จึงผ่าน ถ้าใช้ < รถคันนี้จะโดนเตือนโดยไม่สมควร' : null },
+      { key: 'e <= 2 ?', expr: `${f1(e)} <= 2`, t: e <= 2, yes: 'lv = 1', val: 1 },
+      { key: 'e <= 10 ?', expr: `${f1(e)} <= 10`, t: e <= 10, yes: 'lv = 2', val: 2 },
+    ], 'lv = 3', 3, 'lv');
+    R.s('f2', 'คืนค่า lv', `ส่ง lv = ${lv} กลับไป`);
+    R.leave(); R.M.lv = lv;
+    R.s('main', 'lv = check', `คันที่ ${i + 1} ได้ผล "${NM[lv]}"`);
+    R.M.n[lv]++; R.arr.lv[i] = lv;
+    R.s('main', 'n[lv] = n[lv] + 1', `นับเพิ่ม n[${lv}] ได้ n = [${R.M.n.join(', ')}]`);
+    const lab = ['ผ่าน', `เกิน ${f1(e)}% เตือน`, `เกิน ${f1(e)}% สั่งขนถ่ายน้ำหนัก`, `เกิน ${f1(e)}% ห้ามขึ้นสะพาน`][lv];
+    R.out.push(`คันที่ ${i + 1} : ${R.M.t} ตัน ${String(R.M.kg).padStart(3)} kg  ${lab}`);
+    R.s('main', 'พิมพ์ คันที่', `พิมพ์ผลคันที่ ${i + 1}`);
+    R.M.i = i + 1;
+    R.s('main', 'i = i + 1', `i = ${i + 1} เรียกคันถัดไป`);
+  }
+  R.iter = null;
+  R.out.push('-----------------------------------', 'ผ่าน 4 | เตือน 1 | ขนถ่าย 2 | ห้ามขึ้น 1');
+  R.s('main', 'พิมพ์ n[0..3]', 'ชั่งครบ 8 คัน พิมพ์สรุป');
+  R.q('main', 'n[3] > 0 ?', `n[3] = ${R.M.n[3]} > 0`, true, { msg: 'มีรถที่ห้ามขึ้นสะพานไหม' });
+  R.out.push('คำสั่ง : ส่งรายงานหน่วยงานทางหลวง และกันรถคันที่เกินพิกัด');
+  R.s('main', 'พิมพ์ "ส่งรายงาน', 'รถคันที่ 5 เกิน 11.6% ต้องกันไว้ และส่งรายงานหน่วยงานทางหลวง');
+  R.s('main', 'สิ้นสุด', 'จบผังงาน', { done: { title: 'ส่งรายงานหน่วยงานทางหลวง', body: 'ผ่าน 4 · เตือน 1 · ขนถ่าย 2 · ห้ามขึ้น 1 (คันที่ 5 เกิน 11.6%)' } });
+  return R;
+}
+
+/* ---------------- Lab 5 ---------------- */
+function lab5() {
+  const R = new Rec('lab5'), rn = [0, 6, 42, 18, 95, 3, 12], NM = ['ไม่มีฝน', 'เล็กน้อย', 'ปานกลาง', 'หนัก', 'หนักมาก'];
+  const DAY = ['อาทิตย์', 'จันทร์', 'อังคาร', 'พุธ', 'พฤหัส', 'ศุกร์', 'เสาร์'];
+  R.s('main', 'เริ่มต้น', 'รถปูนจองไว้แล้ว แต่ฟ้าไม่เป็นใจ พยากรณ์ฝน 7 วันเริ่มวันศุกร์อยู่ในมือเรา มาดูว่าสัปดาห์นี้เทคอนกรีตได้กี่วัน');
+  R.arr = { name: 'rain', unit: 'mm', vals: rn, sub: rn.map((_, i) => DAY[(5 + i) % 7]), i: null, lv: rn.map(() => null), names: NM };
+  R.M.start = 5;
+  R.s('main', 'รับค่า rain', 'รับปริมาณฝนพยากรณ์ 7 วัน (mm/วัน) และ start = 5 หมายถึงวันแรกคือวันศุกร์ (0 = อาทิตย์)');
+  R.M.sum = 0; R.M.nPour = 0; R.M.nHeavy = 0; R.M.i = 0;
+  R.s('main', 'sum = 0', 'ตั้งตัวสะสม sum ตัวนับวันเทได้ nPour ตัวนับวันฝนหนักมาก nHeavy และ i = 0');
+  for (let i = 0; ; i++) {
+    R.iter = i < 7 ? i : null; R.M.i = i; R.arr.i = i < 7 ? i : null;
+    if (!R.loopQ(i, 7, i === 0)) break;
+    const day = (5 + i) % 7;
+    R.M.day = `${day} (${DAY[day]})`;
+    R.s('main', 'day = ', `หาชื่อวัน (5 + ${i}) % 7 = ${day} คือวัน${DAY[day]}`,
+      i === 2 ? { trap: '(5 + 2) % 7 = 0 วนกลับมาเป็นวันอาทิตย์ ถ้าไม่ใช้ % จะได้ 7 ซึ่งไม่มีชื่อวัน' } : {});
+    R.enter('rainLevel(r)', { r: rn[i] });
+    R.s('f1', 'เริ่ม rainLevel', `ส่งฝน ${rn[i]} mm เข้าฟังก์ชัน rainLevel`);
+    const lv = R.chain('f1', [
+      { key: 'r == 0 ?', expr: `${rn[i]} == 0`, t: rn[i] === 0, yes: 'lv = 0', val: 0,
+        trap: i === 0 ? 'ต้องถาม r == 0 ก่อน r <= 10 ไม่อย่างนั้นวันฟ้าใสจะถูกเรียกว่า "ฝนเล็กน้อย"' : null },
+      { key: 'r <= 10 ?', expr: `${rn[i]} <= 10`, t: rn[i] <= 10, yes: 'lv = 1', val: 1 },
+      { key: 'r <= 35 ?', expr: `${rn[i]} <= 35`, t: rn[i] <= 35, yes: 'lv = 2', val: 2 },
+      { key: 'r <= 90 ?', expr: `${rn[i]} <= 90`, t: rn[i] <= 90, yes: 'lv = 3', val: 3 },
+    ], 'lv = 4', 4, 'lv');
+    R.s('f1', 'คืนค่า lv', `ส่ง lv = ${lv} กลับไป`);
+    R.leave(); R.M.lv = lv; R.M.sum += rn[i]; R.arr.lv[i] = lv;
+    R.s('main', 'lv = rainLevel', `วัน${DAY[day]} ${lv === 0 ? 'ไม่มีฝน' : 'ฝน' + NM[lv]} และสะสม sum = ${R.M.sum} mm`);
+    if (R.q('main', 'lv <= 1 ?', `${lv} <= 1`, lv <= 1, { msg: 'ฝนระดับ 0 หรือ 1 ยังเทคอนกรีตได้ วันนี้เทได้ไหม' })) {
+      R.M.nPour++; R.s('main', 'nPour = nPour + 1', `เทได้ nPour = ${R.M.nPour} วัน`);
+    }
+    if (R.q('main', 'lv == 4 ?', `${lv} == 4`, lv === 4, { msg: 'วันนี้ฝนหนักมากไหม' })) {
+      R.M.nHeavy++; R.s('main', 'nHeavy = nHeavy + 1', `ฝนหนักมาก nHeavy = ${R.M.nHeavy} ต้องเตรียมรับมือ`);
+    }
+    const act = ['เทได้', 'เทได้', 'เลื่อนงานเท', 'เลื่อนงานเท', 'หยุดงานกลางแจ้ง'][lv];
+    R.out.push(`${DAY[day].padEnd(7)} ${String(rn[i]).padStart(3)} mm  ${lv === 0 ? 'ไม่มีฝน' : 'ฝน' + NM[lv]}  ${act}`);
+    R.s('main', 'พิมพ์ day', `พิมพ์ผลวัน${DAY[day]}`);
+    R.M.i = i + 1;
+    R.s('main', 'i = i + 1', `i = ${i + 1} ไปวันถัดไป`);
+  }
+  R.iter = null;
+  R.M.avg = f2(176 / 7);
+  R.s('main', 'avg = (float)', 'ฝนรวม 176 mm หาค่าเฉลี่ย (float) 176 / 7 = 25.14 mm/วัน');
+  R.out.push('-----------------------------------', 'ฝนรวม 176 mm  เฉลี่ย 25.14 mm/วัน', 'วันที่เทคอนกรีตได้ : 3 วัน');
+  R.s('main', 'พิมพ์ sum', 'พิมพ์สรุปฝนและจำนวนวันเทได้');
+  R.q('main', 'nPour >= 3 ?', `nPour = ${R.M.nPour} >= 3`, true, { msg: 'เทได้ครบ 3 วันตามแผนไหม' });
+  R.out.push('คำสั่ง : เทคอนกรีตได้ตามแผน');
+  R.s('main', 'พิมพ์ "เทคอนกรีต', 'เทได้ 3 วันคือศุกร์ เสาร์ และพุธ ทำตามแผนได้');
+  R.q('main', 'nHeavy > 0 ?', `nHeavy = ${R.M.nHeavy} > 0`, true, { msg: 'กล่องนี้เป็น if เดี่ยว ไม่ได้ต่อจาก else จึงถูกตรวจเสมอ มีวันฝนหนักมากไหม' });
+  R.out.push('เตือน : มีวันฝนหนักมาก เตรียมระบบระบายน้ำหน้างาน');
+  R.s('main', 'พิมพ์ "เตือน', 'วันอังคารฝน 95 mm ต้องเตรียมระบบระบายน้ำหน้างาน');
+  R.s('main', 'สิ้นสุด', 'จบผังงาน', { done: { title: 'เทคอนกรีตได้ 3 วัน', body: 'ศุกร์ เสาร์ พุธ · ฝนรวม 176 mm เฉลี่ย 25.14 mm/วัน · เตือนวันอังคารฝนหนักมาก' } });
+  return R;
+}
+
+/* ---------------- UI ---------------- */
+const LABS = [
+  { no: 1, name: 'สะพานนี้ยังไหวไหม', grp: 'กลุ่ม 1 · #04 #05 #01', fn: lab1, tabs: [['main', 'ผังหลัก'], ['f1', 'ratio()'], ['f2', 'level()']] },
+  { no: 2, name: 'ก้อนปูนสอบตก', grp: 'กลุ่ม 2 · #10 #11 #12', fn: lab2, tabs: [['main', 'ผังหลัก'], ['f1', 'judge()']] },
+  { no: 3, name: 'เหล็กเส้นไม่เหลือเศษ', grp: 'กลุ่ม 3 · #07 #14 #06', fn: lab3, tabs: [['main', 'ผังหลัก'], ['f1', 'wastePct()'], ['f2', 'grade()']] },
+  { no: 4, name: 'ด่านชั่งพิทักษ์สะพาน', grp: 'กลุ่ม 4 · #09 #13 #15', fn: lab4, tabs: [['main', 'ผังหลัก'], ['f1', 'excess()'], ['f2', 'check()']] },
+  { no: 5, name: 'นักพยากรณ์หน้าไซต์', grp: 'กลุ่ม 5 · #02 #03 #08', fn: lab5, tabs: [['main', 'ผังหลัก'], ['f1', 'rainLevel()']] },
+];
+LABS.forEach(L => { L.all = L.fn().steps; });
+const $ = id => document.getElementById(id);
+const st = { lab: 0, idx: 0, into: true, guess: true, zoom: 0.8, view: 'main', playing: null, done: {},
+  g: LABS.map(() => ({})), streak: 0 };
+
+function steps() { const L = LABS[st.lab]; return st.into ? L.all : L.all.filter(s => s.depth === 0); }
+
+function buildMissions() {
+  $('missions').innerHTML = LABS.map((L, i) => `<button class="mc" role="tab" id="m${i}" aria-selected="false" data-i="${i}">
+    <span class="g">ภารกิจ ${L.no} · ${L.grp.split(' · ')[1]}</span><b>${L.name}</b><span class="st" id="ms${i}">ยังไม่เริ่ม</span></button>`).join('');
+  $('missions').addEventListener('click', e => { const b = e.target.closest('.mc'); if (b) selectLab(+b.dataset.i); });
+}
+function selectLab(i, keepIdx) {
+  stop(); st.lab = i; if (!keepIdx) st.idx = 0;
+  document.querySelectorAll('.mc').forEach((b, k) => b.setAttribute('aria-selected', k === i));
+  const L = LABS[i];
+  $('tabs').innerHTML = L.tabs.map(([k, t]) => `<button class="tab" role="tab" data-c="lab${L.no}_${k}" aria-selected="false">${t}</button>`).join('');
+  $('svgs').innerHTML = L.tabs.map(([k]) => `<div class="sv" data-c="lab${L.no}_${k}" hidden>${CH['lab' + L.no + '_' + k].svg}</div>`).join('');
+  try { history.replaceState(null, '', '#lab' + L.no); } catch (e) {}
+  applyZoom(); render(true);
+}
+function showChart(c) {
+  st.view = c;
+  document.querySelectorAll('#svgs .sv').forEach(d => d.hidden = d.dataset.c !== c);
+  document.querySelectorAll('#tabs .tab').forEach(t => t.setAttribute('aria-selected', t.dataset.c === c));
+}
+function applyZoom() {
+  document.querySelectorAll('#svgs svg').forEach(s => { const w = +s.dataset.w; s.style.width = (w * st.zoom) + 'px'; });
+  $('zVal').textContent = Math.round(st.zoom * 100) + '%';
+}
+function centerOn(el) {
+  if (!el) return;
+  const stage = $('stage'), r = el.getBoundingClientRect(), sr = stage.getBoundingClientRect();
+  const x = stage.scrollLeft + (r.left - sr.left) + r.width / 2 - stage.clientWidth / 2;
+  const y = stage.scrollTop + (r.top - sr.top) + r.height / 2 - stage.clientHeight / 2;
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  stage.scrollTo({ left: Math.max(0, x), top: Math.max(0, y), behavior: reduce ? 'auto' : 'smooth' });
+}
+function fmt(v) { return Array.isArray(v) ? '[' + v.join(', ') + ']' : String(v); }
+function varsHtml(o, prev) {
+  return Object.keys(o).map(k => `<div class="var${prev && fmt(prev[k]) !== fmt(o[k]) ? ' chg' : ''}"><span class="k">${k}</span><span class="v">${fmt(o[k])}</span></div>`).join('');
+}
+const esc = s => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+
+function render(jump) {
+  const S = steps(), s = S[st.idx], prev = S[st.idx - 1], L = LABS[st.lab], key = st.lab + ':' + st.idx + ':' + (st.into ? 1 : 0);
+  // chart + highlight
+  showChart(s.chart);
+  document.querySelectorAll('#svgs .nd').forEach(n => n.classList.remove('cur', 'seen'));
+  for (let k = 0; k < st.idx; k++) { const e = S[k].id && document.getElementById(S[k].id); if (e) e.classList.add('seen'); }
+  const el = s.id && document.getElementById(s.id); if (el) el.classList.add('cur');
+  document.querySelectorAll('#tabs .tab').forEach(t => t.classList.toggle('live', t.dataset.c === s.chart && s.depth > 0));
+  requestAnimationFrame(() => centerOn(el));
+  $('fnBanner').hidden = !s.fname; $('fnBanner').textContent = s.fname ? 'กำลังอยู่ในฟังก์ชัน ' + s.fname : '';
+  // meta
+  $('pStep').textContent = `ก้าวที่ ${st.idx + 1} / ${S.length}`;
+  $('pIter').hidden = s.iter == null; $('pIter').textContent = `รอบ i = ${s.iter}`;
+  $('pFn').hidden = !s.fname; $('pFn').textContent = s.fname ? 'ในฟังก์ชัน ' + s.fname : '';
+  $('prog').style.width = ((st.idx + 1) / S.length * 100) + '%';
+  // ask / narration
+  const gs = st.g[st.lab], ans = gs[key];
+  const needGuess = s.ask && st.guess && ans === undefined;
+  $('ask').hidden = !s.ask;
+  $('say').innerHTML = esc(s.msg || '');
+  if (s.ask) {
+    const cond = document.getElementById(s.id)?.textContent.replace(/\s+/g, ' ').trim() || '';
+    $('askQ').innerHTML = `คำถามในกล่อง <code>${esc(cond)}</code> แทนค่าได้ <code>${esc(s.ask.expr)}</code>`;
+    $('askBtns').hidden = !needGuess;
+    const v = $('verdict');
+    if (needGuess) { v.hidden = true; }
+    else {
+      v.hidden = false;
+      if (ans === undefined || ans === 'skip') { v.className = 'verdict ok'; v.textContent = 'คำตอบ: ' + s.ask.ex; }
+      else if (ans === s.ask.ans) { v.className = 'verdict ok'; v.textContent = 'ทายถูก ' + s.ask.ex; }
+      else { v.className = 'verdict bad'; v.textContent = 'ยังไม่ใช่ ' + s.ask.ex; }
+    }
+  }
+  $('trap').hidden = !s.trap || needGuess; $('trapT').textContent = s.trap || '';
+  // done
+  $('doneCard').hidden = !s.done;
+  if (s.done) {
+    st.done[st.lab] = true;
+    const tot = Object.values(gs).filter(x => x !== 'skip').length;
+    const ok = Object.entries(gs).filter(([k, v]) => v !== 'skip' && v === findAns(k)).length;
+    $('doneCard').innerHTML = `<b>ภารกิจสำเร็จ: ${esc(s.done.title)}</b><span>${esc(s.done.body)}</span>` +
+      (tot ? `<span>ทายขนมเปียกปูนถูก ${ok} จาก ${tot} ครั้ง</span>` : '') +
+      (st.lab < 4 ? `<span><button class="btn primary" id="bNextLab">ไปภารกิจที่ ${st.lab + 2}</button></span>` : `<span>ครบทั้ง 5 ภารกิจแล้ว พร้อมวาดผังของตัวเองในวันสอบ</span>`);
+    const nb = $('bNextLab'); if (nb) nb.onclick = () => selectLab(st.lab + 1);
+  }
+  LABS.forEach((_, i) => { const m = $('ms' + i); if (m) { m.textContent = st.done[i] ? 'สำเร็จแล้ว' : (i === st.lab ? 'กำลังเล่น' : 'ยังไม่เริ่ม'); m.parentElement.classList.toggle('done', !!st.done[i]); } });
+  // array
+  const a = s.arr;
+  if (a) {
+    $('arrTitle').textContent = `อาร์เรย์ ${a.name}[${a.vals.length}] หน่วย ${a.unit}`;
+    $('arr').innerHTML = a.vals.map((v, i) => `<div class="cell${a.i === i ? ' now' : ''}"${a.lv[i] != null ? ` data-lv="${(a.lvMap || [0,1,2,3,4])[a.lv[i]]}"` : ''}>
+      <div class="ix">[${i}]${a.sub ? ' ' + esc(a.sub[i]) : ''}</div><div class="v">${v}</div><div class="t">${a.lv[i] != null ? esc(a.names[a.lv[i]]) : ''}</div></div>`).join('');
+    $('legend').innerHTML = a.names.map((n, k) => `<span style="--c:var(--lv${(a.lvMap || [0,1,2,3,4])[k]})">${n}</span>`).join('');
+  } else { $('arrTitle').textContent = 'อาร์เรย์ข้อมูล'; $('arr').innerHTML = '<span style="color:var(--muted)">ยังไม่ได้รับค่า กดถัดไปเพื่อเริ่ม</span>'; $('legend').innerHTML = ''; }
+  $('vars').innerHTML = Object.keys(s.M).length ? varsHtml(s.M, prev && prev.M) : '<span style="color:var(--muted)">ยังไม่มีตัวแปร</span>';
+  $('fnBox').hidden = !s.F;
+  if (s.F) { $('fnTitle').textContent = 'ตัวแปรภายในฟังก์ชัน ' + s.fname; $('fnVars').innerHTML = varsHtml(s.F, prev && prev.F); }
+  // terminal
+  const newN = prev ? s.out.length - prev.out.length : 0;
+  $('term').innerHTML = `<span class="p">$ ./lab${L.no}</span>\n` + s.out.map((l, i) => i >= s.out.length - newN ? `<span class="new">${esc(l)}</span>` : esc(l)).join('\n');
+  $('term').scrollTop = $('term').scrollHeight;
+  // controls
+  $('bPrev').disabled = st.idx === 0;
+  $('bNext').disabled = st.idx >= S.length - 1;
+  $('bNext').textContent = needGuess ? 'ข้ามการทาย' : 'ถัดไป';
+  $('bIter').disabled = !S.slice(st.idx + 1).some(x => x.loop);
+  const all = st.g.flatMap(o => Object.entries(o));
+  $('sOk').textContent = all.filter(([k, v]) => v !== 'skip' && v === findAns(k)).length;
+  $('sAll').textContent = all.filter(([, v]) => v !== 'skip').length;
+  $('sStreak').textContent = st.streak;
+}
+function findAns(k) { const [lab, idx, into] = k.split(':').map(Number); const L = LABS[lab]; const S = into ? L.all : L.all.filter(s => s.depth === 0); return S[idx].ask.ans; }
+function guess(v) {
+  const S = steps(), s = S[st.idx]; if (!s.ask) return;
+  const key = st.lab + ':' + st.idx + ':' + (st.into ? 1 : 0), gs = st.g[st.lab];
+  if (gs[key] !== undefined) return;
+  gs[key] = v; st.streak = v === s.ask.ans ? st.streak + 1 : 0; render();
+}
+function next() {
+  const S = steps(), s = S[st.idx], key = st.lab + ':' + st.idx + ':' + (st.into ? 1 : 0);
+  if (s.ask && st.guess && st.g[st.lab][key] === undefined) { st.g[st.lab][key] = 'skip'; render(); return; }
+  if (st.idx < S.length - 1) { st.idx++; render(); } else stop();
+}
+function prev() { if (st.idx > 0) { st.idx--; render(); } }
+function nextIter() { const S = steps(); const j = S.findIndex((x, k) => k > st.idx && x.loop); if (j > 0) { st.idx = j; render(); } }
+function play() {
+  if (st.playing) return stop();
+  $('bPlay').textContent = 'หยุด';
+  const tick = () => {
+    const S = steps(), s = S[st.idx], key = st.lab + ':' + st.idx + ':' + (st.into ? 1 : 0);
+    if (st.idx >= S.length - 1) return stop();
+    if (s.ask && st.guess && st.g[st.lab][key] === undefined) { st.playing = setTimeout(tick, 400); return; }
+    st.idx++; render(); st.playing = setTimeout(tick, +$('spd').value);
+  };
+  st.playing = setTimeout(tick, 200);
+}
+function stop() { clearTimeout(st.playing); st.playing = null; $('bPlay').textContent = 'เล่นอัตโนมัติ'; }
+function remap(into) {
+  // keep position when toggling step-into
+  const L = LABS[st.lab], cur = steps()[st.idx];
+  st.into = into;
+  const S = steps(); let j = S.indexOf(cur);
+  if (j < 0) { const gi = L.all.indexOf(cur); j = 0; S.forEach((x, k) => { if (L.all.indexOf(x) <= gi) j = k; }); }
+  st.idx = j; render();
+}
+
+$('bNext').onclick = next; $('bPrev').onclick = prev; $('bPlay').onclick = play; $('bIter').onclick = nextIter;
+$('bReset').onclick = () => { stop(); st.idx = 0; st.g[st.lab] = {}; delete st.done[st.lab]; st.streak = 0; render(); };
+$('gYes').onclick = () => guess('ใช่'); $('gNo').onclick = () => guess('ไม่ใช่');
+$('optGuess').onchange = e => { st.guess = e.target.checked; render(); };
+$('optInto').onchange = e => remap(e.target.checked);
+$('zIn').onclick = () => { st.zoom = Math.min(1.4, +(st.zoom + 0.1).toFixed(2)); applyZoom(); render(); };
+$('zOut').onclick = () => { st.zoom = Math.max(0.4, +(st.zoom - 0.1).toFixed(2)); applyZoom(); render(); };
+$('tabs').addEventListener('click', e => { const t = e.target.closest('.tab'); if (t) showChart(t.dataset.c); });
+document.addEventListener('keydown', e => {
+  if (e.target.matches('input,textarea')) return;
+  if (e.key === 'ArrowRight') { e.preventDefault(); next(); }
+  else if (e.key === 'ArrowLeft') { e.preventDefault(); prev(); }
+  else if (e.key === 'y' || e.key === 'Y') guess('ใช่');
+  else if (e.key === 'n' || e.key === 'N') guess('ไม่ใช่');
+});
+buildMissions();
+if (innerWidth < 700) st.zoom = 0.6;
+const h = (location.hash.match(/^#lab([1-5])$/) || [])[1];
+selectLab(h ? +h - 1 : 0);
+</script>
+
+</body></html>
