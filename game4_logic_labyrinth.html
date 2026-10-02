@@ -1,0 +1,2416 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<script>(function(){try{var t=localStorage.getItem('gnr1007_theme');if(!t){t=(window.matchMedia&&window.matchMedia('(prefers-color-scheme: light)').matches)?'light':'dark';}document.documentElement.setAttribute('data-theme',t);}catch(e){}})();</script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>LOGIC LABYRINTH : เขาวงกตแห่งเงื่อนไข | GNR1007</title>
+<meta name="description" content="เกมเรียนรู้ if-else, if ซ้อน, กับดัก = กับ == และ switch-case พร้อม break — GNR1007 วันที่ 2 ช่วงที่ 4 · ผศ.ดร.กุลวลัญช์ วรุณสิน มหาวิทยาลัยรามคำแหง">
+<meta name="theme-color" content="#0d0718">
+<meta property="og:title" content="LOGIC LABYRINTH : เขาวงกตแห่งเงื่อนไข">
+<meta property="og:description" content="เดินผ่าน 3 ห้องของเขาวงกตเงื่อนไข วัดผลก่อน-หลังเรียนด้วยระบบดาว 6 ดวง (1 ดาว = ตอบถูก 1 ข้อ)">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='18' fill='%230d0718'/><g stroke='%23c084fc' stroke-width='9' fill='none' stroke-linecap='round'><path d='M22 80V50h26V26h30'/><path d='M78 26v54'/></g><circle cx='48' cy='26' r='9' fill='%23fbbf24'/></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+/* ================================================================
+   LOGIC LABYRINTH : เขาวงกตแห่งเงื่อนไข  v1.0 "DUNGEON EDITION · CLIMB MODE"
+   Single-file Web App — HTML + CSS + JavaScript (no backend)
+   วิชา GNR1007 การโปรแกรมคอมพิวเตอร์สำหรับวิศวกร — เนื้อหาวันที่ 2 (บทที่ 5)
+   ผู้พัฒนา: ผศ.ดร.กุลวลัญช์ วรุณสิน
+   สาขาวิศวกรรมคอมพิวเตอร์ คณะวิศวกรรมศาสตร์ มหาวิทยาลัยรามคำแหง
+   Engine ported from CPU CITY / MEMORY VAULT / OPERATOR ARENA
+   ================================================================ */
+:root{
+  --bg:#0d0718; --panel:rgba(var(--panel-rgb),.86); --panel2:rgba(var(--panel2-rgb),.94);
+  --ember:#c084fc; --ember-dim:rgba(192,132,252,.28);
+  --corner:#4ade80; --gold:#fbbf24; --gold2:#fde68a; --red:#fb7185;
+  --text:#efe7fb; --muted:#a898c4; --line:rgba(192,132,252,.22);
+  --radius:16px; --shadow:0 10px 40px rgba(0,0,0,.6);
+  --font:'Kanit','Sarabun','Noto Sans Thai','Segoe UI',Tahoma,sans-serif;
+  --mono:'IBM Plex Mono','Consolas',monospace; --bg-grad-mid:#120a20; --ink-panel-rgb:13,7,24; --panel-rgb:30,18,54; --panel2-rgb:42,25,74;}
+:root[data-theme="light"]{ --bg:#f4f6fa; --panel:rgba(255,255,255,.90); --panel2:rgba(255,255,255,.97); --ember:#6605c7; --ember-dim:rgba(102,5,199,.16); --corner:#1fad53; --gold:#be8a03; --gold2:#e7b904; --red:#e40627; --text:#141b26; --muted:#5c6b80; --line:rgba(102,5,199,.28); --bg-grad-mid:#e9edf3; --ink-panel-rgb:255,255,255; --panel-rgb:255,255,255; --panel2-rgb:244,247,251;
+  color-scheme:light;
+}
+:root{color-scheme:dark;}
+
+
+/* ================================================================
+   OPERATOR ARENA : สังเวียนประลองตัวดำเนินการ  v1.0 "Ringside Edition"
+   Single-file Web App — HTML + CSS + JavaScript (no backend)
+   วิชา GNR1007 การประยุกต์ใช้คอมพิวเตอร์และเทคโนโลยีสำหรับวิศวกร
+   ผู้พัฒนา: ผศ.ดร.กุลวลัญช์ วรุณสิน
+   สาขาวิศวกรรมคอมพิวเตอร์ คณะวิศวกรรมศาสตร์ มหาวิทยาลัยรามคำแหง
+   Engine ported from CPU CITY / MEMORY VAULT Arcade Edition — reskinned theme
+   ================================================================ */
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html{scroll-behavior:smooth}
+body{margin:0;font-family:var(--font);color:var(--text);background:var(--bg);min-height:100vh;overflow-x:hidden;line-height:1.65}
+body::before{content:'';position:fixed;inset:0;z-index:-2;
+  background:radial-gradient(900px 600px at 12% -10%, rgba(192,132,252,.15), transparent 60%),
+             radial-gradient(800px 600px at 92% 8%, rgba(74,222,128,.12), transparent 60%),
+             radial-gradient(700px 500px at 50% 110%, rgba(251,191,36,.09), transparent 60%),
+             linear-gradient(180deg,var(--bg),var(--bg-grad-mid) 60%,var(--bg))}
+body::after{content:'';position:fixed;inset:0;z-index:-1;pointer-events:none;opacity:.4;
+  background-image:linear-gradient(rgba(192,132,252,.05) 1px,transparent 1px),
+                   linear-gradient(90deg,rgba(192,132,252,.05) 1px,transparent 1px);
+  background-size:44px 44px;-webkit-mask-image:radial-gradient(circle at 50% 35%,#000 30%,transparent 85%);
+  mask-image:radial-gradient(circle at 50% 35%,#000 30%,transparent 85%)}
+.wrap{max-width:1100px;margin:0 auto;padding:16px 16px 20px}
+
+#topbar{position:sticky;top:0;z-index:50;backdrop-filter:blur(14px);display:none;
+  background:linear-gradient(180deg,rgba(var(--ink-panel-rgb),.95),rgba(var(--ink-panel-rgb),.65));border-bottom:1px solid var(--line)}
+#topbar.show{display:block}
+.topbar-in{max-width:1100px;margin:0 auto;padding:8px 14px}
+.tb-top{display:flex;align-items:center;gap:8px;flex-wrap:nowrap}
+.brand{display:flex;align-items:center;gap:9px;font-weight:600;letter-spacing:.4px;font-size:.88rem;white-space:nowrap;flex:0 0 auto}
+.brand .dot{width:10px;height:10px;border-radius:50%;background:var(--ember);box-shadow:0 0 12px var(--ember);animation:pulse 1.8s infinite}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.45;transform:scale(.7)}}
+.tb-right{display:flex;gap:7px;align-items:center;flex:0 0 auto}
+.icon-btn{min-width:36px;height:36px;padding:0 9px;border-radius:11px;display:grid;place-items:center;cursor:pointer;
+  background:rgba(192,132,252,.08);border:1px solid var(--line);color:var(--ember);transition:.22s;font-family:var(--mono);font-size:.72rem;font-weight:700}
+.icon-btn:hover{border-color:var(--ember);box-shadow:0 0 14px var(--ember-dim);transform:translateY(-1px)}
+.icon-btn.off{color:var(--muted);opacity:.6}
+.player-chip{display:flex;align-items:center;gap:7px;font-size:.75rem;color:var(--ember);
+  border:1px dashed var(--ember-dim);padding:3px 11px 3px 4px;border-radius:999px;font-family:var(--mono);max-width:150px}
+.player-chip svg{width:24px;height:24px;flex:0 0 24px}
+.player-chip .pn{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.tb-xp-mini{display:flex;align-items:center;gap:6px;flex:0 0 auto}
+.tb-xp-mini .lvl{font-family:var(--mono);font-size:.62rem;color:var(--corner);white-space:nowrap;letter-spacing:.5px}
+.tb-xp-mini .bar{width:76px;height:6px;margin:0;flex:0 0 auto}
+
+#navrail{display:flex;gap:5px;overflow-x:auto;padding:2px 0;scrollbar-width:thin;flex:1 1 auto;min-width:70px}
+#navrail::-webkit-scrollbar{height:4px}
+#navrail::-webkit-scrollbar-thumb{background:var(--ember-dim);border-radius:9px}
+.navpill{flex:0 0 auto;display:flex;flex-direction:column;align-items:center;gap:2px;padding:5px 8px;border-radius:12px;
+  border:1px solid var(--line);background:rgba(var(--panel2-rgb),.7);cursor:default;opacity:.38;min-width:56px;transition:.25s}
+.navpill svg{width:17px;height:17px;color:var(--muted)}
+.navpill span{font-size:.56rem;color:var(--muted);white-space:nowrap;font-family:var(--mono);letter-spacing:.4px}
+.navpill .ps{font-size:.58rem;letter-spacing:1px;color:var(--gold2);min-height:.9em}
+.navpill.unlocked{opacity:1;cursor:pointer}
+.navpill.unlocked:hover{border-color:var(--ember);transform:translateY(-2px);box-shadow:0 6px 18px rgba(192,132,252,.16)}
+.navpill.current{border-color:var(--ember);background:rgba(192,132,252,.13);box-shadow:0 0 0 2px rgba(192,132,252,.10)}
+.navpill.current svg,.navpill.current span{color:var(--ember)}
+.navpill.done svg,.navpill.done span{color:var(--corner)}
+.navpill.locked-shake{animation:shake .35s}
+@media (max-width:780px){
+  .tb-top{flex-wrap:wrap}
+  .brand{order:1}
+  .tb-xp-mini{order:2}
+  .tb-right{order:3;margin-left:auto}
+  #navrail{order:4;flex:1 1 100%;margin-top:2px}
+}
+
+.screen{display:none}
+.screen.active{display:block;animation:fadeUp .5s cubic-bezier(.2,.8,.2,1)}
+@keyframes fadeUp{from{opacity:0;transform:translateY(22px)}to{opacity:1;transform:none}}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-7px)}75%{transform:translateX(7px)}}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:22px;
+  box-shadow:var(--shadow);backdrop-filter:blur(10px);position:relative;overflow:hidden}
+.panel::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;
+  background:linear-gradient(90deg,transparent,var(--ember),transparent);opacity:.7}
+.panel+.panel{margin-top:16px}
+h1,h2,h3{margin:0 0 10px;font-weight:600;letter-spacing:.3px}
+h1{font-size:clamp(1.4rem,5vw,2rem)}
+h2{font-size:1.22rem;color:var(--ember)}
+h3{font-size:1rem;color:var(--corner)}
+p{margin:0 0 12px}
+.muted{color:var(--muted);font-size:.9rem}
+.mono{font-family:var(--mono)}
+.tag{display:inline-block;font-size:.68rem;letter-spacing:2px;text-transform:uppercase;color:var(--ember);
+  border:1px solid var(--ember-dim);padding:3px 12px;border-radius:999px;margin-bottom:12px;font-family:var(--mono)}
+.card{background:var(--panel2);border:1px solid var(--line);border-radius:14px;padding:16px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+
+.btn{font-family:var(--font);font-size:.93rem;font-weight:500;cursor:pointer;padding:11px 24px;border-radius:12px;
+  border:1px solid var(--line);background:rgba(192,132,252,.08);color:var(--text);transition:.25s;min-height:44px}
+.btn:hover:not(:disabled){transform:translateY(-2px);border-color:var(--ember);box-shadow:0 8px 26px rgba(192,132,252,.20)}
+.btn.primary{background:linear-gradient(135deg,var(--ember),var(--gold));color:#0d0718;border:none;font-weight:600;
+  box-shadow:0 8px 28px rgba(192,132,252,.28)}
+.btn.pink{background:linear-gradient(135deg,var(--corner),var(--gold));color:#0d0718;border:none;font-weight:600}
+.btn.ghost{background:transparent}
+.btn.sm{padding:8px 15px;font-size:.82rem;min-height:40px}
+.btn:disabled{opacity:.4;cursor:not-allowed;transform:none;box-shadow:none}
+.btn-row{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px}
+
+#scr-welcome .hero{min-height:calc(100vh - 40px);display:flex;flex-direction:column;align-items:center;
+  justify-content:center;text-align:center;padding:22px 8px;gap:2px}
+.cityart{width:min(520px,94vw);filter:drop-shadow(0 0 26px rgba(192,132,252,.3));animation:float 6s ease-in-out infinite}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-9px)}}
+.title{font-size:clamp(1.5rem,5.6vw,2.7rem);font-weight:700;line-height:1.2;margin:8px 0 2px;
+  background:linear-gradient(100deg,#c084fc,#fbbf24 45%,#4ade80);-webkit-background-clip:text;background-clip:text;color:transparent}
+.subtitle{color:var(--muted);max-width:620px;margin:0 auto 18px;font-size:.95rem}
+.login-card{width:min(560px,94vw);text-align:left}
+label{display:block;font-size:.84rem;color:var(--ember);margin-bottom:7px;font-weight:500}
+input[type=text]{width:100%;padding:13px 16px;border-radius:12px;font-family:var(--font);font-size:1rem;
+  background:rgba(var(--ink-panel-rgb),.75);border:1px solid var(--line);color:var(--text);outline:none;transition:.25s}
+input[type=text]:focus{border-color:var(--ember);box-shadow:0 0 0 4px rgba(192,132,252,.14)}
+input[type=text]::placeholder{color:#6a5a84}
+.err{color:var(--red);font-size:.82rem;margin-top:8px;display:none}
+.err.show{display:block;animation:shake .35s}
+.feature-row{display:flex;gap:7px;flex-wrap:wrap;justify-content:center;margin-top:18px}
+.feature-row span{font-size:.7rem;color:var(--muted);border:1px solid var(--line);padding:4px 11px;border-radius:999px;font-family:var(--mono)}
+.avatar-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(62px,1fr));gap:9px;margin-top:4px}
+.avatar-opt{border:2px solid transparent;background:rgba(var(--ink-panel-rgb),.6);border-radius:14px;padding:5px;cursor:pointer;
+  transition:.2s;display:grid;place-items:center;position:relative;outline:1px solid var(--line)}
+.avatar-opt svg{width:100%;height:auto;display:block}
+.avatar-opt:hover{transform:translateY(-4px) scale(1.05)}
+.avatar-opt.sel{border-color:var(--ember);box-shadow:0 0 0 3px rgba(192,132,252,.22),0 8px 22px rgba(192,132,252,.22);outline-color:transparent}
+.avatar-opt.sel::after{content:'\2713';position:absolute;right:-4px;top:-6px;width:19px;height:19px;border-radius:50%;
+  background:var(--corner);color:#0d0718;font-size:.7rem;display:grid;place-items:center;font-weight:700}
+
+.hud{display:flex;gap:9px;flex-wrap:wrap;margin-bottom:12px}
+.stat{flex:1 1 84px;background:var(--panel2);border:1px solid var(--line);border-radius:12px;padding:8px 10px;text-align:center;min-width:80px}
+.stat b{display:block;font-family:var(--mono);font-size:1.12rem;color:var(--ember);line-height:1.3}
+.stat small{color:var(--muted);font-size:.63rem;letter-spacing:1px;text-transform:uppercase}
+.stat.combo b{color:var(--gold)}.stat.score b{color:var(--corner)}.stat.star b{color:var(--gold2)}
+.bar{height:8px;border-radius:999px;background:rgba(255,255,255,.06);overflow:hidden;margin:6px 0 12px}
+.bar>i{display:block;height:100%;width:0;border-radius:999px;background:linear-gradient(90deg,var(--ember),var(--corner));transition:width .6s cubic-bezier(.2,.8,.2,1)}
+.bar.xp>i{background:linear-gradient(90deg,var(--gold),var(--ember))}
+
+.stage{display:flex;justify-content:center;padding:8px 0 4px;border-radius:14px;
+  background:radial-gradient(ellipse at center,rgba(192,132,252,.08),transparent 68%)}
+.stage svg{width:100%;max-width:520px;height:auto;display:block}
+.dcard{display:flex;gap:14px;align-items:center;background:var(--panel2);border:1px solid var(--line);
+  border-radius:16px;padding:14px 16px;margin-top:4px}
+.dcard .ico{flex:0 0 74px}
+.dcard .ico svg{width:74px;height:74px}
+.skillcard{border:1px solid rgba(74,222,128,.4);background:linear-gradient(135deg,rgba(74,222,128,.12),rgba(var(--ink-panel-rgb),.5));
+  border-radius:16px;padding:16px 18px;margin-top:12px}
+.skillcard .sk-name{color:var(--corner);font-weight:600;font-size:1.05rem}
+
+.q-box{background:rgba(var(--ink-panel-rgb),.5);border:1px solid var(--line);border-radius:16px;padding:15px 16px;margin-top:12px;transition:.3s}
+.q-box.answered{border-color:rgba(255,255,255,.08)}
+.q-box.focusnow{border-color:var(--ember);box-shadow:0 0 0 3px rgba(192,132,252,.10)}
+.qmeta{display:flex;justify-content:space-between;align-items:center;gap:8px;font-family:var(--mono);
+  font-size:.68rem;letter-spacing:1.2px;color:var(--muted);margin-bottom:6px}
+.q-type{color:var(--corner);border:1px solid rgba(74,222,128,.35);padding:2px 9px;border-radius:999px;font-size:.63rem}
+.q-text{font-size:1.02rem;font-weight:500;margin:8px 0 4px}
+.choices{display:grid;gap:9px;margin-top:10px}
+.choice{font-family:var(--font);font-size:.94rem;padding:12px 14px;border-radius:12px;cursor:pointer;
+  background:rgba(var(--panel-rgb),.9);border:1px solid var(--line);color:var(--text);transition:.2s;text-align:left;
+  display:flex;gap:11px;align-items:flex-start;min-height:44px;width:100%}
+.choice .k{flex:0 0 22px;height:22px;border-radius:7px;display:grid;place-items:center;font-family:var(--mono);
+  font-size:.72rem;background:rgba(192,132,252,.12);color:var(--ember);border:1px solid var(--line);margin-top:1px}
+.choice:hover:not(:disabled){border-color:var(--ember);transform:translateY(-2px);box-shadow:0 6px 20px rgba(192,132,252,.16)}
+.choice.correct{background:linear-gradient(135deg,rgba(74,222,128,.28),rgba(74,222,128,.08));border-color:var(--corner);color:var(--corner);font-weight:600}
+.choice.correct .k{background:var(--corner);color:#0d0718;border-color:transparent}
+.choice.wrong{background:linear-gradient(135deg,rgba(251,113,133,.26),rgba(251,113,133,.06));border-color:var(--red);color:var(--red)}
+.choice.wrong .k{background:var(--red);color:#0d0718;border-color:transparent}
+.choice:disabled{cursor:default}
+.explain{margin-top:11px;border-radius:0 12px 12px 0;padding:10px 13px;border-left:3px solid var(--gold);
+  background:rgba(251,191,36,.09);display:none;font-size:.88rem}
+.explain.show{display:block;animation:fadeUp .3s}
+.floaty{position:fixed;left:50%;top:24%;transform:translateX(-50%);font-family:var(--mono);font-weight:700;
+  font-size:1.4rem;pointer-events:none;z-index:120;text-shadow:0 0 20px currentColor;animation:floatUp 1.1s ease-out forwards}
+@keyframes floatUp{0%{opacity:0;transform:translate(-50%,10px) scale(.8)}25%{opacity:1;transform:translate(-50%,-6px) scale(1.1)}100%{opacity:0;transform:translate(-50%,-70px) scale(1)}}
+
+.tbl-wrap{overflow-x:auto;border-radius:12px;border:1px solid var(--line);margin-top:10px}
+table{width:100%;border-collapse:collapse;font-size:.86rem;min-width:460px}
+th,td{padding:9px 11px;text-align:left;border-bottom:1px solid rgba(255,255,255,.06)}
+th{background:rgba(192,132,252,.10);color:var(--ember);font-weight:600}
+tbody tr:hover{background:rgba(192,132,252,.05)}
+
+/* ---------- Lab 1: Precedence Ring ---------- */
+.codebox{font-family:var(--mono);font-size:1rem;background:rgba(var(--ink-panel-rgb),.8);border:1px solid var(--line);
+  border-radius:14px;padding:16px 14px;overflow-x:auto;text-align:center;min-height:2.4em}
+.codebox b{color:var(--gold2)}
+.status-line{margin-top:10px;font-size:.9rem;min-height:2.4em;border-radius:0 12px 12px 0;padding:9px 13px;
+  border-left:3px solid var(--line);background:rgba(var(--ink-panel-rgb),.5)}
+.status-line.ok{border-color:var(--corner)}
+.status-line.no{border-color:var(--red)}
+
+/* ---------- Lab 2: Prefix/Postfix odometer ---------- */
+.gaugebox{display:flex;flex-direction:column;align-items:center;gap:4px;margin:14px 0 8px}
+.odometer{font-family:var(--mono);font-weight:700;font-size:1.5rem;letter-spacing:1px;color:var(--ember);
+  background:rgba(var(--ink-panel-rgb),.7);border:2px solid var(--line);border-radius:12px;padding:12px 20px;min-width:240px;text-align:center;
+  transition:.15s}
+.odometer.ping{color:var(--gold2);border-color:var(--gold2);animation:ovburst .5s ease}
+@keyframes ovburst{0%{transform:scale(1)}30%{transform:scale(1.08)}100%{transform:scale(1)}}
+.odolabel{font-family:var(--mono);font-size:.72rem;letter-spacing:1.5px;color:var(--muted);text-transform:uppercase}
+
+/* ---------- Lab 3: Modulo / Logic grid ---------- */
+.netgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px;margin-top:10px}
+.netgrid button{padding:9px 6px;font-size:.8rem;font-family:var(--mono)}
+.badge-net{display:inline-block;padding:4px 14px;border-radius:999px;font-size:.78rem;border:1px solid;margin-top:8px;font-family:var(--mono)}
+.badge-net.MOD{color:var(--corner);border-color:var(--corner);background:rgba(74,222,128,.1)}
+.badge-net.LOGIC{color:var(--gold);border-color:var(--gold);background:rgba(251,191,36,.1)}
+
+/* ---------- Stars ---------- */
+.star-row{display:flex;gap:clamp(4px,1.8vw,10px);justify-content:center;align-items:center;margin:14px 0 6px;flex-wrap:wrap}
+.star{width:clamp(30px,12.4vw,54px);height:clamp(30px,12.4vw,54px);position:relative;opacity:0;transform:scale(2.2) rotate(-22deg)}
+.star.in{animation:starIn .5s cubic-bezier(.3,1.6,.4,1) forwards}
+@keyframes starIn{to{opacity:1;transform:scale(1) rotate(0)}}
+.star svg{width:100%;height:100%;display:block}
+.star.full svg{filter:drop-shadow(0 0 14px rgba(253,230,138,.75))}
+.star.empty{opacity:.32}
+.star-row.sm .star{width:26px;height:26px}
+.star-row.xs .star{width:17px;height:17px;gap:3px}
+.star-row.xs{gap:3px;margin:2px 0 0}
+.starline{font-family:var(--mono);letter-spacing:3px;color:var(--gold2);font-size:.9rem}
+
+#reveal{position:fixed;inset:0;z-index:200;display:none;place-items:center;text-align:center;padding:20px;
+  background:radial-gradient(circle at 50% 45%,rgba(var(--ink-panel-rgb),.97),rgba(var(--ink-panel-rgb),.99));overflow-y:auto}
+#reveal.show{display:grid}
+.rv-stage{max-width:600px;width:100%}
+.rv-line{font-family:var(--mono);letter-spacing:6px;font-size:clamp(.85rem,3.2vw,1.2rem);color:var(--ember);opacity:0}
+.rv-score{font-family:var(--mono);font-size:clamp(2.6rem,13vw,5rem);font-weight:700;line-height:1.05;opacity:0;
+  background:linear-gradient(100deg,#c084fc,#fbbf24,#4ade80);-webkit-background-clip:text;background-clip:text;color:transparent;
+  filter:drop-shadow(0 0 30px rgba(192,132,252,.45))}
+.rv-rank{font-size:clamp(1.4rem,6.4vw,2.6rem);font-weight:700;opacity:0;letter-spacing:2px;
+  background:linear-gradient(100deg,var(--gold2),#fff6d0,var(--gold));-webkit-background-clip:text;background-clip:text;color:transparent}
+.rv-sub{color:var(--muted);opacity:0;font-size:.92rem;margin-top:6px}
+.rv-in{animation:rvIn .7s cubic-bezier(.2,.9,.2,1) forwards}
+@keyframes rvIn{from{opacity:0;transform:translateY(24px) scale(.92)}to{opacity:1;transform:none}}
+#confetti{position:fixed;inset:0;pointer-events:none;z-index:210;display:none}
+
+.cmp-grid{display:grid;grid-template-columns:1fr auto 1fr;gap:10px;align-items:stretch;margin:6px 0 2px}
+.cmp-col{background:rgba(var(--ink-panel-rgb),.6);border:1px solid var(--line);border-radius:14px;padding:14px 10px;text-align:center}
+.cmp-col small{color:var(--muted);font-size:.64rem;letter-spacing:1.2px;text-transform:uppercase;font-family:var(--mono)}
+.cmp-col b{display:block;font-size:1.5rem;font-family:var(--mono);color:var(--ember);line-height:1.4}
+.cmp-col.post b{color:var(--corner)}
+.cmp-arrow{display:flex;align-items:center;justify-content:center;color:var(--gold2);font-size:1.4rem;font-family:var(--mono)}
+.delta{text-align:center;margin-top:12px;font-size:1.05rem;font-weight:600;color:var(--corner)}
+.delta.flat{color:var(--gold)}.delta.down{color:var(--red)}
+.dstars{display:grid;gap:9px;margin-top:10px}
+.dstar-row{display:grid;grid-template-columns:1fr auto auto;gap:10px;align-items:center;background:rgba(var(--ink-panel-rgb),.5);
+  border:1px solid var(--line);border-radius:12px;padding:9px 12px;font-size:.86rem}
+.dstar-row .lbl{min-width:0}
+.badges{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin:13px 0 4px}
+.badge{border:1px solid var(--ember-dim);background:rgba(192,132,252,.08);border-radius:999px;padding:6px 15px;
+  font-size:.78rem;display:flex;gap:7px;align-items:center;animation:fadeUp .5s backwards}
+.badge b{color:var(--ember);font-weight:600}
+.badge.locked{opacity:.35;border-style:dashed}
+.advice{list-style:none;padding:0;margin:8px 0 0;display:grid;gap:8px}
+.advice li{display:flex;gap:9px;align-items:flex-start;font-size:.88rem;background:rgba(var(--ink-panel-rgb),.5);
+  border:1px solid var(--line);border-radius:11px;padding:9px 12px}
+.advice li::before{content:'\25B8';color:var(--gold);font-weight:700}
+.chartbox{position:relative;width:100%;height:330px;margin-top:10px}
+#radarFallback{width:100%;height:100%;display:none}
+
+#toast{position:fixed;left:50%;bottom:22px;transform:translate(-50%,26px);z-index:180;opacity:0;pointer-events:none;
+  background:rgba(var(--panel-rgb),.97);border:1px solid var(--ember-dim);border-radius:999px;padding:9px 20px;
+  font-size:.84rem;transition:.4s cubic-bezier(.2,.8,.2,1);box-shadow:var(--shadow);max-width:90vw;text-align:center}
+#toast.show{opacity:1;transform:translate(-50%,0)}
+
+footer{border-top:1px solid var(--line);margin-top:26px;padding:18px 16px 30px;text-align:center;
+  background:linear-gradient(180deg,transparent,rgba(var(--ink-panel-rgb),.7))}
+footer p{margin:0;font-size:.8rem;color:var(--muted);line-height:1.8}
+footer b{color:var(--ember);font-weight:600}
+footer .fmono{font-family:var(--mono);font-size:.68rem;color:#7b6a96;letter-spacing:1px}
+
+@media (max-width:860px){
+  .grid2{grid-template-columns:1fr}
+  .wrap{padding:12px 12px 16px}
+  .panel{padding:15px}
+  .panel+.panel{margin-top:12px}
+  h2{font-size:1.08rem}
+  .star{width:44px;height:44px}
+  .brand span{display:none}
+  .dcard{flex-direction:column;text-align:center;gap:8px}
+  .dcard .ico{flex:none}
+}
+@media (max-width:430px){
+  .cmp-grid{grid-template-columns:1fr}
+  .cmp-arrow{transform:rotate(90deg);padding:2px 0}
+  .q-text{font-size:.96rem}
+  .choice{font-size:.9rem;padding:11px 12px}
+  .btn{padding:10px 18px;font-size:.88rem}
+  .player-chip{max-width:104px}
+  .odometer{font-size:1.15rem;padding:10px 12px;min-width:190px}
+}
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.01ms !important;animation-iteration-count:1 !important;transition-duration:.05s !important}
+  .star{opacity:1;transform:none}
+}
+
+.howto{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:8px;margin:14px 0}
+.howto .hk{display:flex;gap:10px;align-items:baseline;padding:9px 12px;border-radius:11px;
+  border:1px solid var(--line);background:var(--panel)}
+.howto .hk b{font-family:var(--mono);color:var(--ember);font-size:.8rem;white-space:nowrap}
+.howto .hk span{color:var(--muted);font-size:.82rem}
+#arcade{position:fixed;inset:0;z-index:90;display:none;background:var(--bg);flex-direction:column}
+#arcade.show{display:flex}
+.ac-top{position:relative;flex:0 0 auto;height:32vh;min-height:168px;max-height:300px;border-bottom:1px solid var(--line);overflow:hidden}
+#acv{display:block;width:100%;height:100%}
+.ac-hud{position:absolute;top:8px;left:8px;right:8px;display:flex;gap:6px;align-items:center;flex-wrap:wrap;pointer-events:none}
+.ac-chip{display:inline-flex;align-items:center;gap:5px;padding:4px 10px;border-radius:999px;font-size:.72rem;
+  color:var(--muted);background:var(--panel);border:1px solid var(--line)}
+.ac-chip b{color:var(--text);font-family:var(--mono)}
+.ac-chip.hot{border-color:var(--gold);color:var(--gold);box-shadow:0 0 14px var(--ember-dim)}
+.ac-exit{pointer-events:auto;margin-left:auto}
+.ac-bar{position:absolute;left:0;right:0;bottom:0;height:5px;background:rgba(0,0,0,.45)}
+.ac-bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--corner),var(--gold));transition:width .55s cubic-bezier(.2,.9,.3,1.25)}
+.ac-play{flex:1 1 auto;overflow-y:auto;padding:14px;display:flex;justify-content:center;-webkit-overflow-scrolling:touch}
+.ac-card{width:min(680px,100%);height:max-content;background:var(--panel2);border:1px solid var(--line);
+  border-radius:18px;padding:18px;box-shadow:var(--shadow)}
+.ac-card h2{margin:0 0 8px}
+.ac-card .choice{padding:15px 14px;font-size:.98rem}
+#acEnd{position:fixed;inset:0;display:none;place-items:center;padding:14px;background:rgba(0,0,0,.82);z-index:10;overflow:auto}
+#acEnd.show{display:grid}
+#acEnd .ac-card{max-height:92vh;overflow:auto}
+.ac-mini{display:flex;gap:16px;align-items:center;justify-content:center;flex-wrap:wrap;margin:14px 0 6px;
+  padding:12px;border-radius:14px;border:1px solid var(--line);background:var(--panel)}
+.ac-mini svg{width:190px;height:172px;flex:0 0 auto}
+.ac-mini .legend{font-size:.76rem;color:var(--muted);line-height:2;text-align:left}
+.ac-mini .legend i{display:inline-block;width:11px;height:11px;border-radius:3px;margin-right:7px;vertical-align:middle}
+.ac-mini .legend b{color:var(--text);font-family:var(--mono)}
+@media(max-width:560px){
+  .ac-top{height:27vh;min-height:140px}
+  .ac-chip{font-size:.66rem;padding:3px 8px}
+  .ac-play{padding:10px}
+  .ac-card{padding:14px;border-radius:14px}
+  .ac-card .choice{padding:16px 12px}
+  .ac-mini{gap:10px;padding:10px}
+  .ac-mini svg{width:158px;height:144px}
+  .ac-mini .legend{font-size:.7rem;line-height:1.85}
+}
+
+/* โค้ดหลายบรรทัดต้องรักษาการขึ้นบรรทัดและชิดซ้ายเสมอ */
+.codebox{white-space:pre-wrap;text-align:left;font-size:.92rem;line-height:1.62}
+.qcode{margin:10px 0;font-size:.86rem;padding:12px 12px}
+.q-text{line-height:1.6}
+@media(max-width:560px){ .codebox{font-size:.82rem} .qcode{font-size:.78rem;padding:10px} }
+
+/* ---------- theme extras ---------- */
+
+.torch{display:flex;gap:10px;flex-wrap:wrap;margin:12px 0}
+.gate{flex:1 1 150px;min-width:150px;padding:12px 14px;border-radius:12px;border:1px solid var(--line);
+  background:rgba(var(--panel-rgb),.6);transition:.28s;position:relative;overflow:hidden}
+.gate .gt{font-family:var(--mono);font-size:.82rem;color:var(--muted)}
+.gate .gr{font-weight:600;margin-top:4px;font-size:.92rem}
+.gate.testing{border-color:var(--gold);box-shadow:0 0 16px rgba(251,191,36,.35);transform:translateY(-2px)}
+.gate.passed{border-color:var(--corner);background:rgba(74,222,128,.10)}
+.gate.failed{opacity:.4}
+.gate.skipped{opacity:.22;filter:grayscale(.6)}
+.gate .flag{position:absolute;top:8px;right:10px;font-family:var(--mono);font-size:.68rem;letter-spacing:1px;color:var(--muted)}
+.gate.passed .flag{color:var(--corner)}
+.gate.failed .flag{color:var(--red)}
+.trapgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:8px;margin:10px 0}
+.swrow{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:10px 0}
+.toggle{padding:9px 14px;border-radius:11px;cursor:pointer;font-family:var(--mono);font-size:.8rem;font-weight:700;
+  border:1px solid var(--line);background:rgba(192,132,252,.08);color:var(--muted);transition:.2s}
+.toggle.on{color:var(--bg);background:var(--corner);border-color:var(--corner)}
+.toggle.off{color:var(--bg);background:var(--red);border-color:var(--red)}
+.tape{font-family:var(--mono);font-size:1.05rem;letter-spacing:2px;min-height:46px;display:flex;align-items:center;
+  gap:8px;flex-wrap:wrap;padding:12px 14px;border-radius:12px;background:rgba(var(--ink-panel-rgb),.7);border:1px solid var(--line)}
+.tape span{padding:3px 9px;border-radius:8px;background:rgba(192,132,252,.16);animation:tapein .3s ease}
+@keyframes tapein{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+
+
+/* v6.01 — ตัวดำเนินการในข้อความบรรยาย ต้องอ่านออกว่าเป็นสองขีดหรือขีดเดียว */
+.q-text code.ic,.explain code.ic,.choice code.ic,.qmeta code.ic{
+  font-family:var(--mono);font-size:.94em;letter-spacing:.09em;
+  background:rgba(255,255,255,.07);border:1px solid var(--line);
+  border-radius:4px;padding:1px 5px;white-space:nowrap;color:var(--gold)}
+</style>
+</head>
+<body>
+
+<canvas id="confetti"></canvas>
+
+
+<div id="arcade" aria-hidden="true" role="dialog" aria-label="ด่านไต่หอเขาวงกต">
+  <div class="ac-top">
+    <canvas id="acv"></canvas>
+    <div class="ac-hud">
+      <span class="ac-chip" id="acTag">ARCADE</span>
+      <span class="ac-chip">ข้อ <b id="acProg">0/6</b></span>
+      <span class="ac-chip">ชั้น <b id="acFloor">0</b></span>
+      <span class="ac-chip" id="acComboChip">Combo <b id="acCombo">0</b></span>
+      <span class="ac-chip">เวลา <b id="acTime">0:00</b></span>
+      <button class="icon-btn ac-exit" id="acExit" title="ออกจากด่าน (Esc)">ESC</button>
+    </div>
+    <div class="ac-bar"><i id="acBar"></i></div>
+  </div>
+  <div class="ac-play"><div class="ac-card" id="acQCard"></div></div>
+  <div id="acEnd"><div class="ac-card">
+    <h2 id="acEndTitle">จบด่าน</h2>
+    <p id="acEndBody" class="muted"></p>
+    <div class="ac-mini" id="acMini"></div>
+    <div class="btn-row"><button class="btn primary" id="acEndGo" style="flex:1">ดูผล</button></div>
+  </div></div>
+</div>
+
+
+<div id="reveal" role="dialog" aria-modal="true" aria-labelledby="rvL1">
+  <div class="rv-stage">
+    <div class="rv-line" id="rvL1">PRETEST COMPLETE</div>
+    <div class="star-row" id="rvStars"></div>
+    <div class="rv-rank" id="rvRank">—</div>
+    <div class="rv-score" id="rvScore">0/6</div>
+    <div class="rv-line" id="rvL2" style="letter-spacing:3px">RAW SCORE</div>
+    <div class="rv-sub" id="rvSub"></div>
+    <button class="btn primary" id="rvGo" style="margin-top:20px;display:none">ไปต่อ</button>
+  </div>
+</div>
+
+<header id="topbar">
+  <div class="topbar-in">
+    <div class="tb-top">
+      <div class="brand"><i class="dot"></i><span>LOGIC LABYRINTH</span></div>
+      <div class="tb-xp-mini">
+        <span class="lvl" id="lvlTxt">LV.1</span>
+        <div class="bar xp"><i id="xpBar"></i></div>
+        <span class="lvl" id="xpTxt">0 XP</span>
+      </div>
+      <div id="navrail"></div>
+      <div class="tb-right">
+        <button class="icon-btn" id="btnSound" title="เปิด/ปิดเสียง" aria-label="เปิดหรือปิดเสียง">SND</button>
+        <button class="icon-btn" id="btnCsv" title="บันทึกคะแนนเป็นไฟล์ CSV" aria-label="บันทึกคะแนนเป็นไฟล์ CSV">CSV</button>
+        <button class="icon-btn" id="btnReset" title="เริ่มภารกิจใหม่" aria-label="เริ่มภารกิจใหม่">RST</button>
+        <button class="icon-btn" id="btnTheme" title="สลับโหมดสว่าง/มืด" aria-label="สลับโหมดสว่างหรือมืด">🌓</button>
+        <div class="player-chip" id="chipName"><span id="chipAva"></span><span class="pn" id="chipTxt">—</span></div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<div class="wrap">
+
+<!-- ===== 0) WELCOME ===== -->
+<section id="scr-welcome" class="screen active">
+  <div class="hero">
+    <svg class="cityart" viewBox="0 0 480 300" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="ภาพเขาวงกตแห่งเงื่อนไข">
+  <defs>
+    <radialGradient id="gTorch" cx="50%" cy="40%" r="62%">
+      <stop offset="0%" stop-color="rgba(251,191,36,.34)"/><stop offset="100%" stop-color="rgba(251,191,36,0)"/>
+    </radialGradient>
+    <filter id="fGlow"><feGaussianBlur stdDeviation="3" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+  </defs>
+  <rect x="0" y="0" width="480" height="300" rx="18" fill="#0d0718"/>
+  <circle cx="240" cy="130" r="150" fill="url(#gTorch)"/>
+  <g stroke="#c084fc" stroke-width="3" fill="none" opacity=".85">
+    <path d="M60 250 V150 H140 V90 H240"/>
+    <path d="M240 90 V40"/>
+    <path d="M240 90 H340 V150 H420 V250"/>
+    <path d="M140 150 H200 V210 H300 V150 H360"/>
+  </g>
+  <circle cx="240" cy="90" r="13" fill="#fbbf24" filter="url(#fGlow)"/>
+  <text x="240" y="95" text-anchor="middle" font-size="12" font-weight="700" fill="#0d0718">if</text>
+  <circle cx="140" cy="150" r="11" fill="#c084fc" filter="url(#fGlow)"/>
+  <circle cx="340" cy="150" r="11" fill="#c084fc" filter="url(#fGlow)"/>
+  <rect x="34" y="238" width="52" height="24" rx="6" fill="#4ade80"/>
+  <text x="60" y="255" text-anchor="middle" font-size="11" font-weight="700" fill="#0d0718">TRUE</text>
+  <rect x="394" y="238" width="52" height="24" rx="6" fill="#fb7185"/>
+  <text x="420" y="255" text-anchor="middle" font-size="11" font-weight="700" fill="#0d0718">FALSE</text>
+  <text x="240" y="286" text-anchor="middle" font-size="10" letter-spacing="3" fill="#a898c4">IF · ELSE IF · ELSE · SWITCH-CASE · BREAK</text>
+</svg>
+    <h1 class="title">LOGIC LABYRINTH : เขาวงกตแห่งเงื่อนไข</h1>
+    <p class="subtitle">สวมบทบาท <b>ผู้ผจญภัย</b> เดินฝ่า 3 ห้องของเขาวงกตแห่งเงื่อนไข ตั้งแต่ประตูสามชั้นของ if-else ห้องกับดักเงาซ้อน ไปจนถึงโถงหลายแพร่งของ switch-case สะสม XP และดาว วัดพัฒนาการก่อน–หลังเรียน</p>
+    <div class="panel login-card">
+      <span class="tag">Adventurer Registration</span>
+      <label for="playerName">ชื่อผู้เล่น (ใช้แสดงบนใบรายงานผล)</label>
+      <input type="text" id="playerName" maxlength="24" autocomplete="off" placeholder="เช่น สมาร์ท / รหัส 67xxxxx">
+      <div class="err" id="nameErr">กรุณากรอกชื่อก่อนเริ่มภารกิจ</div>
+      <label style="margin-top:16px">เลือกอวตารประจำตัว</label>
+      <div class="avatar-grid" id="avatarGrid"></div>
+      <div class="btn-row">
+        <button class="btn primary" id="btnStart" style="flex:1">เริ่มภารกิจ</button>
+      </div>
+      <div style="display:flex;gap:8px;margin-top:10px">
+        <button class="btn sm ghost" id="wSound" style="flex:1">เสียง: เปิด</button>
+        <button class="btn sm ghost" id="wResume" style="flex:1;display:none">เล่นต่อจากเดิม</button>
+      </div>
+    </div>
+    <div class="feature-row"><span>โหมดไต่หอ · เล่นด้วยการตอบอย่างเดียว</span><span>GNR1007 วันที่ 2</span><span>บทที่ 5 · if-else / switch</span><span>PRETEST / POSTTEST</span><span>ระบบดาว 6 ดวง · 1 ดาว = 1 ข้อ</span><span>XP &amp; COMBO</span><span>ส่งออกคะแนน CSV</span></div>
+  </div>
+</section>
+
+<!-- ===== PRETEST ===== -->
+<section id="scr-pretest" class="screen">
+  <div class="panel">
+    <span class="tag">Checkpoint 00 · Pretest</span>
+    <h2>ด่านทดสอบก่อนเรียน</h2>
+    <p class="muted">6 ข้อ (สุ่มจากแต่ละด่าน ด่านละ 2 ข้อ) เล่นในโหมดอาร์เคด — ตอบตามความเข้าใจปัจจุบัน
+      ไม่ต้องกังวลถ้ายังไม่รู้คำตอบ คะแนนชุดนี้คือ <b>เส้นฐาน</b> ที่จะใช้เทียบกับหลังเรียน</p>
+    <div class="howto">
+      <div class="hk"><b>แตะ</b><span>เล่นด้วยการแตะคำตอบอย่างเดียว ไม่มีปุ่มเดิน ไม่มีปุ่มกระโดด</span></div>
+      <div class="hk"><b>ตอบถูก</b><span>ตัวละครไต่หอเขาวงกตขึ้น 1 ชั้น ทันที · ต่อเนื่องหลายข้อได้โบนัส Combo</span></div>
+      <div class="hk"><b>ตอบผิด</b><span>ไม่ตกลงมา ไม่มีแพ้ — อ่านเฉลยแล้วไปข้อถัดไปได้เลย</span></div>
+      <div class="hk"><b>1 2 3 4</b><span>ทางลัดสำหรับคอมพิวเตอร์ (บนมือถือใช้แตะปุ่มใหญ่)</span></div>
+      <div class="hk"><b>จบด่าน</b><span>ตอบครบทุกข้อ = ดูผล พร้อมกราฟเรดาร์บอกจุดแข็ง-จุดอ่อนทันที</span></div>
+      <div class="hk"><b>ดาว</b><span>ตอบถูก 1 ข้อ = 1 ดาว เต็ม 6 ข้อ = 6 ดาว ตัวเลขดาวกับคะแนนจึงตรงกันเสมอ</span></div>
+    </div>
+    <div class="btn-row"><button class="btn primary" id="preLaunch" style="flex:1">เริ่มด่านทดสอบก่อนเรียน</button></div>
+  </div>
+</section>
+
+
+<!-- ===== PREVIEW 1 ===== -->
+<section id="scr-preview1" class="screen">
+  <div class="panel">
+    <span class="tag">Before Chamber 01</span>
+    <h2>กำลังจะเข้าสู่: ห้องประตูสามชั้น (The Three Gates)</h2>
+    <div class="dcard">
+      <div class="ico"><svg viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg">
+        <rect x="12" y="16" width="16" height="48" rx="3" fill="#c084fc"/>
+        <rect x="32" y="24" width="16" height="40" rx="3" fill="#fbbf24"/>
+        <rect x="52" y="34" width="16" height="30" rx="3" fill="#4ade80"/>
+      </svg></div>
+      <div><div class="skillcard" style="margin:0">
+        <div class="sk-name">ทักษะที่จะได้: if / else if / else</div>
+        <p class="muted" style="margin:6px 0 0">อ่านเงื่อนไขจากบนลงล่าง รู้ว่า "เจอจริงตัวแรกทำแล้วข้ามที่เหลือทั้งหมด" และวางลำดับเงื่อนไขให้ถูกต้อง</p>
+      </div></div>
+    </div>
+    <div class="btn-row"><button class="btn primary" data-goto="scr-lesson1">เข้าห้องนี้</button></div>
+  </div>
+</section>
+
+<!-- ===== CHAMBER 1 ===== -->
+<section id="scr-lesson1" class="screen">
+  <div class="panel">
+    <span class="tag">Chamber 01 · The Three Gates</span>
+    <h2>ห้องประตูสามชั้น: if / else if / else</h2>
+    <p>ในเขาวงกตนี้ ผู้ผจญภัยต้องเดินผ่านประตูเรียงกันจากบนลงล่าง <b>ประตูแรกที่เงื่อนไขเป็นจริงจะเปิดให้ผ่าน แล้วประตูที่เหลือจะถูกปิดตายทันที</b>
+      นี่คือหัวใจของ if-else ที่ข้อสอบ กว. ชอบหลอก</p>
+    <div class="stage"><svg viewBox="0 0 360 176" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="ผังการทำงานของ if else if else">
+      <rect x="8" y="8" width="344" height="160" rx="12" fill="rgba(8,4,16,.55)" stroke="rgba(192,132,252,.18)"/>
+      <rect x="120" y="18" width="120" height="26" rx="6" fill="#c084fc"/>
+      <text x="180" y="35" text-anchor="middle" font-size="11" font-weight="700" fill="#0d0718">score &gt;= 80 ?</text>
+      <path d="M180 44 V60" stroke="#a898c4" stroke-width="2"/>
+      <rect x="120" y="60" width="120" height="26" rx="6" fill="#d8b4fe"/>
+      <text x="180" y="77" text-anchor="middle" font-size="11" font-weight="700" fill="#0d0718">score &gt;= 70 ?</text>
+      <path d="M180 86 V102" stroke="#a898c4" stroke-width="2"/>
+      <rect x="120" y="102" width="120" height="26" rx="6" fill="#fbbf24"/>
+      <text x="180" y="119" text-anchor="middle" font-size="11" font-weight="700" fill="#0d0718">score &gt;= 60 ?</text>
+      <path d="M180 128 V144" stroke="#a898c4" stroke-width="2"/>
+      <rect x="132" y="144" width="96" height="22" rx="6" fill="#fb7185"/>
+      <text x="180" y="159" text-anchor="middle" font-size="11" font-weight="700" fill="#0d0718">else → F</text>
+      <g font-size="10" fill="#4ade80">
+        <path d="M240 31 H300" stroke="#4ade80" stroke-width="2"/><text x="306" y="34">A</text>
+        <path d="M240 73 H300" stroke="#4ade80" stroke-width="2"/><text x="306" y="76">B</text>
+        <path d="M240 115 H300" stroke="#4ade80" stroke-width="2"/><text x="306" y="118">C</text>
+      </g>
+    </svg></div>
+    <div class="codebox">int score = 75;
+
+if (score &gt;= 80)      printf("A");
+else if (score &gt;= 70) printf("B");   // ประตูนี้เปิด
+else if (score &gt;= 60) printf("C");   // ไม่ถูกตรวจแล้ว
+else                  printf("F");</div>
+    <div class="tbl-wrap"><table>
+      <tr><th>สิ่งที่นักศึกษาคิด</th><th>สิ่งที่คอมพิวเตอร์ทำจริง</th></tr>
+      <tr><td>75 ผ่านทั้งเกณฑ์ 70 และ 60 น่าจะพิมพ์ B และ C</td><td>พิมพ์เฉพาะ <b>B</b> เพราะเจอจริงตัวแรกแล้วออกจากโครงสร้างทันที</td></tr>
+      <tr><td>เขียนเงื่อนไขสลับลำดับก็ได้ผลเหมือนกัน</td><td>ถ้าเอา <code>score &gt;= 60</code> ขึ้นก่อน ทุกคนที่ได้ 75 จะกลายเป็น C ทันที</td></tr>
+    </table></div>
+
+    <h3 style="margin-top:18px">ห้องทดลอง: เดินผ่านประตู (Gate Runner)</h3>
+    <p class="muted">เลือกคะแนนแล้วดูว่าประตูไหนถูกตรวจ ประตูไหนถูกข้าม — ลองให้ครบทั้ง 4 ปุ่มเพื่อรับ XP เต็ม</p>
+    <div class="btn-row">
+      <button class="btn sm" data-gate="95">score = 95</button>
+      <button class="btn sm" data-gate="75">score = 75</button>
+      <button class="btn sm" data-gate="60">score = 60</button>
+      <button class="btn sm" data-gate="42">score = 42</button>
+    </div>
+    <div class="torch" id="gateRow">
+      <div class="gate" data-g="0"><span class="flag">—</span><div class="gt">if (score &gt;= 80)</div><div class="gr">พิมพ์ A</div></div>
+      <div class="gate" data-g="1"><span class="flag">—</span><div class="gt">else if (score &gt;= 70)</div><div class="gr">พิมพ์ B</div></div>
+      <div class="gate" data-g="2"><span class="flag">—</span><div class="gt">else if (score &gt;= 60)</div><div class="gr">พิมพ์ C</div></div>
+      <div class="gate" data-g="3"><span class="flag">—</span><div class="gt">else</div><div class="gr">พิมพ์ F</div></div>
+    </div>
+    <div class="status-line" id="gateStatus">ยังไม่ได้เริ่มเดินเขาวงกต</div>
+    <div class="btn-row"><button class="btn primary" data-quiz="check1">ไปทำแบบฝึกหัดห้องนี้</button></div>
+  </div>
+</section>
+
+<!-- ===== PREVIEW 2 ===== -->
+<section id="scr-preview2" class="screen">
+  <div class="panel">
+    <span class="tag">Before Chamber 02</span>
+    <h2>กำลังจะเข้าสู่: ห้องกับดักเงาซ้อน (The Shadow Traps)</h2>
+    <div class="dcard">
+      <div class="ico"><svg viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg">
+        <path d="M40 12 L64 40 L40 68 L16 40 Z" fill="none" stroke="#fb7185" stroke-width="3"/>
+        <path d="M40 26 L54 40 L40 54 L26 40 Z" fill="#fbbf24"/>
+      </svg></div>
+      <div><div class="skillcard" style="margin:0">
+        <div class="sk-name">ทักษะที่จะได้: กับดัก if ที่ข้อสอบรัก</div>
+        <p class="muted" style="margin:6px 0 0">Dangling else, <code>=</code> กับ <code>==</code>, semicolon เกิน และกฎ "ไม่ใช่ 0 คือจริง" ของภาษา C</p>
+      </div></div>
+    </div>
+    <div class="btn-row"><button class="btn primary" data-goto="scr-lesson2">เข้าห้องนี้</button></div>
+  </div>
+</section>
+
+<!-- ===== CHAMBER 2 ===== -->
+<section id="scr-lesson2" class="screen">
+  <div class="panel">
+    <span class="tag">Chamber 02 · The Shadow Traps</span>
+    <h2>ห้องกับดักเงาซ้อน: 4 กับดักที่ทำให้เสียคะแนนมากที่สุด</h2>
+    <div class="tbl-wrap"><table>
+      <tr><th>กับดัก</th><th>สิ่งที่ตาเห็น</th><th>สิ่งที่เกิดขึ้นจริง</th></tr>
+      <tr><td>Dangling else</td><td>ย่อหน้าทำให้คิดว่า else คู่กับ if ตัวนอก</td><td>else จับคู่กับ <b>if ที่ใกล้ที่สุด</b> เสมอ คอมไพเลอร์ไม่สนใจย่อหน้า</td></tr>
+      <tr><td><code>=</code> แทน <code>==</code></td><td>คิดว่ากำลังเปรียบเทียบ</td><td>เป็นการ <b>กำหนดค่า</b> แล้วใช้ค่านั้นตัดสินจริง/เท็จ</td></tr>
+      <tr><td>semicolon เกิน</td><td><code>if (x &gt; 0);</code> ดูเหมือนปกติ</td><td>ตัว <code>;</code> ปิด if ทันที บล็อกข้างล่างจึงทำงาน <b>เสมอ</b></td></tr>
+      <tr><td>ค่าความจริงของตัวเลข</td><td>คิดว่าต้องเป็น true/false เท่านั้น</td><td>ใน C <b>0 = เท็จ</b> ส่วนเลขอื่นทุกตัวรวมทั้งค่าลบ = จริง</td></tr>
+    </table></div>
+
+    <h3 style="margin-top:18px">ห้องทดลอง: เครื่องตรวจจับกับดัก (Trap Detector)</h3>
+    <p class="muted">กดเปิดกับดักทีละอัน อ่านโค้ดในกรอบแล้วดูคำเฉลยว่าโปรแกรมพิมพ์อะไรจริง — เปิดให้ครบ 4 กับดักเพื่อรับ XP เต็ม</p>
+    <div class="trapgrid">
+      <button class="btn sm" data-trap="dangling">กับดัก 1: else ลอย</button>
+      <button class="btn sm" data-trap="assign">กับดัก 2: = กับ ==</button>
+      <button class="btn sm" data-trap="semi">กับดัก 3: ; เกิน</button>
+      <button class="btn sm" data-trap="truthy">กับดัก 4: if (เลข)</button>
+    </div>
+    <div class="codebox" id="trapCode">เลือกกับดักด้านบนเพื่อดูโค้ด</div>
+    <div class="status-line" id="trapStatus">ยังไม่ได้เปิดกับดักใด</div>
+    <div class="btn-row"><button class="btn primary" data-quiz="check2">ไปทำแบบฝึกหัดห้องนี้</button></div>
+  </div>
+</section>
+
+<!-- ===== PREVIEW 3 ===== -->
+<section id="scr-preview3" class="screen">
+  <div class="panel">
+    <span class="tag">Before Chamber 03</span>
+    <h2>กำลังจะเข้าสู่: โถงหลายแพร่ง (The Switchboard Hall)</h2>
+    <div class="dcard">
+      <div class="ico"><svg viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="40" cy="40" r="26" fill="none" stroke="#c084fc" stroke-width="3"/>
+        <path d="M40 14 V40 L58 52" stroke="#4ade80" stroke-width="3" fill="none" stroke-linecap="round"/>
+        <circle cx="40" cy="40" r="4" fill="#fbbf24"/>
+      </svg></div>
+      <div><div class="skillcard" style="margin:0">
+        <div class="sk-name">ทักษะที่จะได้: switch-case &amp; break</div>
+        <p class="muted" style="margin:6px 0 0">รู้ว่า switch เทียบค่าเท่ากันเท่านั้น และเห็นด้วยตาว่าการไม่ใส่ break ทำให้ผลลัพธ์ "ไหลทะลุ" อย่างไร</p>
+      </div></div>
+    </div>
+    <div class="btn-row"><button class="btn primary" data-goto="scr-lesson3">เข้าห้องนี้</button></div>
+  </div>
+</section>
+
+<!-- ===== CHAMBER 3 ===== -->
+<section id="scr-lesson3" class="screen">
+  <div class="panel">
+    <span class="tag">Chamber 03 · The Switchboard Hall</span>
+    <h2>โถงหลายแพร่ง: switch-case และประตูกั้นชื่อ break</h2>
+    <p><code>switch</code> คือทางแยกหลายแพร่งที่ <b>เทียบค่าเท่ากันเท่านั้น</b> ใช้ได้กับ <code>int</code> และ <code>char</code>
+      ใช้ช่วงค่าแบบ <code>score &gt;= 80</code> ไม่ได้ และที่สำคัญที่สุดคือ <code>break</code> ทำหน้าที่เป็นประตูกั้น
+      ถ้าไม่มี โปรแกรมจะไหลลง case ถัดไปเรื่อย ๆ</p>
+    <div class="codebox" id="swCode">switch (day) {
+    case 1: printf("Mon "); break;
+    case 2: printf("Tue "); break;
+    case 3: printf("Wed "); break;
+    default: printf("Other");
+}</div>
+
+    <h3 style="margin-top:18px">ห้องทดลอง: สวิตช์บอร์ด (Switchboard)</h3>
+    <p class="muted">เลือกค่าของ day แล้วสลับสวิตช์ break เพื่อดูว่าผลลัพธ์ที่พิมพ์เปลี่ยนไปอย่างไร — ทดลองให้ครบ 6 รูปแบบเพื่อรับ XP เต็ม<br>
+      สวิตช์ break ควบคุม <b>ทุก case พร้อมกัน</b> และโค้ดด้านบนจะเปลี่ยนตามสวิตช์เสมอ ผลลัพธ์ที่ได้จึงตรงกับโค้ดที่เห็น</p>
+    <div class="swrow">
+      <button class="btn sm" data-sw="1">day = 1</button>
+      <button class="btn sm" data-sw="2">day = 2</button>
+      <button class="btn sm" data-sw="3">day = 3</button>
+      <button class="btn sm" data-sw="9">day = 9</button>
+      <button class="toggle on" id="brkToggle">break: ON</button>
+    </div>
+    <div class="tape" id="swTape">ผลลัพธ์จะปรากฏที่นี่</div>
+    <div class="status-line" id="swStatus">ยังไม่ได้กดสวิตช์</div>
+    <div class="btn-row"><button class="btn primary" data-quiz="check3">ไปทำแบบฝึกหัดห้องนี้</button></div>
+  </div>
+</section>
+
+<section id="scr-check1" class="screen">
+  <div class="panel">
+    <span class="tag">Checkpoint · Chamber 01</span>
+    <h2>ด่านฝึกหัด: ห้องประตูสามชั้น</h2>
+    <p class="muted">3 ข้อ เล่นในโหมดอาร์เคด ทำผิดได้ ไม่มีผลต่อคะแนนดาว — จุดประสงค์คือให้แน่ใจว่าเข้าใจก่อนไปด่านถัดไป</p>
+    <div class="status-line" id="check1Result">ยังไม่ได้ลงด่านฝึกหัดนี้</div>
+    <div class="btn-row"><button class="btn primary" data-requiz="check1" style="flex:1">เริ่มด่านฝึกหัด (สุ่มข้อใหม่ทุกครั้ง)</button></div>
+    <div class="btn-row" id="check1Next" style="display:none">
+      <button class="btn primary" data-goto="scr-preview2">ไปด่านถัดไป</button>
+    </div>
+  </div>
+</section>
+
+<section id="scr-check2" class="screen">
+  <div class="panel">
+    <span class="tag">Checkpoint · Chamber 02</span>
+    <h2>ด่านฝึกหัด: ห้องกับดักเงาซ้อน</h2>
+    <p class="muted">3 ข้อ เล่นในโหมดอาร์เคด ทำผิดได้ ไม่มีผลต่อคะแนนดาว — จุดประสงค์คือให้แน่ใจว่าเข้าใจก่อนไปด่านถัดไป</p>
+    <div class="status-line" id="check2Result">ยังไม่ได้ลงด่านฝึกหัดนี้</div>
+    <div class="btn-row"><button class="btn primary" data-requiz="check2" style="flex:1">เริ่มด่านฝึกหัด (สุ่มข้อใหม่ทุกครั้ง)</button></div>
+    <div class="btn-row" id="check2Next" style="display:none">
+      <button class="btn primary" data-goto="scr-preview3">ไปด่านถัดไป</button>
+    </div>
+  </div>
+</section>
+
+<section id="scr-check3" class="screen">
+  <div class="panel">
+    <span class="tag">Checkpoint · Chamber 03</span>
+    <h2>ด่านฝึกหัด: โถงหลายแพร่ง</h2>
+    <p class="muted">3 ข้อ เล่นในโหมดอาร์เคด ทำผิดได้ ไม่มีผลต่อคะแนนดาว — จุดประสงค์คือให้แน่ใจว่าเข้าใจก่อนไปด่านถัดไป</p>
+    <div class="status-line" id="check3Result">ยังไม่ได้ลงด่านฝึกหัดนี้</div>
+    <div class="btn-row"><button class="btn primary" data-requiz="check3" style="flex:1">เริ่มด่านฝึกหัด (สุ่มข้อใหม่ทุกครั้ง)</button></div>
+    <div class="btn-row" id="check3Next" style="display:none">
+      <button class="btn primary" id="goPost">ไปแบบทดสอบหลังเรียน</button>
+    </div>
+  </div>
+</section>
+
+
+<!-- ===== POSTTEST ===== -->
+<section id="scr-posttest" class="screen">
+  <div class="panel">
+    <span class="tag">Checkpoint 04 · Posttest</span>
+    <h2>ด่านทดสอบหลังเรียน</h2>
+    <p class="muted">6 ข้อใหม่ (ห้องละ 2 ข้อ) เพื่อวัดความเข้าใจหลังผ่านครบทั้ง 3 ห้องของเขาวงกต — เล่นในโหมดอาร์เคดเช่นเดียวกับก่อนเรียน เพื่อให้เทียบผลกันได้อย่างเป็นธรรม</p>
+    <div class="howto">
+      <div class="hk"><b>แตะ</b><span>เล่นด้วยการแตะคำตอบอย่างเดียว ไม่มีปุ่มเดิน ไม่มีปุ่มกระโดด</span></div>
+      <div class="hk"><b>ตอบถูก</b><span>ตัวละครไต่หอเขาวงกตขึ้น 1 ชั้น ทันที · ต่อเนื่องหลายข้อได้โบนัส Combo</span></div>
+      <div class="hk"><b>ตอบผิด</b><span>ไม่ตกลงมา ไม่มีแพ้ — อ่านเฉลยแล้วไปข้อถัดไปได้เลย</span></div>
+      <div class="hk"><b>1 2 3 4</b><span>ทางลัดสำหรับคอมพิวเตอร์ (บนมือถือใช้แตะปุ่มใหญ่)</span></div>
+      <div class="hk"><b>จบด่าน</b><span>ตอบครบทุกข้อ = ดูผล พร้อมกราฟเรดาร์บอกจุดแข็ง-จุดอ่อนทันที</span></div>
+      <div class="hk"><b>ดาว</b><span>ตอบถูก 1 ข้อ = 1 ดาว เต็ม 6 ข้อ = 6 ดาว ตัวเลขดาวกับคะแนนจึงตรงกันเสมอ</span></div>
+    </div>
+    <div class="btn-row"><button class="btn primary" id="postLaunch" style="flex:1">เริ่มด่านทดสอบหลังเรียน</button></div>
+  </div>
+</section>
+
+<!-- ===== SUMMARY ===== -->
+<section id="scr-summary" class="screen">
+  <div class="panel">
+    <span class="tag">Expedition Report</span>
+    <h2>สรุปผลภารกิจ LOGIC LABYRINTH</h2>
+    <p class="muted" id="sumWho">—</p>
+    <div class="cmp-grid">
+      <div class="cmp-col">
+        <small>Pretest</small>
+        <div class="star-row sm" id="sumPreStars"></div>
+        <b id="sumPre">-</b>
+        <small id="sumPreRank">—</small>
+      </div>
+      <div class="cmp-arrow">&#8594;</div>
+      <div class="cmp-col post">
+        <small>Posttest</small>
+        <div class="star-row sm" id="sumPostStars"></div>
+        <b id="sumPost">-</b>
+        <small id="sumPostRank">—</small>
+      </div>
+    </div>
+    <div class="delta" id="sumMsg"></div>
+
+    <h3 style="margin-top:20px">ดาวรายด่าน (Posttest)</h3>
+    <p class="muted">ใช้เกณฑ์เดียวกับคะแนนรวมคือ 1 ดาว = ตอบถูก 1 ข้อ แต่ละด่านมี 2 ข้อ จึงเต็ม 2 ดาว — ใช้ดูว่ายังอ่อนด่านไหน</p>
+    <div class="dstars" id="sumDistrictStars"></div>
+
+    <h3 style="margin-top:20px">กราฟทักษะรายด้าน (Pretest vs Posttest)</h3>
+    <p class="muted">แต่ละแกนคำนวณจาก 2 ข้อของด่านนั้นในแบบทดสอบ (0/1/2 → 0%/50%/100%) ยกเว้นแกนภาพรวมที่คิดจากทั้ง 6 ข้อ</p>
+    <div class="chartbox"><canvas id="skillRadarChart"></canvas><svg id="radarFallback" viewBox="0 0 340 300" xmlns="http://www.w3.org/2000/svg"></svg></div>
+
+    <h3 style="margin-top:20px">เหรียญตราที่ได้รับ</h3>
+    <div class="badges" id="sumBadges"></div>
+
+    <h3 style="margin-top:20px">ข้อเสนอแนะเฉพาะบุคคล</h3>
+    <ul class="advice" id="sumAdvice"></ul>
+
+    <div class="hud" style="margin-top:18px">
+      <div class="stat"><b id="sumXp">0</b><small>XP รวม</small></div>
+      <div class="stat combo"><b id="sumCombo">0</b><small>Combo สูงสุด</small></div>
+      <div class="stat star"><b id="sumStarTotal">0</b><small>ดาวหลังเรียน</small></div>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn primary" id="btnReview">ทบทวนด่านที่ได้ดาวน้อยที่สุด</button>
+      <button class="btn" id="btnAgain">เริ่มภารกิจใหม่</button>
+    </div>
+  </div>
+</section>
+
+</div>
+
+<footer>
+  <p><b>GNR1007</b> · การโปรแกรมคอมพิวเตอร์สำหรับวิศวกร — วันที่ 2 (บทที่ 5)</p>
+  <p>ผศ.ดร.กุลวลัญช์ วรุณสิน · สาขาวิศวกรรมคอมพิวเตอร์ คณะวิศวกรรมศาสตร์ มหาวิทยาลัยรามคำแหง</p>
+  <p class="fmono">LOGIC LABYRINTH v6.21 — CLIMB MODE (TAP-ONLY) · MOBILE FIRST · SINGLE-FILE BUILD</p>
+</footer>
+
+<div id="toast" role="status" aria-live="polite"></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<script>
+
+/* ============ 1) UTILITIES ============ */
+const $  = s => document.querySelector(s);
+const $$ = s => Array.from(document.querySelectorAll(s));
+const clamp = (v,a,b) => Math.max(a, Math.min(b, v));
+const pick  = a => a[Math.floor(Math.random()*a.length)];
+const REDUCED = !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
+function shuffle(arr){const a=arr.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
+function pickN(arr,n){ return shuffle(arr).slice(0,n); }
+function esc(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+let toastT=null;
+function toast(msg,ms){const t=$('#toast');t.textContent=msg;t.classList.add('show');clearTimeout(toastT);toastT=setTimeout(()=>t.classList.remove('show'),ms||2600);}
+
+/* ============ 2) SOUND ENGINE (Web Audio, สังเคราะห์เอง) ============ */
+const SFX={on:true,ctx:null,ready:false,master:null,
+  init(){this.ready=true;if(this.ctx)return;try{const AC=window.AudioContext||window.webkitAudioContext;if(!AC)return;this.ctx=new AC();this.master=this.ctx.createGain();this.master.gain.value=0.20;this.master.connect(this.ctx.destination);}catch(e){this.ctx=null;}},
+  note(f,at,dur,type,vol){if(!this.on||!this.ctx)return;const c=this.ctx,o=c.createOscillator(),g=c.createGain();o.type=type||'sine';o.frequency.value=f;const t0=c.currentTime+(at||0);g.gain.setValueAtTime(0.0001,t0);g.gain.exponentialRampToValueAtTime(vol||0.4,t0+0.012);g.gain.exponentialRampToValueAtTime(0.0001,t0+(dur||0.15));o.connect(g);g.connect(this.master);o.start(t0);o.stop(t0+(dur||0.15)+0.03);},
+  noise(dur,vol){if(!this.on||!this.ctx)return;const c=this.ctx,n=Math.floor(c.sampleRate*dur);const buf=c.createBuffer(1,n,c.sampleRate),d=buf.getChannelData(0);for(let i=0;i<n;i++)d[i]=(Math.random()*2-1)*(1-i/n);const src=c.createBufferSource();src.buffer=buf;const f=c.createBiquadFilter();f.type='lowpass';f.frequency.value=1200;const g=c.createGain();g.gain.value=vol||0.3;src.connect(f);f.connect(g);g.connect(this.master);src.start();},
+  play(name){if(!this.ready)return;this.init();if(!this.on||!this.ctx)return;if(this.ctx.state==='suspended')this.ctx.resume();
+    switch(name){
+      case 'click':   this.note(700,0,.06,'square',.16); break;
+      case 'select':  this.note(1100,0,.05,'triangle',.14); break;
+      case 'correct': [523.25,659.25,783.99].forEach((f,i)=>this.note(f,i*.07,.22,'triangle',.42)); break;
+      case 'wrong':   this.note(196,0,.18,'sawtooth',.28); this.note(146.8,.1,.3,'sawtooth',.26); break;
+      case 'combo':   [783.99,1046.5,1318.5].forEach((f,i)=>this.note(f,i*.05,.18,'sine',.38)); break;
+      case 'star':    this.note(120,0,.09,'square',.42); this.noise(.12,.22); this.note(1174.7,.05,.3,'sine',.34); break;
+      case 'unlock':  [392,523.25,659.25,880].forEach((f,i)=>this.note(f,i*.09,.26,'triangle',.34)); break;
+      case 'bell':    this.note(1400,0,.05,'square',.3); this.note(1400,.08,.05,'square',.3); break;
+      case 'ping':    this.note(1046.5,0,.14,'sine',.32); break;
+      case 'tick':    this.note(880,0,.04,'square',.14); break;
+      case 'alarm':   this.note(320,0,.16,'sawtooth',.3); this.note(240,.16,.22,'sawtooth',.3); break;
+      case 'fanfare': [523.25,659.25,783.99,1046.5,1318.5].forEach((f,i)=>this.note(f,i*.11,.4,'triangle',.42)); break;
+    }}};
+function updSoundBtns(){const label='เสียง: '+(SFX.on?'เปิด':'ปิด');const w=$('#wSound');if(w)w.textContent=label;const b=$('#btnSound');if(b){b.classList.toggle('off',!SFX.on);b.textContent=SFX.on?'SND':'MUTE';b.title=label;}}
+
+/* ============ 3) CONFETTI ============ */
+let confettiRAF=null;
+function confetti(ms){
+  if(REDUCED) return;
+  const cv=$('#confetti'),ctx=cv.getContext('2d');
+  cv.width=innerWidth;cv.height=innerHeight;cv.style.display='block';
+  const cols=['#c084fc','#4ade80','#fbbf24','#fde68a','#fb7185','#86efac'];
+  const ps=Array.from({length:140},()=>({x:Math.random()*cv.width,y:-20-Math.random()*cv.height*0.6,r:4+Math.random()*6,vy:1.6+Math.random()*3.4,vx:-1.4+Math.random()*2.8,a:Math.random()*Math.PI,va:-0.14+Math.random()*0.28,c:pick(cols)}));
+  const stop=Date.now()+(ms||4000);cancelAnimationFrame(confettiRAF);
+  (function loop(){ctx.clearRect(0,0,cv.width,cv.height);ps.forEach(p=>{p.x+=p.vx;p.y+=p.vy;p.a+=p.va;if(p.y>cv.height+20){p.y=-20;p.x=Math.random()*cv.width;}ctx.save();ctx.translate(p.x,p.y);ctx.rotate(p.a);ctx.fillStyle=p.c;ctx.fillRect(-p.r/2,-p.r/2,p.r,p.r*1.6);ctx.restore();});if(Date.now()<stop)confettiRAF=requestAnimationFrame(loop);else{ctx.clearRect(0,0,cv.width,cv.height);cv.style.display='none';}})();
+}
+
+/* ============ 4) QUESTION BANK ============ */
+const BANK = {
+  district1:[
+    {q:'พิจารณาโปรแกรมต่อไปนี้<div class="qcode codebox">int score = 75;\n\nif (score &gt;= 80)      printf("A");\nelse if (score &gt;= 70) printf("B");\nelse if (score &gt;= 60) printf("C");\nelse                  printf("F");</div>โปรแกรมจะพิมพ์อะไร',c:['B','B และ C','C','A'],a:0,e:'if-else ตรวจจากบนลงล่าง เมื่อ 75 &gt;= 70 เป็นจริงจะพิมพ์ B แล้วออกจากโครงสร้างทันที เงื่อนไข 60 จึงไม่ถูกตรวจเลย'},
+    {q:'พิจารณาโปรแกรมต่อไปนี้<div class="qcode codebox">int n = 8;\n\nif (n &gt; 10)     printf("BIG");\nelse if (n &gt; 5) printf("MID");\nelse if (n &gt; 0) printf("SMALL");\nelse            printf("ZERO");</div>โปรแกรมจะพิมพ์อะไร',c:['MID','MID SMALL','SMALL','BIG'],a:0,e:'เงื่อนไขแรก 8 &gt; 10 เป็นเท็จ เงื่อนไขที่สอง 8 &gt; 5 เป็นจริง โปรแกรมจึงพิมพ์ MID แล้วข้ามเงื่อนไขที่เหลือทั้งหมดทันที แม้ 8 &gt; 0 จะเป็นจริงด้วยก็ไม่ถูกตรวจ เพราะ if / else if / else ทำงานแบบเจอจริงตัวแรกแล้วจบ'},
+    {q:'โปรแกรมตัดเกรดนี้ถูกเขียนสลับลำดับเงื่อนไข โดยนำ score &gt;= 60 ขึ้นมาไว้บนสุด<div class="qcode codebox">int score = 95;\n\nif (score &gt;= 60)      printf("C");\nelse if (score &gt;= 70) printf("B");\nelse if (score &gt;= 80) printf("A");\nelse                  printf("F");</div>นักศึกษาที่ได้ 95 คะแนนจะได้ผลลัพธ์ใด',c:['C เพราะ 95 &gt;= 60 เป็นจริงตั้งแต่เงื่อนไขแรก','A เหมือนเดิม','F เพราะเงื่อนไขผิดลำดับ','โปรแกรมคอมไพล์ไม่ผ่าน'],a:0,e:'ลำดับเงื่อนไขสำคัญมาก เมื่อเงื่อนไขกว้างที่สุดถูกวางไว้บนสุด ทุกคนจะตกเข้าเงื่อนไขนั้นก่อน จึงต้องเรียงจากเงื่อนไขที่แคบ (เข้มงวด) ที่สุดลงมา'},
+    {q:'พิจารณาโปรแกรมเตือนอุณหภูมิสองฉบับต่อไปนี้ ซึ่งต่างกันเฉพาะค่าเริ่มต้นของ t<div class="qcode codebox">/* ฉบับ ก */\nint t = 40;\n\nif (t &gt;= 100)     printf("BOIL");\nelse if (t &gt;= 60) printf("HOT");\nelse              printf("SAFE");\n\n/* ฉบับ ข — เปลี่ยนเฉพาะบรรทัดแรก ที่เหลือเหมือนกันทุกบรรทัด */\nint t = 60;</div>ฉบับ ก และฉบับ ข พิมพ์อะไรตามลำดับ',c:['SAFE และ HOT','SAFE และ SAFE','HOT และ HOT','SAFE และ BOIL'],a:0,e:'ฉบับ ก ค่า 40 ทำให้ทั้ง t &gt;= 100 และ t &gt;= 60 เป็นเท็จ จึงตกมาที่ else ได้ SAFE ส่วนฉบับ ข ค่า 60 พอดี ทำให้ t &gt;= 60 เป็นจริงทันที เพราะ &gt;= รวมค่าที่เท่ากันด้วย จึงได้ HOT — ค่าขอบแบบนี้คือจุดที่ข้อสอบชอบออก และบล็อก else คือทางออกสุดท้ายที่รับทุกกรณีที่เงื่อนไขก่อนหน้าเป็นเท็จหมด'},
+    {q:'พิจารณาโปรแกรมคำนวณ BMI ต่อไปนี้<div class="qcode codebox">float bmi = 17.58;\n\nif (bmi &lt; 18.5)       printf("Underweight");\nelse if (bmi &lt; 23.0)  printf("Normal");\nelse                  printf("Overweight");</div>โปรแกรมจะพิมพ์อะไร',c:['Underweight','Normal','Overweight','ไม่พิมพ์อะไรเลย'],a:0,e:'17.58 &lt; 18.5 เป็นจริงตั้งแต่เงื่อนไขแรก จึงพิมพ์ Underweight แล้วข้าม else ทั้งหมดทันที'},
+    {q:'พิจารณาโปรแกรมคำนวณ BMI ต่อไปนี้ โดยค่า bmi เท่ากับ 18.5 พอดี<div class="qcode codebox">float bmi = 18.5;\n\nif (bmi &lt; 18.5)       printf("Underweight");\nelse if (bmi &lt; 23.0)  printf("Normal");\nelse                  printf("Overweight");</div>ผลลัพธ์จะเป็นอย่างไร',c:['Normal เพราะ 18.5 &lt; 18.5 เป็นเท็จ จึงตกไปเงื่อนไขถัดไปที่ 18.5 &lt; 23.0 เป็นจริง','Underweight เพราะเท่ากับเกณฑ์พอดี','Overweight','เกิดข้อผิดพลาดขณะทำงาน'],a:0,e:'ค่าขอบเป็นจุดที่ข้อสอบชอบออก เครื่องหมาย &lt; ไม่รวมค่าที่เท่ากัน 18.5 &lt; 18.5 จึงเป็นเท็จ แล้วไปเข้าเงื่อนไขถัดไปได้ Normal'},
+    {q:'พิจารณาโปรแกรมต่อไปนี้<div class="qcode codebox">int x = 0;\n\nif (x &gt; 0)      printf("Positive");\nelse if (x &lt; 0) printf("Negative");\nelse            printf("Zero");</div>โปรแกรมจะพิมพ์อะไร',c:['Zero','Positive','Negative','ไม่พิมพ์อะไรเลย'],a:0,e:'0 ไม่มากกว่า 0 และไม่น้อยกว่า 0 เงื่อนไขสองข้อแรกจึงเป็นเท็จ โปรแกรมจึงตกมาที่ else และพิมพ์ Zero'},
+    {q:'พิจารณาโปรแกรมต่อไปนี้ ซึ่งใช้ if แยกกันสามตัว ไม่ได้ใช้ else if<div class="qcode codebox">int score = 85;\n\nif (score &gt;= 80) printf("A");\nif (score &gt;= 70) printf("B");\nif (score &gt;= 60) printf("C");</div>โปรแกรมจะพิมพ์อะไร',c:['ABC','A','C','ไม่พิมพ์อะไรเลย'],a:0,e:'if ที่แยกกันจะถูกตรวจครบทุกตัวอย่างอิสระ 85 ผ่านทั้งสามเงื่อนไขจึงพิมพ์ ABC ต่างจาก else if ที่หยุดทันทีเมื่อเจอเงื่อนไขจริงตัวแรก'},
+    {q:'พิจารณาโปรแกรมตรวจคุณสมบัติผู้สมัครต่อไปนี้<div class="qcode codebox">int age = 20;\nint gpa = 3;\n\nif (age &gt;= 18 &amp;&amp; gpa &gt;= 2)\n    printf("PASS");\nelse\n    printf("FAIL");</div>โปรแกรมจะพิมพ์อะไร',c:['PASS','FAIL','PASSFAIL','คอมไพล์ไม่ผ่าน'],a:0,e:'ตัวดำเนินการ &amp;&amp; ต้องจริงทั้งสองฝั่ง 20 &gt;= 18 จริง และ 3 &gt;= 2 จริง เงื่อนไขรวมจึงเป็นจริง โปรแกรมพิมพ์ PASS'},
+    {q:'พิจารณาโปรแกรมคิดส่วนลดต่อไปนี้<div class="qcode codebox">int total = 1500;\n\nif (total &gt;= 2000)      printf("20%%");\nelse if (total &gt;= 1000) printf("10%%");\nelse                    printf("0%%");</div>ลูกค้าที่ซื้อ 1500 บาทจะได้ส่วนลดเท่าใด',c:['10%','20%','0%','30%'],a:0,e:'1500 ไม่ถึง 2000 เงื่อนไขแรกจึงเป็นเท็จ แต่ 1500 &gt;= 1000 เป็นจริง จึงได้ส่วนลด 10% แล้วออกจากโครงสร้างทันที'},
+    {q:'พิจารณาโปรแกรมสองแบบต่อไปนี้ ซึ่งใช้ค่า s เดียวกัน<div class="qcode codebox">int s = 85;\n\n/* แบบ ก */\nif (s &gt;= 80) printf("A");\nif (s &gt;= 70) printf("B");\nif (s &gt;= 60) printf("C");\n\n/* แบบ ข */\nif (s &gt;= 80)      printf("A");\nelse if (s &gt;= 70) printf("B");\nelse if (s &gt;= 60) printf("C");</div>แบบ ก และแบบ ข พิมพ์อะไรตามลำดับ',c:['แบบ ก พิมพ์ ABC ส่วนแบบ ข พิมพ์ A','ทั้งสองแบบพิมพ์ A','ทั้งสองแบบพิมพ์ ABC','แบบ ก พิมพ์ A ส่วนแบบ ข พิมพ์ ABC'],a:0,e:'แบบ ก เป็น if อิสระสามตัว จึงถูกตรวจครบทุกตัวและเป็นจริงทั้งสามเงื่อนไข ได้ ABC ส่วนแบบ ข หยุดทันทีที่เจอเงื่อนไขจริงตัวแรก ได้เพียง A ความต่างจึงอยู่ที่เงื่อนไขสัมพันธ์กันหรือไม่ ไม่ใช่ความเร็ว'},
+    {q:'พิจารณาโปรแกรมควบคุมอุณหภูมิต่อไปนี้ โดยค่า t เท่ากับ 25 พอดี<div class="qcode codebox">int t = 25;\n\nif (t &gt;= 25) printf("ON");\nelse         printf("OFF");</div>ผลลัพธ์คืออะไร',c:['ON เพราะ &gt;= รวมค่าที่เท่ากันด้วย','OFF เพราะยังไม่เกิน 25','ไม่พิมพ์อะไรเลย','คอมไพล์ไม่ผ่าน'],a:0,e:'เครื่องหมาย &gt;= หมายถึงมากกว่าหรือเท่ากับ ค่า 25 จึงทำให้เงื่อนไขเป็นจริง ต่างจาก &gt; ที่ไม่รวมค่าที่เท่ากัน'}
+  ],
+  district2:[
+    {q:'พิจารณาโปรแกรมต่อไปนี้<div class="qcode codebox">int x = 10;\n\nif (x &gt; 5)\n    if (x &gt; 20)\n        printf("A");\n    else\n        printf("B");</div>โปรแกรมจะพิมพ์อะไร',c:['B','A','ไม่พิมพ์อะไรเลย','AB'],a:0,e:'else จับคู่กับ if ที่ใกล้ที่สุดคือ if (x &gt; 20) เมื่อ x = 10 ผ่าน if ตัวนอกแต่ตก if ตัวใน จึงเข้า else และพิมพ์ B'},
+    {q:'พิจารณาโปรแกรมต่อไปนี้ ซึ่งมี if ซ้อนกันสองชั้นแต่มี else เพียงตัวเดียว<div class="qcode codebox">int x = 3;\n\nif (x &gt; 0)\n    if (x &gt; 10)\n        printf("BIG");\n    else\n        printf("SMALL");</div>โปรแกรมจะพิมพ์อะไร',c:['SMALL','BIG','ไม่พิมพ์อะไรเลย','คอมไพล์ไม่ผ่านเพราะ else ไม่มีคู่'],a:0,e:'กฎ Dangling else บังคับให้ else จับคู่กับ if ที่ใกล้ที่สุดซึ่งยังไม่มี else นั่นคือ if (x &gt; 10) ไม่ใช่ if (x &gt; 0) ตามที่ย่อหน้าชวนให้เข้าใจ เมื่อ x เป็น 3 จึงเข้า if ตัวนอกได้ แต่ 3 &gt; 10 เป็นเท็จ จึงตกมาที่ else พิมพ์ SMALL — การย่อหน้าไม่มีผลต่อการแปลโปรแกรม'},
+    {q:'พิจารณาโปรแกรมต่อไปนี้<div class="qcode codebox">int x = 0;\n\nif (x = 5)\n    printf("TRUE");\nelse\n    printf("FALSE");</div>โปรแกรมจะพิมพ์อะไร',c:['TRUE','FALSE','ไม่พิมพ์อะไรเลย','คอมไพล์ไม่ผ่าน'],a:0,e:'x = 5 เป็นการกำหนดค่า ไม่ใช่การเปรียบเทียบ ผลของนิพจน์คือ 5 ซึ่งไม่ใช่ 0 จึงเป็นจริง โปรแกรมจึงพิมพ์ TRUE'},
+    {q:'พิจารณาโปรแกรมต่อไปนี้<div class="qcode codebox">if (0)  printf("A");\nif (1)  printf("B");\nif (-1) printf("C");\nif (2)  printf("D");</div>โปรแกรมจะพิมพ์อะไร',c:['BCD','B','ABCD','BD'],a:0,e:'ภาษา C ถือว่า 0 คือเท็จ ส่วนค่าอื่นทั้งหมดรวมทั้งค่าลบคือจริง จึงมีเพียง if (0) เท่านั้นที่ไม่ทำงาน ผลลัพธ์คือ BCD — ข้อสอบชอบดักด้วย if (-1) เพราะหลายคนเข้าใจผิดว่าค่าลบเป็นเท็จ'},
+    {q:'พิจารณาโปรแกรมต่อไปนี้ (สังเกตเครื่องหมาย ; ท้ายบรรทัด if)<div class="qcode codebox">int x = -3;\n\nif (x &gt; 0);\n{\n    printf("POSITIVE");\n}</div>จะเกิดอะไรขึ้น',c:['พิมพ์ POSITIVE เพราะ ; ปิด if ไปแล้ว บล็อกปีกกาจึงทำงานเสมอ','ไม่พิมพ์อะไรเลยเพราะ x เป็นค่าลบ','คอมไพล์ไม่ผ่าน','เกิดลูปไม่รู้จบ'],a:0,e:'เครื่องหมาย ; หลังเงื่อนไขทำให้ if มีบอดี้เป็นคำสั่งว่าง บล็อกปีกกาที่ตามมาจึงกลายเป็นบล็อกอิสระที่ทำงานทุกครั้ง'},
+    {q:'เปรียบเทียบการเขียนสองแบบต่อไปนี้ ซึ่งใช้ค่า x เดียวกัน<div class="qcode codebox">int x = -5;\n\n/* แบบ ก : ไม่ใส่ปีกกา */\nif (x &gt; 0)\n    printf("A");\n    printf("B");\n\n/* แบบ ข : ใส่ปีกกา */\nif (x &gt; 0) {\n    printf("A");\n    printf("B");\n}</div>แบบ ก และแบบ ข พิมพ์อะไรตามลำดับ',c:['แบบ ก พิมพ์ B ส่วนแบบ ข ไม่พิมพ์อะไรเลย','ทั้งสองแบบไม่พิมพ์อะไรเลย','ทั้งสองแบบพิมพ์ AB','แบบ ก ไม่พิมพ์อะไรเลย ส่วนแบบ ข พิมพ์ AB'],a:0,e:'เมื่อไม่มีปีกกา if คุมเพียงคำสั่งถัดไปหนึ่งคำสั่ง แบบ ก จึงคุมแค่ printf("A") ส่วน printf("B") อยู่นอก if และทำงานเสมอ ได้ B ทั้งที่ x เป็นค่าลบ ส่วนแบบ ข ปีกกาคุมทั้งสองคำสั่ง จึงไม่พิมพ์อะไรเลยตามที่ตั้งใจ — การใส่ปีกกาทุกครั้งแม้มีคำสั่งเดียวจึงกันพลาดได้'},
+    {q:'พิจารณาโปรแกรมต่อไปนี้<div class="qcode codebox">int a = 5, b = 10;\n\nif (a &gt; b)\n    if (b &gt; 0)\n        printf("X");\n    else\n        printf("Y");</div>โปรแกรมจะพิมพ์อะไร',c:['ไม่พิมพ์อะไรเลย','X','Y','XY'],a:0,e:'else ผูกกับ if (b &gt; 0) ซึ่งอยู่ภายใน if (a &gt; b) ทั้งหมด เมื่อ 5 &gt; 10 เป็นเท็จ โครงสร้างข้างในจึงไม่ถูกทำงานเลยแม้แต่ else'},
+    {q:'พิจารณาโปรแกรมต่อไปนี้<div class="qcode codebox">int x = 3;\n\nif (x == 5) printf("EQ1 ");\nelse        printf("NE1 ");\n\nif (x = 5)  printf("EQ2");\nelse        printf("NE2");</div>โปรแกรมจะพิมพ์อะไร',c:['NE1 EQ2','NE1 NE2','EQ1 EQ2','NE1 แล้วคอมไพล์ไม่ผ่าน'],a:0,e:'บรรทัดแรกใช้ == เปรียบเทียบ 3 กับ 5 ได้เท็จ จึงพิมพ์ NE1 ส่วนบรรทัดหลังใช้ = กำหนดค่า 5 ให้ x แล้วนำผลลัพธ์ 5 ไปใช้เป็นค่าความจริงซึ่งเป็นจริงเสมอ จึงพิมพ์ EQ2 — สองขีดคือถาม หนึ่งขีดคือสั่ง'},
+    {q:'พิจารณาโปรแกรมต่อไปนี้ (สังเกตว่าไม่มีปีกกาครอบ)<div class="qcode codebox">int x = -5;\n\nif (x &gt; 0)\n    printf("A");\n    printf("B");</div>โปรแกรมจะพิมพ์อะไร',c:['B','ไม่พิมพ์อะไรเลย','AB','A'],a:0,e:'เมื่อไม่มีปีกกา if จะควบคุมเพียงคำสั่งถัดไปหนึ่งคำสั่งเท่านั้น บรรทัด printf("B") จึงอยู่นอก if และทำงานเสมอ การย่อหน้าไม่มีผล'},
+    {q:'พิจารณาโปรแกรมต่อไปนี้<div class="qcode codebox">if (!0) printf("A");\nif (!5) printf("B");</div>โปรแกรมจะพิมพ์อะไร',c:['A','B','AB','ไม่พิมพ์อะไรเลย'],a:0,e:'ตัวดำเนินการ ! กลับค่าความจริง !0 กลายเป็นจริงจึงพิมพ์ A ส่วน 5 เป็นจริงอยู่แล้ว !5 จึงเป็นเท็จ ไม่พิมพ์ B'},
+    {q:'พิจารณาโปรแกรมต่อไปนี้<div class="qcode codebox">int x = 3;\n\nif (x = 0)\n    printf("TRUE");\nelse\n    printf("FALSE");\n\nprintf(" x=%d", x);</div>ผลลัพธ์คืออะไร',c:['FALSE x=0','TRUE x=3','FALSE x=3','TRUE x=0'],a:0,e:'x = 0 กำหนดค่า 0 ให้ x ผลของนิพจน์คือ 0 ซึ่งเป็นเท็จ จึงเข้า else และค่า x ถูกเปลี่ยนเป็น 0 ไปแล้วอย่างถาวร'},
+    {q:'พิจารณาโปรแกรมต่อไปนี้ ซึ่งมีกับดักซ่อนอยู่สองจุด<div class="qcode codebox">int score = 0;\n\nif (score = 60)      /* ตั้งใจจะเขียน == */\n    printf("PASS");\n\nif (score &gt; 100);    /* มี ; เกินท้ายบรรทัด */\n{\n    printf("BONUS");\n}</div>โปรแกรมจะพิมพ์อะไร',c:['PASSBONUS','ไม่พิมพ์อะไรเลย','PASS','คอมไพล์ไม่ผ่าน'],a:0,e:'กับดักที่หนึ่ง if (score = 60) กำหนดค่า 60 ให้ score แล้วใช้ 60 เป็นค่าความจริงซึ่งเป็นจริง จึงพิมพ์ PASS กับดักที่สอง เครื่องหมาย ; ปิด if ไปแล้ว บล็อกปีกกาที่ตามมาจึงเป็นบล็อกอิสระที่ทำงานเสมอ ได้ BONUS ต่อท้าย ผลรวมคือ PASSBONUS ทั้งที่ score เริ่มต้นเป็น 0 — ทั้งคู่คอมไพล์ผ่าน จึงเป็น logic error ที่คอมไพเลอร์ไม่ฟ้องและตรวจพบยาก'}
+  ],
+  district3:[
+    {q:'พิจารณาโปรแกรมต่อไปนี้ ซึ่งพยายามใช้ switch ตัดเกรดจากคะแนน<div class="qcode codebox">int score = 85;\n\nswitch (score) {\n    case 80: printf("B"); break;\n    case 90: printf("A"); break;\n    default: printf("Other");\n}</div>โปรแกรมจะพิมพ์อะไร',c:['Other','B','A','BA'],a:0,e:'switch เทียบเฉพาะความเท่ากันกับค่าคงที่ ไม่ใช่ช่วงค่า ค่า 85 จึงไม่ตรงกับ case 80 หรือ case 90 เลย โปรแกรมตกไปที่ default พิมพ์ Other — งานตัดเกรดจากช่วงคะแนนจึงต้องใช้ if / else if ไม่ใช่ switch'},
+    {q:'พิจารณาโปรแกรมสองฉบับต่อไปนี้ ซึ่งต่างกันเฉพาะการมีหรือไม่มีคำสั่ง break<div class="qcode codebox">/* ฉบับ ก */\nint n = 1;\n\nswitch (n) {\n    case 1: printf("A"); break;\n    case 2: printf("B"); break;\n    default: printf("C");\n}\n\n/* ฉบับ ข — ลบ break ออกทุกตัว โดย n = 1 เท่าเดิม */\nswitch (n) {\n    case 1: printf("A");\n    case 2: printf("B");\n    default: printf("C");\n}</div>ฉบับ ก และฉบับ ข พิมพ์อะไรตามลำดับ',c:['A และ ABC','A และ AB','ABC และ A','A ทั้งสองฉบับ'],a:0,e:'ฉบับ ก พิมพ์เพียง A เพราะ break พาออกจาก switch ทันทีหลังทำงานใน case 1 เสร็จ ส่วนฉบับ ข เมื่อไม่มี break โปรแกรมจะไหลทะลุ (fall-through) จาก case 1 ลงไปทำคำสั่งของ case 2 และ default ต่อจนจบ switch ได้ ABC — นี่คือหน้าที่ของ break ในโครงสร้าง switch-case'},
+    {q:'พิจารณาโปรแกรมต่อไปนี้ โดยกำหนดให้ day = 2<div class="qcode codebox">switch (day) {\n    case 1: printf("Mon "); break;\n    case 2: printf("Tue ");\n    case 3: printf("Wed "); break;\n    default: printf("Other");\n}</div>ผลลัพธ์คืออะไร',c:['Tue Wed','Tue','Wed','Tue Wed Other'],a:0,e:'case 2 ไม่มี break จึงไหลทะลุลง case 3 พิมพ์ทั้ง Tue และ Wed แล้วจึงเจอ break ที่ case 3 และออกจาก switch'},
+    {q:'พิจารณาโปรแกรมต่อไปนี้ โดยกำหนดให้ day = 9<div class="qcode codebox">switch (day) {\n    case 1: printf("Mon "); break;\n    case 2: printf("Tue ");\n    case 3: printf("Wed "); break;\n    default: printf("Other");\n}</div>ผลลัพธ์คืออะไร',c:['Other','Mon','ไม่พิมพ์อะไรเลย','Tue Wed'],a:0,e:'ไม่มี case ใดตรงกับ 9 โปรแกรมจึงไปทำที่ default ซึ่งพิมพ์ Other'},
+    {q:'พิจารณาสองทางเลือกต่อไปนี้ สำหรับงานตัดเกรดที่กำหนดให้คะแนน 80-100 ได้ A<div class="qcode codebox">int score = 85;\n\n/* ทางเลือกที่ 1 */\nif (score &gt;= 80) printf("A");\n\n/* ทางเลือกที่ 2 */\nswitch (score) {\n    case 80: case 81: case 82:\n    /* ... ต้องเขียนต่อจนครบ 21 case ... */\n    case 100:\n        printf("A"); break;\n}</div>ถ้าจะใช้ทางเลือกที่ 2 ให้ครอบคลุมคะแนน 80 ถึง 100 ต้องเขียน case ทั้งหมดกี่ค่า เทียบกับทางเลือกที่ 1 ที่ใช้กี่บรรทัด',c:['21 ค่า เทียบกับ 1 บรรทัด','20 ค่า เทียบกับ 1 บรรทัด','21 ค่า เทียบกับ 21 บรรทัด','3 ค่า เทียบกับ 1 บรรทัด'],a:0,e:'คะแนน 80 ถึง 100 มีทั้งหมด 100 − 80 + 1 = 21 ค่า และ switch เทียบได้เฉพาะค่าที่เท่ากัน จึงต้องไล่เขียน case ครบทั้ง 21 ค่า ขณะที่ if (score &gt;= 80) เขียนบรรทัดเดียวจบ เงื่อนไขที่เป็นช่วงค่าจึงเหมาะกับ if / else if / else มากกว่า'},
+    {q:'พิจารณาโปรแกรมสองฉบับต่อไปนี้ ซึ่งเขียน case 6 ไว้ติดกับ case 7 โดยไม่มีคำสั่งของตัวเอง และต่างกันเฉพาะค่าเริ่มต้นของ day<div class="qcode codebox">/* ฉบับ ก */\nint day = 6;\n\nswitch (day) {\n    case 6:\n    case 7:\n        printf("Weekend");\n        break;\n    default:\n        printf("Weekday");\n}\n\n/* ฉบับ ข — เปลี่ยนเฉพาะบรรทัดแรก ที่เหลือเหมือนกันทุกบรรทัด */\nint day = 5;</div>ฉบับ ก และฉบับ ข พิมพ์อะไรตามลำดับ',c:['Weekend และ Weekday','Weekend และ Weekend','Weekday และ Weekend','Weekend และ WeekendWeekday'],a:0,e:'ฉบับ ก ค่า 6 ตรงกับ case 6 ซึ่งไม่มีคำสั่งของตัวเองและไม่มี break จึงไหลทะลุ (fall-through) ลงไปทำคำสั่งของ case 7 ได้ Weekend ส่วนฉบับ ข ค่า 5 ไม่ตรงกับ case ใดเลย จึงตกไปที่ default ได้ Weekday — เทคนิคเขียน case ติดกันแบบนี้ใช้จัดกลุ่มค่าที่ให้ผลเหมือนกัน'},
+    {q:'พิจารณาโปรแกรมต่อไปนี้ โดยกำหนดให้ grade เป็นตัวอักษร B<div class="qcode codebox">char grade = \'B\';\n\nswitch (grade) {\n    case \'A\': printf("Excellent"); break;\n    case \'B\': printf("Good"); break;\n    default:  printf("Other");\n}</div>ผลลัพธ์คืออะไร',c:['Good','Excellent','Other','คอมไพล์ไม่ผ่านเพราะ switch ใช้กับ char ไม่ได้'],a:0,e:'switch ใช้ได้กับชนิด int และ char เมื่อ grade ตรงกับ case B จึงพิมพ์ Good แล้วเจอ break ออกจาก switch ทันที'},
+    {q:'พิจารณาโปรแกรมต่อไปนี้ โดยกำหนดให้ day = 1<div class="qcode codebox">switch (day) {\n    case 1: printf("Mon "); break;\n    case 2: printf("Tue "); break;\n    default: printf("Other");\n}</div>ผลลัพธ์คืออะไร',c:['Mon','Mon Tue','Mon Tue Other','Other'],a:0,e:'case 1 ตรงกับค่า day และมี break ปิดท้าย โปรแกรมจึงพิมพ์ Mon แล้วออกจาก switch โดยไม่ไหลลง case ถัดไป'},
+    {q:'พิจารณาโปรแกรมต่อไปนี้ โดยกำหนดให้ day = 7<div class="qcode codebox">switch (day) {\n    case 6:\n    case 7:\n        printf("Weekend");\n        break;\n    default:\n        printf("Weekday");\n}</div>ผลลัพธ์คืออะไร',c:['Weekend','Weekday','WeekendWeekday','ไม่พิมพ์อะไรเลย'],a:0,e:'case 7 ตรงกับค่า day จึงพิมพ์ Weekend เทคนิคการเขียน case 6 ไว้ติดกันโดยไม่มีคำสั่ง ทำให้ทั้งวันที่ 6 และ 7 ให้ผลเหมือนกัน'},
+    {q:'พิจารณาโปรแกรมต่อไปนี้<div class="qcode codebox">int n = 2, k = 2;\n\nswitch (n) {\n    case k:     printf("A"); break;\n    case n &gt; 1: printf("B"); break;\n    case 2:     printf("C"); break;\n}</div>บรรทัดใดบ้างที่ทำให้คอมไพล์ไม่ผ่าน',c:['case k และ case n &gt; 1 ผิดทั้งคู่','เฉพาะ case k เท่านั้นที่ผิด','เฉพาะ case n &gt; 1 เท่านั้นที่ผิด','ไม่มีบรรทัดใดผิด โปรแกรมพิมพ์ C'],a:0,e:'case ต้องตามด้วยค่าคงที่ชนิดจำนวนเต็มที่ทราบค่าตั้งแต่ตอนคอมไพล์ เช่น 1 หรือ 2 หรือค่าคงที่ชนิดอักขระ การใช้ตัวแปร k จึงผิด และการใช้นิพจน์เปรียบเทียบ n &gt; 1 ก็ผิดเช่นกันแม้จะให้ผลเป็น 0 หรือ 1 ก็ตาม มีเพียง case 2 บรรทัดเดียวที่เขียนถูกต้อง'},
+    {q:'พิจารณาโปรแกรมต่อไปนี้<div class="qcode codebox">float x = 1.5;\n\nswitch (x) {\n    case 1: printf("One"); break;\n    default: printf("Other");\n}</div>จะเกิดอะไรขึ้น',c:['คอมไพล์ไม่ผ่าน เพราะ switch ใช้กับชนิดทศนิยมไม่ได้','พิมพ์ One','พิมพ์ Other','ทำงานปกติแต่ไม่พิมพ์อะไร'],a:0,e:'switch รองรับเฉพาะชนิดจำนวนเต็ม เช่น int และ char การใช้ float หรือ double เป็นนิพจน์ควบคุมจะทำให้คอมไพล์ไม่ผ่าน'},
+    {q:'พิจารณาโปรแกรมต่อไปนี้ ซึ่งไม่มี break เลยสักตัว โดยกำหนดให้ n = 1<div class="qcode codebox">switch (n) {\n    case 1: printf("A");\n    case 2: printf("B");\n    case 3: printf("C");\n}</div>ผลลัพธ์คืออะไร',c:['ABC','A','BC','ไม่พิมพ์อะไรเลย'],a:0,e:'เมื่อไม่มี break เลย โปรแกรมจะเริ่มที่ case ที่ตรงแล้วไหลทะลุลงทุก case ที่เหลือจนจบ switch จึงพิมพ์ ABC'}
+  ]
+};
+const SKILL_LABELS = {district1:'if / else if / else', district2:'กับดัก if ซ้อน', district3:'switch-case & break'};
+const DISTRICT_SCREEN = {district1:'scr-preview1', district2:'scr-preview2', district3:'scr-preview3'};
+
+/* ============ 5) STATE + PERSISTENCE ============ */
+const SKEY = 'logiclabyrinth_v1_state';
+const state = {
+  name:'', avatar:0, pre:null, post:null,
+  preByD:{district1:0,district2:0,district3:0},
+  postByD:{district1:0,district2:0,district3:0},
+  xp:0, combo:0, maxCombo:0, fastCorrect:false, preTime:0, postTime:0, preIds:[], postIds:[],
+  labs:{lab1:[],lab2:[],lab3:[]},
+  unlocked:['pretest'], visited:{}, screen:'scr-welcome'
+};
+function save(){try{sessionStorage.setItem(SKEY,JSON.stringify(state));}catch(e){}}
+function loadSaved(){try{const raw=sessionStorage.getItem(SKEY);if(!raw)return null;const o=JSON.parse(raw);return (o&&o.name)?o:null;}catch(e){return null;}}
+function clearSaved(){try{sessionStorage.removeItem(SKEY);}catch(e){}}
+
+/* ============ 6) STAR SYSTEM ============ */
+const STAR_TABLE = [
+  {min:6, stars:6, rank:'LABYRINTH MASTER', msg:'อ่านเงื่อนไขได้แม่นทุกชั้น พร้อมต่อยอดไปเรื่องลูปและ Code Tracing ได้ทันที'},
+  {min:5, stars:5, rank:'PATHFINDER',       msg:'แม่นยำสูง เหลืออีกเพียงจุดเดียวก็เต็ม ลองย้อนอ่านข้อที่พลาดอีกครั้ง'},
+  {min:4, stars:4, rank:'TORCHBEARER',      msg:'ผ่านเกณฑ์ความเข้าใจพื้นฐานแล้ว ยังมีช่องว่างให้ฝึกอีกเล็กน้อย'},
+  {min:3, stars:3, rank:'WANDERER',         msg:'เริ่มจับหลักได้ แต่ยังหลงบางห้อง ควรกลับไปทบทวนตารางกับดัก'},
+  {min:2, stars:2, rank:'LOST APPRENTICE',  msg:'พอมีพื้นฐาน แนะนำให้เล่นห้องทดลองให้ครบทั้ง 3 ห้องก่อนสอบใหม่'},
+  {min:0, stars:0, rank:'GATE ROOKIE',      msg:'ยังไม่คุ้นเนื้อหา ไม่เป็นไรเลย นี่คือเหตุผลที่เราต้องเดินให้ครบทั้งเขาวงกต'}
+];
+const MAX_STARS = 6;   /* เต็ม 6 ข้อ = เต็ม 6 ดาว · 1 ดาว = ตอบถูก 1 ข้อ */
+function starInfo(score){
+  const t = STAR_TABLE.find(t => score >= t.min) || STAR_TABLE[STAR_TABLE.length-1];
+  return {stars: score, rank: t.rank, msg: t.msg};
+}
+const STAR_SVG_FULL = '<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><defs><linearGradient id="sg" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#fff6d0"/><stop offset="55%" stop-color="#fde68a"/><stop offset="100%" stop-color="#fbbf24"/></linearGradient></defs><path d="M12 2.6l2.9 5.9 6.5.95-4.7 4.58 1.11 6.47L12 17.45 6.19 20.5l1.11-6.47L2.6 9.45l6.5-.95z" fill="url(#sg)" stroke="#fde68a" stroke-width="1" stroke-linejoin="round"/></svg>';
+const STAR_SVG_EMPTY = '<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M12 2.6l2.9 5.9 6.5.95-4.7 4.58 1.11 6.47L12 17.45 6.19 20.5l1.11-6.47L2.6 9.45l6.5-.95z" fill="none" stroke="#a898c4" stroke-width="1.4" stroke-linejoin="round"/></svg>';
+function renderStars(host,filled,total,animate){
+  total=total||MAX_STARS;host.innerHTML='';
+  host.setAttribute('aria-label','ได้ '+filled+' ดาว จาก '+total+' ดาว');
+  for(let i=0;i<total;i++){const d=document.createElement('div');const isFull=i<filled;d.className='star '+(isFull?'full':'empty');d.innerHTML=isFull?STAR_SVG_FULL:STAR_SVG_EMPTY;host.appendChild(d);}
+  const kids=Array.from(host.children);
+  if(!animate||REDUCED){kids.forEach(k=>{k.style.opacity=k.classList.contains('empty')?'.32':'1';k.style.transform='none';});return;}
+  kids.forEach((k,i)=>{setTimeout(()=>{k.classList.add('in');if(k.classList.contains('full'))SFX.play('star');},200+i*190);});
+}
+
+/* ============ 7) XP / LEVEL ============ */
+const XP_PER_LEVEL = 120;
+function addXp(n,label){state.xp+=n;updXp();if(label!==false)floaty('+'+n+' XP','#fbbf24');save();}
+function updXp(){const lvl=Math.floor(state.xp/XP_PER_LEVEL)+1;const into=state.xp%XP_PER_LEVEL;const lt=$('#lvlTxt'),xb=$('#xpBar'),xt=$('#xpTxt');if(lt)lt.textContent='LV.'+lvl;if(xb)xb.style.width=(into/XP_PER_LEVEL*100)+'%';if(xt)xt.textContent=state.xp+' XP';}
+function floaty(txt,color){if(REDUCED)return;const el=document.createElement('div');el.className='floaty';el.textContent=txt;el.style.color=color||'#4ade80';document.body.appendChild(el);setTimeout(()=>el.remove(),1200);}
+
+/* ============ 8) NAVIGATION ============ */
+const NAVSTOPS = [
+  {key:'pretest',  label:'PRETEST',  screens:['scr-pretest'], icon:'p'},
+  {key:'d1',       label:'C1 GATES', screens:['scr-preview1','scr-lesson1','scr-check1'], icon:'m', district:'district1'},
+  {key:'d2',       label:'C2 TRAPS', screens:['scr-preview2','scr-lesson2','scr-check2'], icon:'c', district:'district2'},
+  {key:'d3',       label:'C3 SWITCH',screens:['scr-preview3','scr-lesson3','scr-check3'], icon:'n', district:'district3'},
+  {key:'posttest', label:'POSTTEST', screens:['scr-posttest'], icon:'t'},
+  {key:'summary',  label:'REPORT',   screens:['scr-summary'], icon:'s'}
+];
+const ICONS = {
+  p:'<path d="M4 12 L9 17 L20 5" stroke="currentColor" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>',
+  m:'<rect x="7" y="6" width="4" height="12" rx="1" fill="currentColor"/><rect x="14" y="10" width="4" height="8" rx="1" fill="currentColor"/>',
+  c:'<circle cx="9" cy="12" r="5" stroke="currentColor" stroke-width="2" fill="none"/><circle cx="15" cy="12" r="5" stroke="currentColor" stroke-width="2" fill="none"/>',
+  n:'<circle cx="12" cy="12" r="8" stroke="currentColor" stroke-width="2" fill="none"/><path d="M12 12 L12 6 M12 12 L17 12" stroke="currentColor" stroke-width="1.8" fill="none"/>',
+  t:'<path d="M4 12 L9 17 L20 5" stroke="currentColor" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>',
+  s:'<path d="M4 20 V10 M12 20 V4 M20 20 V14" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/>'
+};
+function stopOfScreen(id){ return NAVSTOPS.find(s => s.screens.includes(id)); }
+function renderNav(currentScreen){
+  const host=$('#navrail'); if(!host) return;
+  host.innerHTML=''; const cur=stopOfScreen(currentScreen);
+  NAVSTOPS.forEach(s=>{
+    const isUnlocked=state.unlocked.includes(s.key);
+    const isDone=state.visited[s.key]==='done';
+    const el=document.createElement('div');
+    el.className='navpill'+(isUnlocked?' unlocked':'')+(isDone?' done':'')+(cur&&cur.key===s.key?' current':'');
+    let starTxt='';
+    if(s.district&&state.postByD&&state.post!==null){starTxt='★'.repeat(state.postByD[s.district])+'☆'.repeat(2-state.postByD[s.district]);}
+    el.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true">'+ICONS[s.icon]+'</svg><span>'+s.label+'</span><span class="ps">'+starTxt+'</span>';
+    el.setAttribute('role','button'); el.setAttribute('tabindex',isUnlocked?'0':'-1');
+    el.setAttribute('aria-label',s.label+(isUnlocked?'':' (ยังไม่ปลดล็อก)'));
+    const act=()=>{
+      if(!isUnlocked){el.classList.add('locked-shake');setTimeout(()=>el.classList.remove('locked-shake'),400);toast('ห้องนี้ยังไม่ปลดล็อก เดินตามลำดับก่อนนะครับ');return;}
+      SFX.play('click'); goto_(s.screens[0]);
+      if(s.key==='summary') showSummary();
+    };
+    el.addEventListener('click',act);
+    el.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();act();}});
+    host.appendChild(el);
+  });
+}
+function unlock(key){ if(!state.unlocked.includes(key)){ state.unlocked.push(key); SFX.play('unlock'); } }
+function goto_(id){
+  $$('.screen').forEach(s=>s.classList.remove('active'));
+  const el=document.getElementById(id); if(!el) return;
+  el.classList.add('active'); state.screen=id;
+  const stop=stopOfScreen(id);
+  if(stop){unlock(stop.key); if(!state.visited[stop.key]) state.visited[stop.key]='seen';}
+  $('#topbar').classList.toggle('show', id!=='scr-welcome');
+  renderNav(id);
+  window.scrollTo({top:0,behavior:REDUCED?'auto':'smooth'});
+  save();
+}
+
+/* ============ 9) QUIZ ENGINE — ARCADE ============
+   แบบทดสอบทั้งหมด (ก่อนเรียน / ฝึกหัด / หลังเรียน) เล่นในมินิเกม
+   รูปแบบของมินิเกมกำหนดจากบล็อก ARCADE ด้านล่าง (platform หรือ climb)
+   ================================================= */
+function randomizeChoices(q){const order=shuffle(q.c.map((c,i)=>i));return {q:q.q,e:q.e,c:order.map(i=>q.c[i]),a:order.indexOf(q.a)};}
+/* สุ่มด่านละ 2 ข้อ โดย exclude = รายการ id ที่ห้ามซ้ำ (ใช้กัน Posttest ซ้ำกับ Pretest) */
+function stratifiedSix(exclude){
+  const ex=exclude||[], picks=[];
+  ['district1','district2','district3'].forEach(d=>{
+    const all=BANK[d].map((q,i)=>({q:q,id:d+'#'+i}));
+    let pool=all.filter(o=>ex.indexOf(o.id)<0);
+    if(pool.length<2) pool=all;                       /* กันกรณีคลังไม่พอ */
+    pickN(pool,2).forEach(o=>picks.push(Object.assign({},randomizeChoices(o.q),{district:d,qid:o.id})));
+  });
+  return shuffle(picks);
+}
+const KEYCAPS=['1','2','3','4'];
+
+
+/* ============ ARCADE : CLIMB MODE v6 — TAP ONLY ============
+   ปรับใหม่ทั้งหมดให้ "ไม่ต้องกระโดด ไม่ต้องบังคับทิศทาง"
+   กติกา: ตอบถูก 1 ข้อ = ไต่ขึ้น 1 ชั้น · ตอบผิดไม่ตกลงมา แค่ย่ำอยู่ที่เดิม
+   ผลลัพธ์: เล่นบนมือถือได้ด้วยนิ้วเดียว ไม่มีทักษะนิ้วมาบังคะแนนความเข้าใจ
+   =========================================================== */
+const ACT={floorWord:'ชั้น',topWord:'ยอดหอเงื่อนไข',groundWord:'ปากเขาวงกต',theme:'dungeon'};
+const AC={on:false,mode:null,qs:[],idx:0,answered:0,correct:0,byD:null,score:0,
+  W:0,H:0,raf:null,elapsed:0,last:null,qOpen:false,onDone:null,
+  floor:0,animFrom:0,animTo:0,animT:1,shake:0,glow:0,col:null,dead:false,parts:[],t:0,padT:36};
+
+function acColors(){
+  const cs=getComputedStyle(document.documentElement), g=n=>(cs.getPropertyValue(n)||'').trim();
+  return {bg:g('--bg')||'#0d0718',panel:g('--panel2')||'#241a3a',ember:g('--ember')||'#c084fc',
+    corner:g('--corner')||'#4ade80',gold:g('--gold')||'#fbbf24',red:g('--red')||'#fb7185',
+    text:g('--text')||'#efe7fb',muted:g('--muted')||'#a898c4'};
+}
+function acResize(){
+  const cv=$('#acv'); if(!cv) return;
+  const dpr=Math.min(2,window.devicePixelRatio||1);
+  AC.W=cv.clientWidth||innerWidth; AC.H=cv.clientHeight||200;
+  const hud=document.querySelector('.ac-hud');
+  AC.padT=Math.min(120,((hud&&hud.offsetHeight)||28)+16);
+  cv.width=Math.max(1,AC.W*dpr); cv.height=Math.max(1,AC.H*dpr);
+  const ctx=cv.getContext('2d'); if(ctx&&ctx.setTransform) ctx.setTransform(dpr,0,0,dpr,0,0);
+}
+/* ตำแหน่งชั้นที่ i (0 = พื้น, n = ยอด) — ไต่เฉียงขึ้นเป็นบันไดเวียน */
+function acStepGeom(i){
+  const n=AC.qs.length||1;
+  const padB=30, padT=AC.padT||36;
+  const h=Math.max(60,AC.H-padB-padT);
+  const y=AC.H-padB-(i*(h/n));
+  const w=Math.max(56,Math.min(118,AC.W*0.21));
+  const usable=Math.max(20,AC.W-w-32);
+  const x=16+(n<=1?0:(i/n)*usable);
+  return {x:x,y:y,w:w,h:9};
+}
+function acPuff(x,y,color,n){
+  if(REDUCED) return;
+  for(let k=0;k<(n||14);k++)
+    AC.parts.push({x:x,y:y,vx:(Math.random()-.5)*2.8,vy:-Math.random()*2.8-.3,l:1,c:color,r:1.6+Math.random()*2.2});
+}
+function acStepParts(d){
+  for(let i=AC.parts.length-1;i>=0;i--){
+    const p=AC.parts[i];
+    p.x+=p.vx; p.y+=p.vy; p.vy+=0.055; p.l-=d/900;
+    if(p.l<=0) AC.parts.splice(i,1);
+  }
+}
+/* ---- ฉากหลังตามธีมของแต่ละเกม ---- */
+function acDecor(ctx,c){
+  const t=AC.t, W=AC.W, H=AC.H;
+  if(ACT.theme==='dungeon'){
+    ctx.globalAlpha=.10; ctx.strokeStyle=c.ember; ctx.lineWidth=1;
+    for(let r=0;r<7;r++){const y=18+r*(H/7);
+      for(let k=0;k<8;k++){const bx=(r%2?-30:0)+k*(W/7);ctx.strokeRect(bx,y,W/7-6,H/7-8);}}
+    ctx.globalAlpha=1;
+    for(let k=0;k<3;k++){
+      const tx=W*(0.16+k*0.34), ty=26+((k*37)%40);
+      const fl=Math.sin(t/260+k*2)*3;
+      const gr=ctx.createRadialGradient(tx,ty,1,tx,ty,26+fl);
+      gr.addColorStop(0,'rgba(251,191,36,.55)'); gr.addColorStop(1,'rgba(251,191,36,0)');
+      ctx.fillStyle=gr; ctx.beginPath(); ctx.arc(tx,ty,26+fl,0,Math.PI*2); ctx.fill();
+      ctx.fillStyle=c.gold; ctx.beginPath(); ctx.arc(tx,ty,3.4,0,Math.PI*2); ctx.fill();
+    }
+  } else if(ACT.theme==='factory'){
+    ctx.globalAlpha=.13; ctx.strokeStyle=c.ember; ctx.lineWidth=2;
+    for(let k=0;k<4;k++){const gx=W*(0.12+k*0.27), gy=34+((k*29)%46), rr=15+k*3, a=t/(520+k*90);
+      ctx.beginPath(); ctx.arc(gx,gy,rr,0,Math.PI*2); ctx.stroke();
+      for(let s=0;s<8;s++){const an=a+s*Math.PI/4;
+        ctx.beginPath(); ctx.moveTo(gx+Math.cos(an)*rr,gy+Math.sin(an)*rr);
+        ctx.lineTo(gx+Math.cos(an)*(rr+6),gy+Math.sin(an)*(rr+6)); ctx.stroke();}}
+    ctx.globalAlpha=.10; ctx.lineWidth=7; ctx.strokeStyle=c.corner;
+    for(let k=0;k<3;k++){const y=H*(0.3+k*0.24); ctx.beginPath(); ctx.moveTo(0,y); ctx.lineTo(W,y); ctx.stroke();}
+    ctx.globalAlpha=1;
+  } else {
+    ctx.globalAlpha=.14; ctx.fillStyle=c.gold;
+    for(let r=0;r<5;r++) for(let k=0;k<9;k++){
+      const on=((r*9+k*3+Math.floor(t/700))%5)<2;
+      if(on){ctx.fillRect(12+k*(W/9),16+r*(H/6),Math.max(6,W/9-14),Math.max(5,H/6-16));}}
+    ctx.globalAlpha=.16; ctx.strokeStyle=c.muted; ctx.lineWidth=1;
+    for(let k=0;k<26;k++){const rx=(k*137+t*0.22)%(W+60)-30, ry=((k*211+t*0.55)%(H+40))-20;
+      ctx.beginPath(); ctx.moveTo(rx,ry); ctx.lineTo(rx-4,ry+11); ctx.stroke();}
+    ctx.globalAlpha=1;
+  }
+}
+function acDraw(){
+  const cv=$('#acv'); if(!cv) return;
+  const ctx=cv.getContext('2d'); if(!ctx) return;
+  const c=AC.col, n=AC.qs.length;
+  ctx.clearRect(0,0,AC.W,AC.H);
+  const bgGrad=ctx.createLinearGradient(0,0,0,AC.H);
+  bgGrad.addColorStop(0,c.panel); bgGrad.addColorStop(1,c.bg);
+  ctx.fillStyle=bgGrad; ctx.fillRect(0,0,AC.W,AC.H);
+  acDecor(ctx,c);
+
+  const sh=AC.shake>0?Math.sin(AC.shake*1.15)*4:0;
+  ctx.save(); ctx.translate(sh,0);
+
+  /* เส้นบันไดเชื่อมชั้น */
+  ctx.strokeStyle=c.ember; ctx.globalAlpha=.30; ctx.lineWidth=2; ctx.setLineDash([5,6]);
+  ctx.beginPath();
+  for(let i=0;i<=n;i++){const g=acStepGeom(i); const cx=g.x+g.w/2;
+    if(i===0) ctx.moveTo(cx,g.y); else ctx.lineTo(cx,g.y);}
+  ctx.stroke(); ctx.setLineDash([]); ctx.globalAlpha=1;
+
+  /* ชั้นทั้งหมด */
+  for(let i=0;i<=n;i++){
+    const g=acStepGeom(i), reached=i<=AC.floor, isTop=(i===n), isNext=(i===AC.floor+1);
+    if(reached && !isTop){
+      ctx.globalAlpha=.22; ctx.fillStyle=c.corner;
+      ctx.fillRect(g.x-3,g.y-3,g.w+6,g.h+6); ctx.globalAlpha=1;
+    }
+    if(isNext && AC.animT>=1){
+      const pu=.35+Math.sin(AC.t/230)*.22;
+      ctx.globalAlpha=pu; ctx.fillStyle=c.gold;
+      ctx.fillRect(g.x-4,g.y-4,g.w+8,g.h+8); ctx.globalAlpha=1;
+    }
+    ctx.fillStyle=isTop?c.gold:(reached?c.ember:(document.documentElement.getAttribute('data-theme')==='light'?'rgba(16,24,38,.20)':'rgba(255,255,255,.16)'));
+    ctx.fillRect(g.x,g.y,g.w,g.h);
+    ctx.globalAlpha=.45; ctx.fillStyle='#000';
+    ctx.fillRect(g.x,g.y+g.h,g.w,4); ctx.globalAlpha=1;
+    ctx.font='11px Kanit,sans-serif';
+    ctx.fillStyle=reached?c.corner:(isNext?c.gold:c.muted);
+    const lab=isTop?ACT.topWord:(i===0?ACT.groundWord:ACT.floorWord+' '+i);
+    const lw=ctx.measureText(lab).width;
+    let lx=Math.max(4,Math.min(g.x+2,AC.W-lw-8));
+    ctx.fillText(lab,lx,isTop?(g.y+g.h+15):(g.y-6));
+    if(i>0&&i<=AC.floor){
+      ctx.beginPath();ctx.arc(g.x+g.w-9,g.y-13,4.6,0,Math.PI*2);
+      ctx.fillStyle=c.gold;ctx.fill();
+    }
+  }
+  /* ธงยอดหอ */
+  const top=acStepGeom(n), fx=top.x+top.w-14, fy=top.y-12;
+  ctx.strokeStyle=c.gold; ctx.lineWidth=2;
+  ctx.beginPath(); ctx.moveTo(fx,fy); ctx.lineTo(fx,fy-20); ctx.stroke();
+  ctx.fillStyle=c.gold; ctx.beginPath();
+  ctx.moveTo(fx,fy-20); ctx.lineTo(fx+15+Math.sin(AC.t/200)*3,fy-15); ctx.lineTo(fx,fy-10); ctx.fill();
+
+  /* ผู้เล่น: ไต่จากชั้น animFrom → animTo แบบโค้งสปริง */
+  const t=Math.min(1,AC.animT), e=t<.5?2*t*t:-1+(4-2*t)*t;
+  const a=acStepGeom(AC.animFrom), b=acStepGeom(AC.animTo);
+  const px=a.x+(b.x-a.x)*e + (a.w/2) + (b.w-a.w)/2*e;
+  const arc=Math.sin(Math.PI*t)*(AC.animFrom===AC.animTo?0:30);
+  const py=a.y+(b.y-a.y)*e-arc;
+  const bob=(AC.animFrom===AC.animTo)?Math.sin(AC.t/300)*1.8:0;
+  if(AC.glow>0){
+    ctx.globalAlpha=Math.min(.5,AC.glow/40);
+    const gg=ctx.createRadialGradient(px,py-34,2,px,py-34,46);
+    gg.addColorStop(0,c.corner); gg.addColorStop(1,'rgba(0,0,0,0)');
+    ctx.fillStyle=gg; ctx.beginPath(); ctx.arc(px,py-34,46,0,Math.PI*2); ctx.fill(); ctx.globalAlpha=1;
+  }
+  const legSw=(AC.animFrom===AC.animTo)?0:Math.sin(t*Math.PI*3)*5;
+  ctx.strokeStyle=c.ember; ctx.lineWidth=4; ctx.lineCap='round';
+  ctx.beginPath(); ctx.moveTo(px-4,py-12+bob); ctx.lineTo(px-6-legSw,py+bob); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(px+4,py-12+bob); ctx.lineTo(px+6+legSw,py+bob); ctx.stroke();
+  ctx.fillStyle=c.ember; ctx.fillRect(px-11,py-38+bob,22,27);
+  ctx.strokeStyle=c.corner; ctx.lineWidth=3.5;
+  ctx.beginPath(); ctx.moveTo(px-10,py-32+bob); ctx.lineTo(px-17,py-40-legSw+bob); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(px+10,py-32+bob); ctx.lineTo(px+17,py-40+legSw+bob); ctx.stroke();
+  ctx.fillStyle=c.corner; ctx.beginPath();ctx.arc(px,py-46+bob,10,0,Math.PI*2);ctx.fill();
+  ctx.fillStyle=c.bg; ctx.fillRect(px-5.5,py-49+bob,3.4,3.4); ctx.fillRect(px+2.2,py-49+bob,3.4,3.4);
+  if(state.combo>=3){
+    ctx.font='13px Kanit,sans-serif'; ctx.fillStyle=c.gold;
+    ctx.fillText('x'+state.combo,px+14,py-50+bob);
+  }
+  /* particles */
+  AC.parts.forEach(p=>{ctx.globalAlpha=Math.max(0,p.l);ctx.fillStyle=p.c;
+    ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,Math.PI*2);ctx.fill();});
+  ctx.globalAlpha=1;
+  ctx.restore();
+
+  ctx.fillStyle=c.muted; ctx.font='12px Kanit,sans-serif'; ctx.textAlign='right';
+  ctx.fillText(AC.W<150?(AC.floor+'/'+n):('ไต่ถึง'+ACT.floorWord+' '+AC.floor+' / '+n),AC.W-12,AC.H-11);
+  ctx.textAlign='left';
+}
+function acLoop(now){
+  if(!AC.on) return;
+  if(AC.last===null)AC.last=now;
+  const d=now-AC.last; AC.last=now; AC.elapsed+=d; AC.t+=d;
+  if(AC.animT<1) AC.animT=Math.min(1,AC.animT+d/640);
+  if(AC.shake>0) AC.shake=Math.max(0,AC.shake-d/22);
+  if(AC.glow>0) AC.glow=Math.max(0,AC.glow-d/26);
+  acStepParts(d);
+  acDraw(); acHud();
+  AC.raf=requestAnimationFrame(acLoop);
+}
+function acHud(){
+  $('#acProg').textContent=AC.answered+'/'+AC.qs.length;
+  $('#acFloor').textContent=AC.floor;
+  $('#acCombo').textContent=state.combo;
+  $('#acComboChip').classList.toggle('hot',state.combo>=3);
+  const bar=$('#acBar'); if(bar) bar.style.width=(AC.qs.length?(AC.floor/AC.qs.length*100):0)+'%';
+  const s=Math.floor(AC.elapsed/1000);
+  $('#acTime').textContent=Math.floor(s/60)+':'+String(s%60).padStart(2,'0');
+}
+function acStart(mode,qs,tag,onDone){
+  AC.on=true;AC.mode=mode;AC.qs=qs;AC.idx=0;AC.answered=0;AC.correct=0;AC.score=0;
+  AC.byD={district1:0,district2:0,district3:0};
+  AC.elapsed=0;AC.last=null;AC.t=0;AC.qOpen=false;AC.onDone=onDone;AC.col=acColors();
+  AC.floor=0;AC.animFrom=0;AC.animTo=0;AC.animT=1;AC.shake=0;AC.glow=0;AC.dead=false;AC.parts=[];
+  state.combo=0;
+  const ov=$('#arcade'); ov.classList.add('show'); ov.setAttribute('aria-hidden','false');
+  document.body.style.overflow='hidden';
+  $('#acTag').textContent=tag; $('#acEnd').classList.remove('show');
+  acResize(); acHud(); acQuestion();
+  SFX.init(); SFX.play('unlock');
+  cancelAnimationFrame(AC.raf); AC.raf=requestAnimationFrame(acLoop);
+}
+function acClose(){
+  AC.on=false; cancelAnimationFrame(AC.raf);
+  const ov=$('#arcade'); ov.classList.remove('show'); ov.setAttribute('aria-hidden','true');
+  document.body.style.overflow='';
+}
+function acAbort(){
+  if(!AC.on) return;
+  if(AC.answered>0 && !confirm('ออกจากด่านนี้หรือไม่ ผลของรอบนี้จะไม่ถูกบันทึก')) return;
+  acClose();
+}
+function acQuestion(){
+  const q=AC.qs[AC.idx], host=$('#acQCard');
+  AC.qOpen=true; host.dataset.done='';
+  host.innerHTML=
+    '<div class="qmeta"><span>ข้อ '+(AC.idx+1)+'/'+AC.qs.length+'</span>'+
+      (q.district?'<span class="q-type">'+SKILL_LABELS[q.district]+'</span>':'')+'</div>'+
+    '<div class="q-text">'+q.q+'</div>'+
+    '<div class="choices">'+q.c.map((c,ci)=>'<button class="choice" data-ci="'+ci+'"><span class="k">'+KEYCAPS[ci]+'</span><span>'+c+'</span></button>').join('')+'</div>'+
+    '<div class="explain" data-ex></div>'+
+    '<div class="btn-row" id="acNextRow" style="display:none"><button class="btn primary" id="acNextQ" style="flex:1">'+
+      (AC.idx===AC.qs.length-1?'จบด่าน · ดูผล':'ข้อถัดไป')+'</button></div>';
+  const t0=Date.now();
+  host.querySelectorAll('.choice').forEach(btn=>{
+    btn.addEventListener('click',()=>{
+      if(host.dataset.done) return;
+      host.dataset.done='1';
+      const ci=+btn.dataset.ci, ex=host.querySelector('[data-ex]');
+      host.querySelectorAll('.choice').forEach(b=>b.disabled=true);
+      if(ci===q.a){
+        btn.classList.add('correct'); AC.correct++;
+        if(q.district) AC.byD[q.district]++;
+        state.combo++; state.maxCombo=Math.max(state.maxCombo,state.combo);
+        const cbonus=Math.min(state.combo-1,4)*5;
+        const gain=(AC.mode==='practice'?12:20+cbonus);
+        addXp(gain,false); AC.score+=100+cbonus*10;
+        AC.animFrom=AC.floor; AC.floor++; AC.animTo=AC.floor; AC.animT=0; AC.glow=40;
+        const g=acStepGeom(AC.floor); acPuff(g.x+g.w/2,g.y,AC.col.corner,16);
+        floaty('ไต่ขึ้น'+ACT.floorWord+' '+AC.floor+' · +'+gain+' XP',AC.col.corner);
+        SFX.play(state.combo>=3?'combo':'correct');
+        if((Date.now()-t0)<8000) state.fastCorrect=true;
+      } else {
+        btn.classList.add('wrong');
+        host.querySelectorAll('.choice')[q.a].classList.add('correct');
+        state.combo=0; addXp(4,false); AC.shake=40; SFX.play('wrong');
+        const g=acStepGeom(AC.floor); acPuff(g.x+g.w/2,g.y,AC.col.red,10);
+        floaty('ยังไม่ขยับ — อ่านเฉลยแล้วไปต่อ',AC.col.red);
+      }
+      ex.innerHTML=q.e; ex.classList.add('show');
+      $('#acNextRow').style.display='flex';
+      $('#acNextQ').onclick=()=>{
+        AC.answered++; AC.idx++;
+        if(AC.idx>=AC.qs.length){ AC.qOpen=false; acFinishRound(); }
+        else { acQuestion(); $('.ac-play').scrollTop=0; }
+        acHud(); save();
+      };
+      acHud(); save();
+      try{ $('#acNextRow').scrollIntoView({behavior:REDUCED?'auto':'smooth',block:'nearest'}); }catch(e){}
+    });
+  });
+  acHud();
+}
+/* ---- เรดาร์ย่อยท้ายด่าน: เห็นทันทีว่ารอบนี้แข็ง/อ่อนด้านไหน ---- */
+function acMiniRadar(){
+  const host=$('#acMini'); if(!host) return;
+  const ks=['district1','district2','district3'];
+  const tot={district1:0,district2:0,district3:0};
+  AC.qs.forEach(q=>{ if(q.district) tot[q.district]++; });
+  const used=ks.filter(k=>tot[k]>0);
+  if(used.length<3){                       /* ด่านฝึกหัดสายเดียว → แสดงเป็นแถบ */
+    const k=used[0]||'district1';
+    const pct=tot[k]?Math.round(AC.byD[k]/tot[k]*100):0;
+    host.innerHTML='<div class="legend" style="width:100%">ความแม่นรอบนี้ — <b>'+SKILL_LABELS[k]+'</b><br>'+
+      '<span style="display:block;height:12px;border-radius:7px;background:rgba(255,255,255,.10);margin-top:8px;overflow:hidden">'+
+      '<span style="display:block;height:100%;width:'+pct+'%;background:linear-gradient(90deg,var(--corner),var(--gold))"></span></span>'+
+      '<b style="font-size:1.1rem">'+pct+'%</b> ('+AC.byD[k]+'/'+tot[k]+' ข้อ)</div>';
+    return;
+  }
+  const cx=95,cy=88,R=62;
+  const vals=ks.map(k=>tot[k]?AC.byD[k]/tot[k]:0);
+  const pt=(i,r)=>{const an=-Math.PI/2+i*2*Math.PI/3;return [cx+Math.cos(an)*r,cy+Math.sin(an)*r];};
+  let s='<svg viewBox="0 0 190 172" xmlns="http://www.w3.org/2000/svg">';
+  [1,.66,.33].forEach(f=>{
+    s+='<polygon points="'+ks.map((_,i)=>pt(i,R*f).map(v=>v.toFixed(1)).join(',')).join(' ')+
+       '" fill="none" stroke="rgba(255,255,255,.14)" stroke-width="1"/>';});
+  ks.forEach((_,i)=>{const p=pt(i,R);s+='<line x1="'+cx+'" y1="'+cy+'" x2="'+p[0].toFixed(1)+'" y2="'+p[1].toFixed(1)+'" stroke="rgba(255,255,255,.14)"/>';});
+  s+='<polygon points="'+vals.map((v,i)=>pt(i,Math.max(4,R*v)).map(x=>x.toFixed(1)).join(',')).join(' ')+
+     '" fill="var(--corner)" fill-opacity=".30" stroke="var(--corner)" stroke-width="2.5"/>';
+  vals.forEach((v,i)=>{const p=pt(i,Math.max(4,R*v));
+    s+='<circle cx="'+p[0].toFixed(1)+'" cy="'+p[1].toFixed(1)+'" r="4" fill="var(--gold)"/>';});
+  ks.forEach((_,i)=>{const p=pt(i,R+16);
+    s+='<text x="'+p[0].toFixed(1)+'" y="'+p[1].toFixed(1)+'" font-size="12" fill="var(--muted)" text-anchor="middle" font-family="Kanit,sans-serif">'+(i+1)+'</text>';});
+  s+='</svg>';
+  s+='<div class="legend">'+ks.map((k,i)=>'<div><i style="background:var(--gold)"></i>'+(i+1)+'. '+SKILL_LABELS[k]+
+     ' — <b>'+AC.byD[k]+'/'+tot[k]+'</b></div>').join('')+'</div>';
+  host.innerHTML=s;
+}
+function acFinishRound(){
+  if(AC.dead) return; AC.dead=true;
+  const total=AC.qs.length, timeSec=Math.round(AC.elapsed/1000);
+  if(AC.correct===total){ AC.score+=300; confetti(2600); SFX.play('fanfare'); }
+  else SFX.play('bell');
+  $('#acEndTitle').textContent=AC.correct===total?('ถึง'+ACT.topWord+' — CLEAR!'):'จบด่าน';
+  $('#acEndBody').innerHTML='ตอบถูก <b>'+AC.correct+'/'+total+'</b> ข้อ · ไต่ถึง'+ACT.floorWord+' <b>'+AC.floor+'</b> จาก '+total+
+    ' · คะแนนอาร์เคด <b>'+AC.score+'</b> · เวลา <b>'+Math.floor(timeSec/60)+':'+String(timeSec%60).padStart(2,'0')+'</b>';
+  acMiniRadar();
+  $('#acEnd').classList.add('show');
+  $('#acEndGo').onclick=()=>{
+    $('#acEnd').classList.remove('show'); acClose();
+    if(AC.onDone) AC.onDone({correct:AC.correct,byD:AC.byD,time:timeSec,score:AC.score});
+  };
+}
+/* ---- wiring: คีย์บอร์ดเป็นทางเลือกเสริม ไม่จำเป็นต่อการเล่น ---- */
+$('#acExit').addEventListener('click',acAbort);
+document.addEventListener('keydown',e=>{
+  if(!AC.on||e.target.tagName==='INPUT') return;
+  const k=e.key.toLowerCase();
+  if(k==='escape'){acAbort();return;}
+  const host=$('#acQCard');
+  const idx=KEYCAPS.indexOf(e.key);
+  if(idx>=0){
+    const btn=host.querySelectorAll('.choice')[idx];
+    if(btn&&!btn.disabled){e.preventDefault();btn.click();return;}
+  }
+  if(k==='enter'){const n=$('#acNextQ'); if(n) n.click();}
+});
+window.addEventListener('resize',()=>{ if(AC.on) acResize(); });
+
+/* ---- launchers ---- */
+function startTest(kind){
+  const qs=stratifiedSix(kind==='post' ? (state.preIds||[]) : []);
+  if(kind==='pre'){ state.preIds=qs.map(q=>q.qid); } else { state.postIds=qs.map(q=>q.qid); }
+  save();
+  acStart(kind, qs, (kind==='pre'?'PRETEST · ด่านทดสอบก่อนเรียน':'POSTTEST · ด่านทดสอบหลังเรียน'), res=>{
+    if(kind==='pre'){state.pre=res.correct;state.preByD=res.byD;state.preTime=res.time;}
+    else{state.post=res.correct;state.postByD=res.byD;state.postTime=res.time;}
+    save();
+    setTimeout(()=>finishTest(kind,res.correct),350);
+  });
+}
+function finishTest(kind,score){
+  const info=starInfo(score);
+  $('#rvL1').textContent=kind==='pre'?'PRETEST COMPLETE':'POSTTEST COMPLETE';
+  $('#rvL2').textContent='RAW SCORE';
+  $('#rvScore').textContent=score+'/6';
+  $('#rvRank').textContent=info.rank;
+  $('#rvSub').textContent=kind==='pre'?'นี่คือเส้นฐานของคุณ — เดี๋ยวเรามาวัดกันใหม่หลังเดินครบทั้ง 3 ห้อง':info.msg;
+  const rv=$('#reveal'); rv.classList.add('show');
+  ['#rvL1','#rvRank','#rvScore','#rvL2','#rvSub'].forEach(sel=>{const e=$(sel);e.classList.remove('rv-in');e.style.opacity=0;});
+  const go=$('#rvGo'); go.style.display='none';
+  [['#rvL1',0],['#rvRank',1500],['#rvScore',1900],['#rvL2',2000],['#rvSub',2250]].forEach(([sel,delay])=>{
+    setTimeout(()=>{const e=$(sel);e.style.opacity=1;e.classList.add('rv-in');},REDUCED?0:delay);
+  });
+  renderStars($('#rvStars'),info.stars,MAX_STARS,true);
+  if(kind==='post'&&info.stars>=5){setTimeout(()=>{confetti(4200);SFX.play('fanfare');},1500);}
+  go.textContent=kind==='pre'?'เข้าห้องแรก':'ดูรายงานผลภารกิจ';
+  setTimeout(()=>{go.style.display='inline-block';},REDUCED?0:2500);
+  go.onclick=()=>{
+    SFX.play('click'); rv.classList.remove('show');
+    if(kind==='pre'){state.visited['pretest']='done';unlock('d1');goto_('scr-preview1');}
+    else {state.visited['posttest']='done';unlock('summary');showSummary();}
+  };
+}
+function startQuiz(key){
+  const map={check1:'district1',check2:'district2',check3:'district3'};
+  const d=map[key];
+  const qs=pickN(BANK[d],3).map(q=>Object.assign({},randomizeChoices(q),{district:d}));
+  acStart('practice', qs, 'TRAINING · ด่านฝึกหัด ' + SKILL_LABELS[d], res=>{
+    const rs=$('#'+key+'Result');
+    rs.className='status-line '+(res.correct===3?'ok':'');
+    rs.innerHTML='รอบล่าสุด: ตอบถูก <b>'+res.correct+'/3</b> ข้อ · คะแนนอาร์เคด '+res.score+
+      ' · เวลา '+res.time+' วินาที'+(res.correct===3?' — แม่นเต็มสิบ ไปด่านถัดไปได้เลย':' — ลองสุ่มข้อใหม่อีกรอบเพื่อความมั่นใจ');
+    $('#'+key+'Next').style.display='flex';
+    const stop=stopOfScreen('scr-'+key); if(stop) state.visited[stop.key]='done';
+    renderNav(state.screen); save();
+  });
+}
+
+/* ============ 10) LAB HELPERS ============ */
+function markLab(group,key,xp){
+  if(state.labs[group].indexOf(key)<0){ state.labs[group].push(key); addXp(xp||8); save(); return true; }
+  return false;
+}
+function labCount(g){ return state.labs[g].length; }
+
+/* ============ 11) GAME-SPECIFIC LABS ============ */
+
+/* ---- LAB 1: Gate Runner ---- */
+const GATE_RULES=[{t:'score >= 80',f:s=>s>=80,out:'A'},{t:'score >= 70',f:s=>s>=70,out:'B'},{t:'score >= 60',f:s=>s>=60,out:'C'},{t:'else',f:()=>true,out:'F'}];
+let gateBusy=false;
+function runGate(score){
+  if(gateBusy) return; gateBusy=true;
+  const gates=$$('#gateRow .gate');
+  gates.forEach(g=>{g.className='gate';g.querySelector('.flag').textContent='—';});
+  const st=$('#gateStatus'); st.className='status-line'; st.textContent='ผู้ผจญภัยถือคะแนน '+score+' เดินเข้าเขาวงกต...';
+  let i=0;
+  const step=()=>{
+    if(i>=gates.length){gateBusy=false;return;}
+    const g=gates[i], rule=GATE_RULES[i];
+    g.classList.add('testing'); SFX.play('tick');
+    setTimeout(()=>{
+      g.classList.remove('testing');
+      if(rule.f(score)){
+        g.classList.add('passed'); g.querySelector('.flag').textContent='TRUE';
+        for(let k=i+1;k<gates.length;k++){gates[k].classList.add('skipped');gates[k].querySelector('.flag').textContent='ข้าม';}
+        st.className='status-line ok';
+        st.innerHTML='ประตูที่ '+(i+1)+' เปิด → พิมพ์ <b>'+rule.out+'</b> แล้วออกจากโครงสร้างทันที ประตูที่เหลือ '+(gates.length-i-1)+' บานไม่ถูกตรวจเลย';
+        SFX.play('correct'); gateBusy=false;
+        markLab('lab1',String(score));
+        if(labCount('lab1')===4) toast('เดินครบทั้ง 4 เส้นทางของเขาวงกตแล้ว');
+        return;
+      }
+      g.classList.add('failed'); g.querySelector('.flag').textContent='FALSE';
+      i++; setTimeout(step,REDUCED?40:260);
+    },REDUCED?40:420);
+  };
+  step();
+}
+
+/* ---- LAB 2: Trap Detector ---- */
+const TRAPS={
+  dangling:{code:'int x = 10;\n\nif (x > 5)\n    if (x > 20)\n        printf("A");\n    else\n        printf("B");',
+    ans:'พิมพ์ <b>B</b> — else จับคู่กับ if ที่ใกล้ที่สุดคือ <code>if (x &gt; 20)</code> ไม่ใช่ตัวนอก การย่อหน้าไม่มีผลต่อคอมไพเลอร์'},
+  assign:{code:'int x = 0;\n\nif (x = 5)\n    printf("TRUE");\nelse\n    printf("FALSE");',
+    ans:'พิมพ์ <b>TRUE</b> — <code>x = 5</code> คือการกำหนดค่า ผลของนิพจน์คือ 5 ซึ่งไม่ใช่ 0 จึงเป็นจริงเสมอ (ถ้าเขียน <code>x = 0</code> จะเป็นเท็จเสมอ)'},
+  semi:{code:'int x = -3;\n\nif (x > 0);\n{\n    printf("POSITIVE");\n}',
+    ans:'พิมพ์ <b>POSITIVE</b> — เครื่องหมาย <code>;</code> ปิด if ไปแล้ว บล็อกปีกกาจึงเป็นบล็อกอิสระที่ทำงานเสมอ ไม่ว่า x จะเป็นเท่าใด'},
+  truthy:{code:'if (-1)  printf("A");\nif (0)   printf("B");\nif (2)   printf("C");',
+    ans:'พิมพ์ <b>AC</b> — ในภาษา C มีเพียง <b>0 เท่านั้นที่เป็นเท็จ</b> ตัวเลขอื่นทุกตัวรวมทั้งค่าลบถือเป็นจริง'}
+};
+function runTrap(key){
+  const t=TRAPS[key];
+  $('#trapCode').textContent=t.code;
+  const st=$('#trapStatus');
+  st.className='status-line'; st.textContent='กำลังสแกนกับดัก...';
+  SFX.play('ping');
+  setTimeout(()=>{
+    st.className='status-line ok'; st.innerHTML=t.ans; SFX.play('correct');
+    markLab('lab2',key);
+    if(labCount('lab2')===4) toast('ปลดกับดักครบทั้ง 4 จุดแล้ว');
+  },REDUCED?40:700);
+}
+
+/* ---- LAB 3: Switchboard ---- */
+let brkOn=true;
+const SW_CASES=[{v:1,out:'Mon'},{v:2,out:'Tue'},{v:3,out:'Wed'}];
+/* โค้ดตัวอย่างต้องเปลี่ยนตามสวิตช์ break เสมอ เพื่อให้ผลลัพธ์ที่จำลองตรงกับโค้ดที่ผู้เรียนเห็น */
+const SW_CODE_ON='switch (day) {\n    case 1: printf("Mon "); break;\n    case 2: printf("Tue "); break;\n    case 3: printf("Wed "); break;\n    default: printf("Other");\n}';
+const SW_CODE_OFF='switch (day) {\n    case 1: printf("Mon ");        // ไม่มี break จึงไหลต่อ\n    case 2: printf("Tue ");        // ไม่มี break จึงไหลต่อ\n    case 3: printf("Wed ");        // ไม่มี break จึงไหลต่อ\n    default: printf("Other");\n}';
+function renderSwCode(){const el=$('#swCode'); if(el) el.textContent=brkOn?SW_CODE_ON:SW_CODE_OFF;}
+function runSwitch(day){
+  const tape=$('#swTape'), st=$('#swStatus');
+  tape.innerHTML=''; st.className='status-line'; st.textContent='switch (day = '+day+') กำลังเทียบค่า...';
+  const outs=[]; let started=false;
+  SW_CASES.forEach(c=>{
+    if(c.v===day) started=true;
+    if(started){ outs.push(c.out); if(brkOn) started=false; }
+  });
+  if(!outs.length) outs.push('Other');        /* ไม่มี case ใดตรง จึงตกไปที่ default */
+  else if(started) outs.push('Other');        /* ไหลทะลุจนถึง default เพราะไม่มี break */
+  let i=0;
+  const step=()=>{
+    if(i<outs.length){
+      const s=document.createElement('span'); s.textContent=outs[i]; tape.appendChild(s);
+      SFX.play(i===0?'ping':'tick'); i++; setTimeout(step,REDUCED?40:420);
+    } else {
+      st.className='status-line ok';
+      if(outs[0]==='Other') st.innerHTML='ไม่มี case ใดตรงกับ '+day+' จึงตกไปที่ <code>default</code> → พิมพ์ <b>Other</b>';
+      else if(brkOn) st.innerHTML='เจอ <code>case '+day+'</code> ทำงานแล้วชน <code>break</code> จึงออกจาก switch ทันที → พิมพ์ <b>'+outs.join(' ')+'</b>';
+      else st.innerHTML='ไม่มี <code>break</code> จึง <b>ไหลทะลุ</b> ลง case ถัดไปจนหมด รวมทั้ง <code>default</code> ด้วย → พิมพ์ <b>'+outs.join(' ')+'</b> (นี่คือจุดหลอกที่ออกสอบบ่อยที่สุดของ switch)';
+      SFX.play('correct');
+      markLab('lab3',day+'|'+(brkOn?'brk':'nobrk'));
+      if(labCount('lab3')>=6) toast('ทดลองสวิตช์บอร์ดครบทุกรูปแบบแล้ว');
+    }
+  };
+  step();
+}
+
+
+/* ============ 12) SUMMARY + RADAR ============ */
+const BADGE_DEFS = [
+  {id:'perfect',  name:'MASTER OF GATES',  desc:'Posttest ถูกครบ 6 ข้อ',            test:s => s.post === 6},
+  {id:'zero2hero',name:'LIGHT IN THE DARK',desc:'ดาวเพิ่มขึ้น 3 ดวงขึ้นไป',        test:s => (starInfo(s.post).stars - starInfo(s.pre).stars) >= 3},
+  {id:'fast',     name:'QUICK REFLEX',     desc:'ตอบถูกภายใน 5 วินาที',            test:s => s.fastCorrect},
+  {id:'labrat',   name:'TRAP DISARMER',    desc:'เล่นห้องทดลองครบทั้งสามห้อง',      test:s => s.labs.lab1.length === 4 && s.labs.lab2.length === 4 && s.labs.lab3.length >= 6},
+  {id:'combo',    name:'FLAWLESS RUN',     desc:'ตอบถูกติดกัน 5 ข้อขึ้นไป',        test:s => s.maxCombo >= 5},
+  {id:'sweep',    name:'TRIPLE CHAMBER',   desc:'ได้ 2/2 ครบทั้งสามห้อง',          test:s => s.postByD.district1 === 2 && s.postByD.district2 === 2 && s.postByD.district3 === 2}
+];
+function weakestDistrict(){const ds=['district1','district2','district3'];return ds.reduce((min,d)=>state.postByD[d]<state.postByD[min]?d:min,ds[0]);}
+function extraTips(postInfo){ 
+  const tips=[];
+  if(labCount('lab1')<4) tips.push('ยังเดินประตูไม่ครบทั้ง 4 คะแนนในห้องแรก การได้ "เห็น" ว่าประตูถัดไปถูกข้ามจริง ช่วยให้จำกฎเจอจริงตัวแรกแล้วจบได้แม่นขึ้น');
+  if(labCount('lab2')<4) tips.push('ยังเปิดกับดักไม่ครบทั้ง 4 อัน โดยเฉพาะ <b>= กับ ==</b> และ <b>; เกิน</b> เป็นสองข้อที่ออกสอบบ่อยที่สุดของบทนี้');
+  if(labCount('lab3')<6) tips.push('ลองสลับสวิตช์ break ทั้งเปิดและปิดในโถงหลายแพร่ง เพื่อเห็นการไหลทะลุ (fall-through) ด้วยตาตัวเอง');
+  if(postInfo.stars===MAX_STARS) tips.push('ได้ครบ 6 ดาวเต็มแล้ว ขั้นต่อไปคือลองเขียนโปรแกรมตัดเกรดจริงด้วย if-else แล้วทดสอบกับค่าขอบ เช่น 80 พอดี และ 79.9');
+  return tips;
+ }
+function showSummary(){
+  goto_('scr-summary'); state.visited['summary']='done';
+  const preInfo=starInfo(state.pre||0), postInfo=starInfo(state.post||0);
+  const fmtT=s=>Math.floor((s||0)/60)+':'+String((s||0)%60).padStart(2,'0');
+  $('#sumWho').textContent='ผู้ผจญภัย: '+(state.name||'ไม่ระบุชื่อ')+' · เวลาในด่านทดสอบ ก่อนเรียน '+fmtT(state.preTime)+
+    ' / หลังเรียน '+fmtT(state.postTime)+' · ภารกิจสำเร็จเมื่อ '+new Date().toLocaleString('th-TH',{dateStyle:'medium',timeStyle:'short'});
+  $('#sumPre').textContent=state.pre+'/6'; $('#sumPost').textContent=state.post+'/6';
+  $('#sumPreRank').textContent=preInfo.rank; $('#sumPostRank').textContent=postInfo.rank;
+  renderStars($('#sumPreStars'),preInfo.stars,MAX_STARS,false);
+  renderStars($('#sumPostStars'),postInfo.stars,MAX_STARS,true);
+  const dStar=postInfo.stars-preInfo.stars, msg=$('#sumMsg');
+  if(dStar>0){msg.className='delta';msg.textContent='ดาวเพิ่มขึ้น +'+dStar+' ดวง (จาก '+preInfo.stars+' เป็น '+postInfo.stars+' ดาว) — พัฒนาการชัดเจนมาก';}
+  else if(dStar===0){msg.className='delta flat';msg.textContent=postInfo.stars>=5?'คงระดับ '+postInfo.stars+' ดาวไว้ได้ทั้งก่อนและหลังเรียน — ความเข้าใจมั่นคงดีมาก':'ดาวยังคงที่ที่ '+postInfo.stars+' ดวง — ยังมีจุดที่ยังไม่คลิก ลองทบทวนหัวข้อที่ระบบแนะนำด้านล่างแล้วสอบใหม่';}
+  else {msg.className='delta down';msg.textContent='รอบนี้ดาวยังไม่ขึ้น ถือเป็นข้อมูลที่มีค่า — ระบบเลือกหัวข้อที่ควรทบทวนก่อนไว้ให้ที่ปุ่มด้านล่างแล้ว';}
+  const dsHost=$('#sumDistrictStars'); dsHost.innerHTML='';
+  ['district1','district2','district3'].forEach(d=>{
+    const got=state.postByD[d], was=state.preByD[d];
+    const row=document.createElement('div'); row.className='dstar-row';
+    const diff=got-was;
+    const diffTxt=diff>0?'<span style="color:var(--corner)">+'+diff+'</span>':diff<0?'<span style="color:var(--red)">'+diff+'</span>':'<span style="color:var(--muted)">คงที่</span>';
+    row.innerHTML='<div class="lbl">'+SKILL_LABELS[d]+'</div><div class="star-row xs" data-d="'+d+'"></div><div class="mono" style="font-size:.78rem">'+got+'/2 '+diffTxt+'</div>';
+    dsHost.appendChild(row);
+    renderStars(row.querySelector('.star-row'),got,2,false);
+  });
+  drawRadar();
+  const bHost=$('#sumBadges'); bHost.innerHTML='';
+  BADGE_DEFS.forEach((b,i)=>{
+    let ok=false; try{ok=!!b.test(state);}catch(e){ok=false;}
+    const el=document.createElement('div');
+    el.className='badge'+(ok?'':' locked'); el.style.animationDelay=(i*0.07)+'s';
+    el.innerHTML='<b>'+(ok?'★':'☆')+'</b><span><b>'+b.name+'</b> — '+b.desc+'</span>';
+    bHost.appendChild(el);
+  });
+  const adv=$('#sumAdvice'); adv.innerHTML='';
+  const tips=[]; const weak=weakestDistrict();
+  if(state.postByD[weak]<2) tips.push('จุดที่ควรทบทวนก่อนคือ <b>'+SKILL_LABELS[weak]+'</b> — กลับไปอ่านสรุปและเล่นห้องทดลองของหัวข้อนั้นซ้ำอีกครั้ง');
+  extraTips(postInfo).forEach(t=>tips.push(t));
+  if(state.maxCombo<3) tips.push('ลองทำแบบฝึกหัดประจำด่านซ้ำจนตอบถูกติดกัน 3 ข้อขึ้นไป จะช่วยยืนยันว่าเข้าใจจริงไม่ใช่เดา');
+  if(!tips.length) tips.push('ผลงานอยู่ในเกณฑ์ดี แนะนำให้เล่นซ้ำอีกรอบเพื่อเจอชุดคำถามใหม่ที่ระบบสุ่มให้');
+  tips.forEach(t=>{const li=document.createElement('li');li.innerHTML=t;adv.appendChild(li);});
+  $('#sumXp').textContent=state.xp; $('#sumCombo').textContent=state.maxCombo;
+  $('#sumStarTotal').textContent=postInfo.stars+'/'+MAX_STARS;
+  $('#btnReview').textContent='ทบทวน: '+SKILL_LABELS[weak];
+  $('#btnReview').onclick=()=>{SFX.play('click');goto_(DISTRICT_SCREEN[weak]);};
+  save();
+}
+/* ---- CSV export (สำหรับอาจารย์เก็บคะแนน) ---- */
+function exportCSV(){
+  const rows=[['name','avatar','pretest','posttest','d1_pre','d2_pre','d3_pre','d1_post','d2_post','d3_post','stars_pre','stars_post','pre_time_s','post_time_s','xp','max_combo','labs','timestamp'],
+    [state.name,state.avatar,state.pre,state.post,state.preByD.district1,state.preByD.district2,state.preByD.district3,
+     state.postByD.district1,state.postByD.district2,state.postByD.district3,
+     starInfo(state.pre||0).stars,starInfo(state.post||0).stars,state.preTime||0,state.postTime||0,state.xp,state.maxCombo,
+     labCount('lab1')+'/'+labCount('lab2')+'/'+labCount('lab3'),new Date().toISOString()]];
+  const csv='﻿'+rows.map(r=>r.map(v=>'"'+String(v).replace(/"/g,'""')+'"').join(',')).join('\n');
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8'}));
+  a.download='GNR1007_D2_labyrinth_'+(state.name||'player').replace(/[^\w฀-๿-]/g,'_')+'.csv';
+  document.body.appendChild(a); a.click(); a.remove();
+  toast('บันทึกไฟล์คะแนน CSV แล้ว ส่งให้อาจารย์ได้เลย');
+}
+let radarChart=null;
+function radarData(){
+  const labels=[SKILL_LABELS.district1,SKILL_LABELS.district2,SKILL_LABELS.district3,'ภาพรวมความแม่นยำ'];
+  const preData=[state.preByD.district1/2*100,state.preByD.district2/2*100,state.preByD.district3/2*100,state.pre/6*100].map(Math.round);
+  const postData=[state.postByD.district1/2*100,state.postByD.district2/2*100,state.postByD.district3/2*100,state.post/6*100].map(Math.round);
+  return {labels,preData,postData};
+}
+function drawRadar(){
+  const {labels,preData,postData}=radarData();
+  const canvas=$('#skillRadarChart'), fb=$('#radarFallback');
+  if(typeof Chart==='undefined'){canvas.style.display='none';fb.style.display='block';drawRadarSVG(labels,preData,postData);return;}
+  canvas.style.display='block'; fb.style.display='none';
+  if(radarChart) radarChart.destroy();
+  radarChart=new Chart(canvas,{type:'radar',
+    data:{labels,datasets:[
+      {label:'Pretest',data:preData,borderColor:'#a898c4',backgroundColor:'rgba(201,168,154,0.12)',pointBackgroundColor:'#a898c4'},
+      {label:'Posttest',data:postData,borderColor:'#c084fc',backgroundColor:'rgba(192,132,252,0.20)',pointBackgroundColor:'#c084fc'}]},
+    options:{responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{labels:{color:'#efe7fb',font:{family:'Kanit'}}}},
+      scales:{r:{min:0,max:100,ticks:{display:false,stepSize:25},grid:{color:'rgba(192,132,252,.18)'},angleLines:{color:'rgba(192,132,252,.18)'},pointLabels:{color:'#a898c4',font:{size:10,family:'Kanit'}}}}}});
+}
+function drawRadarSVG(labels,preData,postData){
+  const cx=170,cy=140,R=96,n=labels.length;
+  const pt=(i,v)=>{const ang=-Math.PI/2+i*2*Math.PI/n;const r=R*(v/100);return [cx+r*Math.cos(ang),cy+r*Math.sin(ang)];};
+  let s='';
+  [25,50,75,100].forEach(g=>{s+='<polygon points="'+labels.map((_,i)=>pt(i,g).join(',')).join(' ')+'" fill="none" stroke="rgba(192,132,252,.16)"/>';});
+  labels.forEach((_,i)=>{const [x,y]=pt(i,100);s+='<line x1="'+cx+'" y1="'+cy+'" x2="'+x+'" y2="'+y+'" stroke="rgba(192,132,252,.16)"/>';});
+  s+='<polygon points="'+preData.map((v,i)=>pt(i,v).join(',')).join(' ')+'" fill="rgba(201,168,154,.14)" stroke="#a898c4" stroke-width="2"/>';
+  s+='<polygon points="'+postData.map((v,i)=>pt(i,v).join(',')).join(' ')+'" fill="rgba(192,132,252,.20)" stroke="#c084fc" stroke-width="2"/>';
+  labels.forEach((lb,i)=>{const [x,y]=pt(i,124);const anchor=x<cx-6?'end':(x>cx+6?'start':'middle');s+='<text x="'+x+'" y="'+(y+4)+'" text-anchor="'+anchor+'" font-size="9" fill="#a898c4" font-family="Kanit,sans-serif">'+lb+'</text>';});
+  s+='<g font-size="10"><rect x="18" y="266" width="12" height="4" fill="#a898c4"/><text x="36" y="271" fill="#a898c4">Pretest</text><rect x="110" y="266" width="12" height="4" fill="#c084fc"/><text x="128" y="271" fill="#c084fc">Posttest</text></g>';
+  $('#radarFallback').innerHTML=s;
+}
+
+/* ============ 13) AVATARS ============ */
+const AVATARS = [
+  '<circle cx="26" cy="26" r="24" fill="#1a1030" stroke="#c084fc" stroke-width="2"/><path d="M26 10l14 9v14l-14 9-14-9V19z" fill="#c084fc"/><circle cx="26" cy="26" r="5" fill="#0d0718"/>',
+  '<circle cx="26" cy="26" r="24" fill="#1a1030" stroke="#4ade80" stroke-width="2"/><path d="M14 34c0-10 24-10 24 0" fill="none" stroke="#4ade80" stroke-width="3"/><circle cx="26" cy="19" r="6" fill="#4ade80"/>',
+  '<circle cx="26" cy="26" r="24" fill="#1a1030" stroke="#fbbf24" stroke-width="2"/><path d="M20 12h12l-3 12h6l-11 16 3-12h-6z" fill="#fbbf24"/>',
+  '<circle cx="26" cy="26" r="24" fill="#1a1030" stroke="#fb7185" stroke-width="2"/><rect x="14" y="18" width="24" height="18" rx="6" fill="#fb7185"/><circle cx="21" cy="27" r="3" fill="#0d0718"/><circle cx="31" cy="27" r="3" fill="#0d0718"/>',
+  '<circle cx="26" cy="26" r="24" fill="#1a1030" stroke="#d8b4fe" stroke-width="2"/><path d="M12 38 L26 12 L40 38 Z" fill="none" stroke="#d8b4fe" stroke-width="3"/><circle cx="26" cy="30" r="4" fill="#d8b4fe"/>',
+  '<circle cx="26" cy="26" r="24" fill="#1a1030" stroke="#fde68a" stroke-width="2"/><rect x="16" y="14" width="20" height="24" rx="10" fill="#fde68a"/><path d="M26 38v6" stroke="#fde68a" stroke-width="3" stroke-linecap="round"/>'
+];
+function renderAvatars(){
+  const host=$('#avatarGrid'); host.innerHTML='';
+  AVATARS.forEach((a,i)=>{
+    const b=document.createElement('button'); b.type='button';
+    b.className='avatar-opt'+(i===state.avatar?' sel':'');
+    b.setAttribute('aria-label','อวตารแบบที่ '+(i+1));
+    b.innerHTML='<svg viewBox="0 0 52 52" xmlns="http://www.w3.org/2000/svg">'+a+'</svg>';
+    b.addEventListener('click',()=>{state.avatar=i;SFX.init();SFX.play('select');renderAvatars();});
+    host.appendChild(b);
+  });
+}
+function updChip(){
+  $('#chipAva').innerHTML='<svg viewBox="0 0 52 52" xmlns="http://www.w3.org/2000/svg">'+AVATARS[state.avatar]+'</svg>';
+  $('#chipTxt').textContent=state.name||'—';
+}
+
+/* ============ 14) EVENT WIRING ============ */
+document.addEventListener('click',e=>{
+  const go=e.target.closest('[data-goto]'); if(go){SFX.play('click');goto_(go.dataset.goto);return;}
+  const qz=e.target.closest('[data-quiz]'); if(qz){SFX.play('click');const k=qz.dataset.quiz;goto_('scr-'+k);return;}
+  const rq=e.target.closest('[data-requiz]'); if(rq){SFX.play('click');startQuiz(rq.dataset.requiz);return;}
+  
+  const gt=e.target.closest('[data-gate]'); if(gt){SFX.play('click');runGate(+gt.dataset.gate);return;}
+  const tp=e.target.closest('[data-trap]'); if(tp){SFX.play('click');runTrap(tp.dataset.trap);return;}
+  const sw=e.target.closest('[data-sw]'); if(sw){SFX.play('click');runSwitch(+sw.dataset.sw);return;}
+  if(e.target.closest('#brkToggle')){
+    brkOn=!brkOn; const b=$('#brkToggle');
+    b.textContent='break: '+(brkOn?'ON':'OFF');
+    b.className='toggle '+(brkOn?'on':'off');
+    renderSwCode();
+    SFX.play('select');
+    toast(brkOn?'ใส่ break ให้ทุก case แล้ว — จะหยุดที่ case ที่ตรง':'ถอด break ออกทุก case — ระวังการไหลทะลุ (fall-through)');
+    return;
+  }
+
+});
+$('#preLaunch').addEventListener('click',()=>{SFX.play('click');startTest('pre');});
+$('#postLaunch').addEventListener('click',()=>{SFX.play('click');startTest('post');});
+$('#goPost').addEventListener('click',()=>{SFX.play('click');state.visited['d3']='done';unlock('posttest');goto_('scr-posttest');});
+$('#btnStart').addEventListener('click',()=>{
+  const nm=$('#playerName').value.trim();
+  if(!nm){$('#nameErr').classList.add('show');$('#playerName').focus();return;}
+  $('#nameErr').classList.remove('show'); state.name=nm;
+  SFX.init(); SFX.play('unlock'); updChip(); updXp();
+  goto_('scr-pretest');
+});
+$('#playerName').addEventListener('input',()=>$('#nameErr').classList.remove('show'));
+$('#playerName').addEventListener('keydown',e=>{if(e.key==='Enter')$('#btnStart').click();});
+$('#wSound').addEventListener('click',()=>{SFX.on=!SFX.on;SFX.init();updSoundBtns();if(SFX.on)SFX.play('select');});
+$('#btnSound').addEventListener('click',()=>{SFX.on=!SFX.on;updSoundBtns();if(SFX.on)SFX.play('select');});
+$('#btnCsv').addEventListener('click',()=>{SFX.play('click');exportCSV();});
+function hardReset(){clearSaved();location.reload();}
+$('#btnReset').addEventListener('click',()=>{if(confirm('ต้องการเริ่มภารกิจใหม่ทั้งหมดหรือไม่ ความคืบหน้าปัจจุบันจะถูกล้าง'))hardReset();});
+$('#btnAgain').addEventListener('click',hardReset);
+const saved=loadSaved();
+if(saved){
+  $('#wResume').style.display='block';
+  $('#wResume').textContent='เล่นต่อ: '+saved.name;
+  $('#wResume').addEventListener('click',()=>{
+    Object.assign(state,saved); SFX.init(); updChip(); updXp();
+    const target=state.screen&&state.screen!=='scr-welcome'?state.screen:'scr-pretest';
+    goto_(target);
+    if(target==='scr-summary') showSummary();
+    toast('กลับมาต่อจากจุดเดิมแล้ว');
+  });
+}
+renderAvatars(); updSoundBtns(); updXp(); renderNav('scr-welcome'); renderSwCode();
+window.addEventListener('resize',()=>{
+  const cv=$('#confetti');if(cv.style.display==='block'){cv.width=innerWidth;cv.height=innerHeight;}
+  if(AC.on) acResize();
+});
+
+
+</script>
+
+<script>(function(){
+  var KEY='gnr1007_theme';
+  var btn=document.getElementById('btnTheme');
+  if(!btn) return;
+  function apply(t){document.documentElement.setAttribute('data-theme',t);}
+  btn.addEventListener('click', function(){
+    var cur = document.documentElement.getAttribute('data-theme')==='light' ? 'dark':'light';
+    apply(cur);
+    try{localStorage.setItem(KEY,cur);}catch(e){}
+  });
+})();</script>
+<!-- GNR-CORE:BEGIN -->
+<style id="gnr-core-css">
+:root:not([data-theme="light"]){--ember:#c084fc;--corner:#4ade80;--gold:#fbbf24;--gold2:#fde68a;--red:#fb7185}
+:root[data-theme="light"]{--ember:#6605c7;--corner:#157538;--gold:#825e02;--gold2:#7e6502;--red:#d00524;--line:rgba(102,5,199,.26);--ember-dim:rgba(102,5,199,.16)}
+/* ================================================================
+   GNR-CORE v7.0 — ชั้นปรับปรุงร่วมของทุกเกม (ใส่ท้ายสไตล์เดิม จึงมีสิทธิ์เหนือกว่า)
+   1) อ่านง่ายทั้งโหมดมืดและสว่าง  2) แถบสถานะด่านย้ายไปด้านซ้าย
+   3) ช่องรหัสนักศึกษา + ชื่อเล่น   4) หน้าสรุปผลแบบแดชบอร์ดจอเดียว
+   ================================================================ */
+
+/* ---------- 1) ความอ่านง่าย ---------- */
+:root{--muted:#a9b7ca}
+:root[data-theme="light"]{--text:#101826;--muted:#46536a}
+body{font-size:16px}
+.muted{font-size:.92rem}
+input[type=text]::placeholder{color:var(--muted);opacity:.75}
+.navpill{opacity:.62}
+.navpill.unlocked{opacity:1}
+footer .fmono{color:var(--muted)}
+.floaty{text-shadow:0 0 3px var(--bg),0 0 14px var(--bg),0 0 22px currentColor}
+
+:root[data-theme="light"] body::after{opacity:.18}
+:root[data-theme="light"] .btn.primary,
+:root[data-theme="light"] .btn.pink{color:#fff;text-shadow:0 1px 1px rgba(0,0,0,.25)}
+:root[data-theme="light"] .btn:not(.primary):not(.pink){background:rgba(16,24,38,.04)}
+:root[data-theme="light"] .icon-btn{background:rgba(16,24,38,.05)}
+:root[data-theme="light"] .title{background:linear-gradient(100deg,var(--ember),var(--gold) 50%,var(--corner));
+  -webkit-background-clip:text;background-clip:text;color:transparent}
+:root[data-theme="light"] .rv-score{background:linear-gradient(100deg,var(--ember),var(--gold),var(--corner));
+  -webkit-background-clip:text;background-clip:text;color:transparent;filter:none}
+:root[data-theme="light"] .rv-rank{background:linear-gradient(100deg,var(--gold),var(--ember));
+  -webkit-background-clip:text;background-clip:text;color:transparent}
+:root[data-theme="light"] .bar{background:rgba(16,24,38,.10)}
+:root[data-theme="light"] th,:root[data-theme="light"] td,
+:root[data-theme="light"] .qtbl th,:root[data-theme="light"] .qtbl td{border-bottom-color:rgba(16,24,38,.10)}
+:root[data-theme="light"] .choice{background:#fff}
+:root[data-theme="light"] .codebox,:root[data-theme="light"] .qcode{background:#f3f6fb;color:#0f1726;border-color:rgba(16,24,38,.16)}
+:root[data-theme="light"] .explain{background:rgba(255,196,0,.10)}
+:root[data-theme="light"] #acEnd{background:rgba(16,24,38,.55)}
+:root[data-theme="light"] .ac-bar{background:rgba(16,24,38,.12)}
+:root[data-theme="light"] .panel{box-shadow:0 1px 2px rgba(16,24,38,.06),0 14px 38px rgba(16,24,38,.10)}
+:root[data-theme="light"] .avatar-opt{background:#eef2f8}
+.q-text code.ic,.explain code.ic,.choice code.ic,.qmeta code.ic{color:var(--gold)}
+:root[data-theme="light"] .q-text code.ic,:root[data-theme="light"] .explain code.ic,
+:root[data-theme="light"] .choice code.ic{background:rgba(16,24,38,.06)}
+
+/* ---------- 2) ARCADE: แถบสถานะอยู่ด้านซ้าย ใช้พื้นที่น้อยที่สุด ---------- */
+:root{--rail-w:clamp(66px,15vw,212px)}
+#arcade.show{flex-direction:row}
+#arcade .ac-top{flex:0 0 var(--rail-w);width:var(--rail-w);height:auto;min-height:0;max-height:none;
+  border-bottom:0;border-right:1px solid var(--line);display:flex;flex-direction:column;overflow:hidden;position:relative}
+#arcade .ac-hud{order:-1;position:static;inset:auto;display:flex;flex-direction:column;align-items:stretch;gap:4px;
+  padding:7px 6px 6px;flex-wrap:nowrap;pointer-events:auto;background:var(--panel2);border-bottom:1px solid var(--line);z-index:2}
+#arcade .ac-exit{order:-2;margin:0;align-self:stretch;min-width:0;height:30px;min-height:30px;font-size:.66rem}
+#arcade #acTag{order:-1;display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:3;overflow:hidden;
+  white-space:normal;text-align:center;font-size:.6rem;line-height:1.3;padding:3px 4px;border-radius:8px;color:var(--ember);font-weight:600}
+#arcade .ac-chip{justify-content:space-between;border-radius:8px;padding:3px 7px;font-size:.68rem;min-width:0;white-space:nowrap;color:var(--muted)}
+#arcade .ac-chip b{font-size:.82rem;color:var(--text)}
+#arcade .ac-chip.hot b{color:var(--gold)}
+.gnr-cvwrap{position:relative;flex:1 1 auto;min-height:0}
+.gnr-cvwrap #acv{position:absolute;inset:0;width:100%;height:100%;display:block}
+#arcade .ac-play{flex:1 1 auto;min-width:0;padding:14px 16px}
+#arcade .ac-card{width:min(760px,100%)}
+@media (max-width:700px){
+  #arcade .ac-hud{padding:5px 4px;gap:3px}
+  #arcade .ac-chip{flex-direction:column;gap:0;padding:2px 1px;text-align:center;align-items:center;font-size:.56rem;line-height:1.25}
+  #arcade .ac-chip b{font-size:.74rem}
+  #arcade .ac-play{padding:8px 8px 10px}
+  #arcade .ac-card{padding:13px 12px}
+}
+@media (max-height:520px) and (orientation:landscape){
+  #arcade #acTag{display:none}
+  #arcade .ac-hud{gap:2px;padding:4px}
+}
+
+/* ---------- 3) ลงทะเบียน: รหัสนักศึกษา + ชื่อเล่น ---------- */
+.gnr-hint{margin-top:7px;font-size:.78rem;line-height:1.55;color:var(--muted);
+  border-left:3px solid var(--ember);padding:6px 10px;border-radius:0 9px 9px 0;background:rgba(var(--ink-panel-rgb),.45)}
+.gnr-hint b{color:var(--text)}
+.gnr-count{font-family:var(--mono);font-size:.72rem;float:right;color:var(--muted)}
+.gnr-count.ok{color:var(--corner)}
+.gnr-idnote{margin-top:6px;font-size:.8rem;color:var(--corner);min-height:1.2em}
+#gnrSid{font-family:var(--mono);letter-spacing:.14em}
+
+/* ---------- 4) หน้าสรุปผล: แดชบอร์ดจอเดียว ---------- */
+body.gnr-sum footer{display:none}
+body.gnr-sum .wrap{padding-top:10px;padding-bottom:10px}
+#scr-summary.gnr-done>.panel{padding:14px 16px 12px}
+#scr-summary.gnr-done>.panel>*:not(.gnr-head):not(.gnr-dash){display:none !important}
+.gnr-head{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:10px}
+.gnr-head .tag{margin:0}
+.gnr-head h2{margin:0;font-size:1.12rem}
+.gnr-head .gnr-when{margin-left:auto;font-size:.76rem;color:var(--muted);font-family:var(--mono)}
+.gnr-dash{display:grid;grid-template-columns:minmax(250px,1fr) minmax(300px,1.3fr) minmax(270px,1.15fr);gap:12px;
+  height:var(--gnr-dash-h,auto);min-height:0}
+.gnr-col{display:flex;flex-direction:column;gap:10px;min-height:0;min-width:0}
+.gnr-box{background:rgba(var(--ink-panel-rgb),.55);border:1px solid var(--line);border-radius:14px;padding:11px 12px;min-width:0}
+.gnr-box h4{margin:0 0 6px;font-size:.78rem;letter-spacing:.06em;color:var(--ember);font-weight:600;text-transform:uppercase;font-family:var(--mono)}
+.gnr-id{display:grid;grid-template-columns:52px 1fr;gap:10px;align-items:center}
+.gnr-id .ava{width:52px;height:52px;border-radius:14px;background:var(--panel2);border:1px solid var(--line);display:grid;place-items:center}
+.gnr-id .ava svg{width:44px;height:44px}
+.gnr-id .nick{font-size:1.12rem;font-weight:600;line-height:1.25;color:var(--text);word-break:break-word}
+.gnr-id .sid,.gnr-id .nick{text-transform:none !important}
+.gnr-id .sid{font-family:var(--mono);font-size:.95rem;letter-spacing:.12em;color:var(--ember)}
+.gnr-id .sid small{font-family:var(--font);letter-spacing:0;color:var(--muted);font-size:.72rem;margin-right:6px}
+.gnr-id .gm{font-size:.74rem;color:var(--muted);grid-column:1/-1;border-top:1px dashed var(--line);padding-top:6px;margin-top:2px}
+.gnr-dash .cmp-grid{margin:0;gap:6px}
+.gnr-dash .cmp-col{padding:8px 6px}
+.gnr-dash .cmp-col b{font-size:1.3rem;line-height:1.25}
+.gnr-dash .star-row.sm{margin:4px 0 2px;gap:3px}
+.gnr-dash .star-row.sm .star{width:clamp(11px,1.05vw,15px);height:clamp(11px,1.05vw,15px)}
+.gnr-dash .star-row.sm{gap:2px}
+.gnr-dash .cmp-col{min-width:0;overflow:hidden}
+.gnr-dash .star-row.sm{flex-wrap:nowrap}
+.gnr-dash .delta{margin:8px 0 0;font-size:.88rem;line-height:1.45}
+.gnr-dash .hud{margin:0 !important;gap:6px}
+.gnr-dash .hud .stat{padding:5px 6px;min-width:0}
+.gnr-dash .hud .stat b{font-size:.98rem}
+.gnr-dash .hud .stat small{font-size:.58rem}
+.gnr-radar{flex:1 1 auto;display:flex;flex-direction:column;min-height:0}
+.gnr-dash .chartbox{flex:1 1 auto;height:auto;min-height:220px;margin:0}
+.gnr-sw{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.gnr-sw .sw{border-radius:12px;padding:8px 10px;border:1px solid var(--line);min-width:0}
+.gnr-sw .sw h5{margin:0 0 4px;font-size:.8rem;font-weight:600}
+.gnr-sw .sw.good{background:color-mix(in srgb,var(--corner) 11%,transparent);border-color:color-mix(in srgb,var(--corner) 45%,transparent)}
+.gnr-sw .sw.good h5{color:var(--corner)}
+.gnr-sw .sw.weak{background:color-mix(in srgb,var(--red) 9%,transparent);border-color:color-mix(in srgb,var(--red) 40%,transparent)}
+.gnr-sw .sw.weak h5{color:var(--red)}
+.gnr-sw ul{list-style:none;margin:0;padding:0;display:grid;gap:3px}
+.gnr-sw li{font-size:.8rem;line-height:1.4;display:flex;justify-content:space-between;gap:6px}
+.gnr-sw li span:last-child{font-family:var(--mono);font-size:.74rem;color:var(--muted);white-space:nowrap}
+.gnr-sw .none{font-size:.78rem;color:var(--muted)}
+.gnr-cheer{border-radius:14px;padding:12px 14px;border:1px solid color-mix(in srgb,var(--gold) 50%,transparent);
+  background:linear-gradient(135deg,color-mix(in srgb,var(--gold) 16%,transparent),color-mix(in srgb,var(--ember) 8%,transparent))}
+.gnr-cheer .big{font-size:1.02rem;font-weight:600;line-height:1.45;color:var(--text);margin:0 0 4px}
+.gnr-cheer p{margin:0;font-size:.84rem;line-height:1.55;color:var(--text)}
+.gnr-cheer .lvl{display:inline-block;font-family:var(--mono);font-size:.68rem;letter-spacing:.08em;color:var(--gold);margin-bottom:3px}
+.gnr-tabs{display:flex;gap:4px;flex-wrap:wrap}
+.gnr-tabs button{flex:1 1 auto;font-family:var(--font);font-size:.76rem;padding:6px 8px;border-radius:9px;cursor:pointer;
+  border:1px solid var(--line);background:transparent;color:var(--muted);min-height:32px}
+.gnr-tabs button.on{background:var(--ember);color:var(--bg);border-color:var(--ember);font-weight:600}
+.gnr-tabbody{flex:1 1 auto;min-height:90px;overflow:auto;padding-right:2px}
+.gnr-tabbody>*{display:none !important;margin-top:0 !important}
+.gnr-tabbody>.on{display:grid !important}
+.gnr-tabbody .advice li{display:block;font-size:.82rem;padding:7px 10px;line-height:1.55}
+.gnr-tabbody .advice li::before{margin-right:6px}
+.gnr-tabbody .badges{justify-content:flex-start;margin:0}
+.gnr-tabbody .badge{font-size:.72rem;padding:4px 10px}
+.gnr-tabbody .dstar-row,.gnr-tabbody .axisrow{padding:6px 10px;font-size:.8rem}
+.gnr-dash .btn-row{margin-top:0;gap:8px}
+.gnr-dash .btn-row .btn{flex:1 1 auto;padding:9px 12px;min-height:40px;font-size:.84rem}
+.gnr-note{font-size:.7rem;color:var(--muted);line-height:1.4}
+@media (max-width:980px){
+  .gnr-dash{grid-template-columns:1fr 1fr;height:auto}
+  .gnr-col.c{grid-column:1/-1}
+  .gnr-dash .chartbox{height:260px;flex:none}
+  .gnr-tabbody{max-height:260px}
+}
+@media (max-width:640px){
+  .gnr-dash{grid-template-columns:1fr;gap:10px}
+  .gnr-col{display:contents}
+  .gnr-id{order:1} .gnr-score{order:2} .gnr-cheer{order:3} .gnr-radar{order:4} .gnr-sw{order:5}
+  .gnr-dash .hud{order:6} .gnr-tabs{order:7} .gnr-tabbody{order:8} .gnr-dash .btn-row{order:9} .gnr-note{order:10}
+  .gnr-head .gnr-when{margin-left:0;width:100%}
+  .gnr-dash .chartbox{height:250px;min-height:250px}
+  .gnr-tabbody{max-height:none}
+}
+.gnr-dash .cmp-grid{grid-template-columns:minmax(0,1fr) auto minmax(0,1fr) !important}
+.gnr-dash .cmp-arrow{transform:none !important;padding:0 !important}
+@media print{
+  #topbar,.gnr-tabs,.gnr-dash .btn-row{display:none !important}
+  .gnr-dash{height:auto}
+}
+
+/* ---------- ผังงาน SVG (เกม 7, 10) ในโหมดสว่าง ---------- */
+:root[data-theme="light"] .fs.t{fill:rgba(15,122,85,.08);stroke:#0f7a55}
+:root[data-theme="light"] .fs.p{fill:rgba(3,105,161,.07);stroke:#0369a1}
+:root[data-theme="light"] .fs.d{fill:rgba(180,120,0,.09);stroke:#a16207}
+:root[data-theme="light"] .fs.io{fill:rgba(154,52,18,.06);stroke:#b45309}
+:root[data-theme="light"] .fs.c{fill:rgba(71,85,105,.07);stroke:#475569}
+:root[data-theme="light"] .ft{fill:#0f1726}
+:root[data-theme="light"] .fl{fill:#334155}
+:root[data-theme="light"] .fe{stroke:#64748b}
+:root[data-theme="light"] .fa{fill:#64748b}
+:root[data-theme="light"] .fn.hi .fs{stroke:#b45309;fill:rgba(251,191,36,.22)}
+:root[data-theme="light"] .fn.hi .ft{fill:#7c2d12}
+:root[data-theme="light"] .fclegend{background:rgba(16,24,38,.04)}
+.navpill{opacity:.85}
+.navpill:not(.unlocked){border-style:dashed}
+:root[data-theme="light"] .choice.correct .k,:root[data-theme="light"] .choice.wrong .k{color:#fff}
+:root[data-theme="light"] body::before{background:
+  radial-gradient(900px 600px at 12% -10%,var(--ember-dim),transparent 60%),
+  radial-gradient(800px 600px at 92% 8%,rgba(251,191,36,.08),transparent 60%),
+  linear-gradient(180deg,var(--bg),var(--bg-grad-mid,#e9edf3) 60%,var(--bg))}
+
+/* ---------- 5) จอคอมพิวเตอร์: ทุกหน้าอยู่ในจอเดียว ไม่ต้องเลื่อน (UI v7.1, 2 ต.ค. 2569) ----------
+   - หน้าแรก: ภาพ/ชื่อเกมซ้าย บัตรลงทะเบียนขวา
+   - หน้าบทเรียน/ห้องทดลอง: ขยายความกว้างและจัดเนื้อหาเป็น 2 คอลัมน์ (gnr_core.js จัดกลุ่มหัวข้อให้ไม่ขาดกลางตาราง)
+   - footer ย่อเหลือแถบบาง มือถือและแท็บเล็ตแนวตั้งยังเป็นแบบเดิมทุกอย่าง */
+.gnr-flow,.gnr-blk{display:contents}
+@media (min-width:1100px){
+  footer{margin-top:8px;padding:7px 16px 9px}
+  footer p{display:inline;font-size:.72rem;line-height:1.5}
+  footer p+p::before{content:" · "}
+  footer .fmono{font-size:.62rem}
+  #scr-welcome .hero{min-height:calc(100dvh - 96px);display:grid;grid-template-columns:minmax(0,1fr) minmax(420px,500px);
+    grid-template-rows:auto auto auto auto;align-content:center;align-items:center;column-gap:clamp(28px,4vw,64px);
+    max-width:1240px;margin:0 auto;padding:16px 24px;text-align:center}
+  #scr-welcome .hero>*{grid-column:1}
+  #scr-welcome .hero>.login-card{grid-column:2;grid-row:1/span 4;width:100%;margin:0;align-self:center}
+  #scr-welcome .cityart{width:auto;max-width:100%;height:min(300px,34dvh);justify-self:center}
+  #scr-welcome .title{font-size:clamp(1.6rem,2.6vw,2.5rem)}
+  #scr-welcome .subtitle{margin:4px auto 0}
+  #scr-welcome .feature-row{margin-top:14px}
+}
+@media (min-width:1200px){
+  body.gnr-wide .wrap,body.gnr-wide .topbar-in{max-width:min(1760px,96vw)}
+  body.gnr-wide .wrap{padding-top:10px;padding-bottom:8px}
+  .screen.gnr-cols>.panel{padding:16px 22px}
+  .screen.gnr-cols>.panel>h2{margin-bottom:6px}
+  .gnr-flow{display:block;column-count:2;column-gap:30px;column-fill:balance}
+  .gnr-blk{display:block;break-inside:avoid;page-break-inside:avoid;padding-bottom:2px}
+  .gnr-blk>:first-child{margin-top:0}
+  .gnr-flow .tbl-wrap,.gnr-flow .codebox{max-width:100%}
+}
+@media (min-width:1200px) and (min-height:900px){ .gnr-flow{column-gap:40px} }
+@media (min-width:1100px) and (max-height:760px){
+  .wrap{padding-top:8px;padding-bottom:6px}
+  .panel{padding:16px 20px}
+  .howto{margin-top:8px}
+}
+@media (min-width:1100px) and (max-height:820px){
+  .gnr-flow .stage svg{max-height:30dvh;width:auto;max-width:100%;margin:0 auto}
+  .gnr-flow .codebox,.gnr-flow pre{line-height:1.45}
+  .gnr-flow .tbl-wrap td,.gnr-flow .tbl-wrap th{padding-top:6px;padding-bottom:6px}
+}
+@media (min-width:1200px){ body.gnr-wide #pitGrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px} body.gnr-wide #pitGrid>*{margin:0} }
+</style>
+<script>window.GNR_CFG={game:'game4',title:'LOGIC LABYRINTH',padExtra:16};</script>
+<script id="gnr-core-js">
+/* ================================================================
+   GNR-CORE v7.0 — สคริปต์ร่วมของทุกเกม (โหลดหลังสคริปต์หลักของเกม)
+   ใช้ตัวแปรระดับโกลบอลของเกม: state, AC, ACT, acColors, acResize, acStepGeom,
+   showSummary, radarData, radarChart, goto_, exportCSV, MAX_STARS
+   ================================================================ */
+(function(){
+  'use strict';
+  var CFG = window.GNR_CFG || {game:'game', title:'GNR1007', padExtra:16};
+  var ID_KEY = 'gnr1007_student', RES_KEY = 'gnr1007_results', SECRET = 'ru2569', MASK = 'xxxxxxxxxx';
+  function $(s){ return document.querySelector(s); }
+  function el(tag, cls, html){ var e=document.createElement(tag); if(cls) e.className=cls; if(html!=null) e.innerHTML=html; return e; }
+  function escH(s){ return String(s==null?'':s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];}); }
+  function css(n){ return (getComputedStyle(document.documentElement).getPropertyValue(n)||'').trim(); }
+  function isLight(){ return document.documentElement.getAttribute('data-theme')==='light'; }
+  function rgba(hex,a){
+    var h=(hex||'').replace('#','');
+    if(h.length===3) h=h.split('').map(function(c){return c+c;}).join('');
+    if(!/^[0-9a-f]{6}$/i.test(h)) return hex;
+    var n=parseInt(h,16); return 'rgba('+(n>>16&255)+','+(n>>8&255)+','+(n&255)+','+a+')';
+  }
+
+  /* ---------------- ตัวตนผู้เรียน ---------------- */
+  function checkId(raw){
+    var v=(raw||'').trim();
+    if(v.toLowerCase()===SECRET) return {ok:true, sid:MASK, via:'code'};
+    var d=v.replace(/[\s-]/g,'');
+    if(!d) return {ok:false, msg:'กรุณากรอกรหัสนักศึกษา 10 หลัก'};
+    if(/^\d+$/.test(d)){
+      if(d.length!==10) return {ok:false, msg:'รหัสนักศึกษาต้องมี 10 หลัก (ตอนนี้ '+d.length+' หลัก)'};
+      if(!/^[5-7]\d{9}$/.test(d)) return {ok:false, msg:'รหัสนักศึกษาต้องขึ้นต้นด้วยปีที่เข้าศึกษา เช่น 69xxxxxxxx'};
+      return {ok:true, sid:d, via:'id'};
+    }
+    return {ok:false, msg:'กรอกได้เฉพาะตัวเลข 10 หลัก หรือรหัสลับที่ได้รับจากผู้สอน'};
+  }
+  function getId(){ try{ var o=JSON.parse(sessionStorage.getItem(ID_KEY)||'null'); return (o&&o.sid)?o:null; }catch(e){ return null; } }
+  function setId(o){ try{ sessionStorage.setItem(ID_KEY, JSON.stringify(o)); }catch(e){} }
+  window.GNRID = {check:checkId, get:getId, set:function(raw,nick){ var r=checkId(raw); if(r.ok) setId({sid:r.sid,via:r.via,raw:raw,nick:nick||''}); return r; }};
+
+  function setupLogin(){
+    var nameIn=$('#playerName'); if(!nameIn) return;
+    var nameLbl=document.querySelector('label[for="playerName"]');
+    var host=nameLbl||nameIn;
+    var box=el('div','gnr-idbox',
+      '<label for="gnrSid">รหัสนักศึกษา <span class="gnr-count" id="gnrCount">0/10</span></label>'+
+      '<input type="text" id="gnrSid" maxlength="12" autocomplete="off" spellcheck="false" placeholder="เช่น 69xxxxxxxx">'+
+      '<div class="gnr-hint">กรอก <b>รหัสนักศึกษา 10 หลัก</b> เป็นตัวเลขล้วน ขึ้นต้นด้วยปีที่เข้าศึกษา ตัวอย่าง <b>69</b>xxxxxxxx (รหัสปี 2569)</div>'+
+      '<div class="err" id="gnrSidErr"></div><div class="gnr-idnote" id="gnrIdNote"></div>');
+    box.style.marginBottom='14px';
+    host.parentNode.insertBefore(box, host);
+    if(nameLbl) nameLbl.textContent='ชื่อเล่น (แสดงบนใบรายงานผล)';
+    nameIn.placeholder='เช่น ต้นกล้า';
+    var sid=$('#gnrSid'), cnt=$('#gnrCount'), err=$('#gnrSidErr'), note=$('#gnrIdNote');
+    function live(){
+      var v=sid.value.trim(), d=v.replace(/[\s-]/g,'');
+      err.classList.remove('show');
+      if(v.toLowerCase()===SECRET){ cnt.textContent='รหัสลับ'; cnt.className='gnr-count ok'; note.textContent='ใช้รหัสลับ · ใบรายงานผลจะแสดงรหัสเป็น '+MASK; return; }
+      cnt.textContent=(/^\d*$/.test(d)?d.length:'-')+'/10';
+      var r=checkId(v); cnt.className='gnr-count'+(r.ok?' ok':'');
+      note.textContent=r.ok?'รูปแบบรหัสนักศึกษาถูกต้อง':'';
+    }
+    sid.addEventListener('input', live);
+    sid.addEventListener('keydown', function(e){ if(e.key==='Enter'){ e.preventDefault(); nameIn.focus(); } });
+    var cur=getId();
+    if(cur){ sid.value=cur.raw||(cur.via==='id'?cur.sid:''); if(cur.nick && !nameIn.value) nameIn.value=cur.nick; live(); }
+    /* ตรวจก่อนเริ่มเกม (จับใน capture phase เพื่อให้ทำงานก่อนตัวจัดการเดิมของเกม) */
+    document.addEventListener('click', function(e){
+      var b=e.target.closest && e.target.closest('#btnStart,#wResume'); if(!b) return;
+      var r=checkId(sid.value);
+      if(!r.ok){
+        e.stopPropagation(); e.preventDefault();
+        err.textContent=r.msg; err.classList.remove('show'); void err.offsetWidth; err.classList.add('show');
+        sid.focus(); return;
+      }
+      var nick=nameIn.value.trim();
+      if(!nick){ var prev=getId(); nick=(prev&&prev.nick)||''; }
+      setId({sid:r.sid, via:r.via, raw:sid.value.trim(), nick:nick});
+    }, true);
+  }
+
+  /* ---------------- ปุ่มกลับหน้ารวม + สลับธีมบนหน้าแรกของเกม ---------------- */
+  var ICON_THEME='<svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.9" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><path d="M12 3.5a8.5 8.5 0 0 1 0 17z" fill="currentColor"/></svg>';
+  var ICON_HOME='<svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3.5 11 12 4l8.5 7"/><path d="M6 9.5V20h12V9.5"/></svg>';
+  function toggleTheme(){
+    var t=isLight()?'dark':'light';
+    document.documentElement.setAttribute('data-theme',t);
+    try{ localStorage.setItem('gnr1007_theme',t); }catch(e){}
+    setTimeout(onTheme,30);
+  }
+  function setupChrome(){
+    var bt=$('#btnTheme'); if(bt){ bt.innerHTML=ICON_THEME; }
+    var right=document.querySelector('.tb-right');
+    if(right && !$('#btnHome')){
+      var h=el('a','icon-btn',ICON_HOME); h.id='btnHome'; h.href='index.html'; h.title='กลับหน้ารวมเกม'; h.setAttribute('aria-label','กลับหน้ารวมเกม');
+      h.style.textDecoration='none'; right.insertBefore(h,right.firstChild);
+    }
+    var wel=$('#scr-welcome');
+    if(wel && !$('#gnrWelBar')){
+      var bar=el('div','', '<a class="icon-btn" href="index.html" title="กลับหน้ารวมเกม" aria-label="กลับหน้ารวมเกม" style="text-decoration:none">'+ICON_HOME+'</a>'+
+        '<button class="icon-btn" type="button" id="gnrWelTheme" title="สลับโหมดสว่าง/มืด" aria-label="สลับโหมดสว่างหรือมืด">'+ICON_THEME+'</button>');
+      bar.id='gnrWelBar'; bar.style.cssText='position:absolute;top:14px;right:14px;display:flex;gap:8px;z-index:5';
+      wel.style.position='relative'; wel.appendChild(bar);
+      $('#gnrWelTheme').addEventListener('click',toggleTheme);
+    }
+  }
+
+  /* ---------------- ARCADE: แถบสถานะด้านซ้าย ---------------- */
+  function setupArcade(){
+    var cv=$('#acv'); if(!cv || cv.parentNode.classList.contains('gnr-cvwrap')) return;
+    var w=el('div','gnr-cvwrap'); cv.parentNode.insertBefore(w,cv); w.appendChild(cv);
+    var exit=$('#acExit'); if(exit){ exit.textContent='ออก (ESC)'; }
+    if(typeof acResize==='function'){
+      acResize=function(){
+        var c=$('#acv'); if(!c) return;
+        var dpr=Math.min(2,window.devicePixelRatio||1);
+        AC.W=c.clientWidth||120; AC.H=c.clientHeight||300;
+        AC.padT=(CFG.padExtra||16)+14;
+        c.width=Math.max(1,AC.W*dpr); c.height=Math.max(1,AC.H*dpr);
+        var ctx=c.getContext('2d'); if(ctx&&ctx.setTransform) ctx.setTransform(dpr,0,0,dpr,0,0);
+        shortWords(ctx);
+      };
+    }
+    if(typeof acStepGeom==='function'){
+      acStepGeom=function(i){
+        var n=AC.qs.length||1, padB=30, padT=AC.padT||36, W=AC.W;
+        var h=Math.max(60,AC.H-padB-padT), y=AC.H-padB-(i*(h/n));
+        if(W<200){ /* รางแคบ: ขั้นบันไดสลับซ้าย-ขวา ไต่ขึ้นแนวตั้ง */
+          var ww=Math.max(30,Math.min(96,W*0.5)), room=Math.max(0,W-ww-12);
+          return {x:6+((i%2)?room:0), y:y, w:ww, h:9};
+        }
+        var w2=Math.max(56,Math.min(118,W*0.30)), usable=Math.max(20,W-w2-24);
+        return {x:12+(n<=1?0:(i/n)*usable), y:y, w:w2, h:9};
+      };
+    }
+  }
+  function shortWords(ctx){
+    if(typeof ACT==='undefined') return;
+    if(!ACT._o) ACT._o={top:ACT.topWord, ground:ACT.groundWord};
+    var room=AC.W-12;
+    try{ ctx.font='11px Kanit,sans-serif'; }catch(e){}
+    function fit(s,alt){ try{ return ctx.measureText(s).width<=room?s:alt; }catch(e){ return s; } }
+    ACT.topWord=fit(ACT._o.top,'ยอด');
+    ACT.groundWord=fit(ACT._o.ground,'เริ่ม');
+  }
+
+  /* ---------------- ข้อความใน SVG (ภาพประกอบบทเรียน) ให้อ่านได้ในโหมดสว่าง ----------------
+     ภาพประกอบเดิมออกแบบบนพื้นมืด จึงใช้สีข้อความสว่างแบบฝังตาย เมื่ออยู่บนพื้นขาวจะจางมาก
+     วิธีแก้: หาสีพื้นใต้ข้อความจริง (รูปทรงที่วาดก่อนและครอบข้อความอยู่) แล้วเข้มสีเฉพาะที่ความต่างสีต่ำ */
+  var _cvs=document.createElement('canvas').getContext('2d');
+  function toRGB(c){
+    if(!c||c==='none'||c==='transparent') return null;
+    try{ _cvs.fillStyle='#000'; _cvs.fillStyle=c; c=_cvs.fillStyle; }catch(e){ return null; }
+    var m=/^#([0-9a-f]{6})$/i.exec(c);
+    if(m){ var n=parseInt(m[1],16); return [n>>16&255,n>>8&255,n&255,1]; }
+    m=/rgba?\(([^)]+)\)/.exec(c); if(!m) return null;
+    var p=m[1].split(',').map(parseFloat); return [p[0],p[1],p[2],p.length>3?p[3]:1];
+  }
+  function L(c){ function f(v){ v/=255; return v<=0.03928?v/12.92:Math.pow((v+0.055)/1.055,2.4);} return 0.2126*f(c[0])+0.7152*f(c[1])+0.0722*f(c[2]); }
+  function CR(a,b){ var x=L(a),y=L(b); return (Math.max(x,y)+0.05)/(Math.min(x,y)+0.05); }
+  function mix(top,bot,a){ return [top[0]*a+bot[0]*(1-a),top[1]*a+bot[1]*(1-a),top[2]*a+bot[2]*(1-a),1]; }
+  function darkenTo(c,bg,target){
+    var r=c.slice(); for(var i=0;i<40 && CR(r,bg)<target;i++){ r=[r[0]*0.88,r[1]*0.88,r[2]*0.88,1]; } return 'rgb('+r.slice(0,3).map(Math.round).join(',')+')';
+  }
+  function fixSvgText(root){
+    var light=isLight(), page=[250,251,253,1];
+    Array.prototype.forEach.call((root||document).querySelectorAll('svg text'),function(t){
+      if(t.closest('#arcade')||t.closest('.chartbox')) return;
+      if(t.hasAttribute('data-ofill')){ t.style.fill=''; }
+      if(!light) return;
+      var cs=getComputedStyle(t), fg=toRGB(cs.fill); if(!fg) return;
+      var svg=t.ownerSVGElement; if(!svg) return;
+      var bb; try{ bb=t.getBBox(); }catch(e){ return; } if(!bb.width) return;
+      var cx=bb.x+bb.width/2, cy=bb.y+bb.height/2, bg=page;
+      var shapes=svg.querySelectorAll('rect,circle,ellipse,path,polygon');
+      for(var i=0;i<shapes.length;i++){
+        var s=shapes[i];
+        if(!(s.compareDocumentPosition(t)&Node.DOCUMENT_POSITION_FOLLOWING)) continue;
+        var sb; try{ sb=s.getBBox(); }catch(e){ continue; }
+        if(cx<sb.x||cx>sb.x+sb.width||cy<sb.y||cy>sb.y+sb.height) continue;
+        var sc=getComputedStyle(s), f=toRGB(sc.fill); if(!f||f[3]===0) continue;
+        var a=f[3]*(parseFloat(sc.fillOpacity)||1)*(parseFloat(sc.opacity)||1);
+        if(sb.width*sb.height<60) continue;
+        bg=mix(f,bg,Math.min(1,a));
+      }
+      if(CR(fg,bg)>=3.2) return;
+      if(L(bg)>0.4){ t.setAttribute('data-ofill','1'); t.style.fill=darkenTo(fg,bg,4.5); }
+    });
+  }
+  var svgT=null; function queueSvgFix(){ clearTimeout(svgT); svgT=setTimeout(function(){ try{ fixSvgText(); }catch(e){} },60); }
+
+  /* ---------------- สีกราฟตามธีม ---------------- */
+  function wrapLabel(s){
+    s=String(s); if(s.length<=12) return s;
+    var words=[];
+    try{ var seg=new Intl.Segmenter('th',{granularity:'word'}); for(var it of seg.segment(s)) words.push(it.segment); }
+    catch(e){ words=s.split(/(\s+)/); }
+    var lines=[''], lim=Math.max(10,Math.ceil(s.length/2)+1);
+    words.forEach(function(w){ var cur=lines[lines.length-1]; if(cur && (cur+w).trim().length>lim){ lines.push(w.trim()); } else { lines[lines.length-1]=cur+w; } });
+    return lines.map(function(x){return x.trim();}).filter(Boolean);
+  }
+  function styleChart(){
+    var tx=css('--text')||'#e6edf6', mu=css('--muted')||'#8ca0b8', em=css('--ember')||'#22d3ee', gd=css('--gold')||'#fbbf24';
+    var grid=isLight()?'rgba(16,24,38,.16)':'rgba(255,255,255,.16)';
+    try{
+      if(typeof radarChart!=='undefined' && radarChart && typeof Chart!=='undefined'){
+        /* สร้างกราฟใหม่ทั้งตัวด้วยสีตามธีม (ไม่แก้ options เดิมผ่าน proxy ของ Chart.js) */
+        var cv=radarChart.canvas, d=radarData(), old=radarChart.data.datasets;
+        var labels=d.labels.map(wrapLabel);
+        var l0=(old[0]&&old[0].label)||'Pretest', l1=(old[1]&&old[1].label)||'Posttest';
+        var pc=(CFG.game==='game10')?gd:em;
+        radarChart.destroy();
+        radarChart=new Chart(cv,{type:'radar',
+          data:{labels:labels,datasets:[
+            {label:l0,data:d.preData,borderColor:mu,backgroundColor:rgba(mu,.12),pointBackgroundColor:mu,borderDash:[5,4],borderWidth:2},
+            {label:l1,data:d.postData,borderColor:pc,backgroundColor:rgba(pc,.22),pointBackgroundColor:pc,borderWidth:2.5}]},
+          options:{responsive:true,maintainAspectRatio:false,animation:{duration:500},
+            layout:{padding:{left:16,right:16,top:2,bottom:0}},
+            plugins:{legend:{position:'bottom',labels:{color:tx,font:{family:'Kanit',size:12},boxWidth:14}}},
+            scales:{r:{min:0,max:100,ticks:{display:true,stepSize:50,backdropColor:'rgba(0,0,0,0)',color:mu,font:{size:9}},
+              grid:{color:grid},angleLines:{color:grid},pointLabels:{color:tx,font:{family:'Kanit',size:11}}}}}});
+      }
+    }catch(e){ console.warn('gnr chart',e); }
+    var fb=$('#radarFallback'); if(fb) Array.prototype.forEach.call(fb.querySelectorAll('text'),function(t){ if(!/Posttest|หลัง/.test(t.textContent)) t.setAttribute('fill',tx); });
+  }
+  function onTheme(){
+    try{ if(typeof AC!=='undefined' && AC.on && typeof acColors==='function') AC.col=acColors(); }catch(e){}
+    styleChart(); queueSvgFix();
+  }
+
+  /* ---------------- หน้าสรุปผลแบบแดชบอร์ด ---------------- */
+  function maxQ(){ try{ return (typeof MAX_STARS!=='undefined')?MAX_STARS:6; }catch(e){ return 6; } }
+  function pct(a,b){ return b?Math.round(a/b*100):0; }
+  function axes(){
+    try{
+      var d=radarData(), out=[];
+      d.labels.forEach(function(l,i){ if(/ภาพรวม/.test(l)) return; out.push({label:l, pre:d.preData[i]||0, post:d.postData[i]||0}); });
+      return out;
+    }catch(e){ return []; }
+  }
+  function cheer(nick, pre, post, max, weakName){
+    var p=pct(post,max), d=post-pre, lvl, big, body;
+    if(p>=100){ lvl='ความพร้อมสอบ: พร้อมมาก'; big='ยอดเยี่ยม '+nick+' — ถูกครบทุกข้อ';
+      body='คุณเข้าใจหัวข้อนี้ครบถ้วนแล้ว ความแม่นยำระดับนี้คือสิ่งที่ข้อสอบ กว ด้านการเขียนโปรแกรมต้องการ ลองเล่นซ้ำเพื่อเจอชุดคำถามใหม่ หรืออธิบายให้เพื่อนฟัง เพราะการสอนผู้อื่นคือการทบทวนที่ดีที่สุด'; }
+    else if(p>=67){ lvl='ความพร้อมสอบ: พร้อม'; big='ดีมาก '+nick+' — อีกนิดเดียวก็เต็ม';
+      body='พื้นฐานของคุณแน่นแล้ว เหลือเพียง <b>'+escH(weakName)+'</b> ที่ต้องเก็บให้ครบ ทบทวนอีกเพียงรอบเดียวก็พร้อมเข้าห้องสอบอย่างมั่นใจ'; }
+    else if(p>=34){ lvl='ความพร้อมสอบ: กำลังพัฒนา'; big='กำลังมาถูกทาง '+nick;
+      body='คุณจับแก่นของหัวข้อนี้ได้แล้วบางส่วน เริ่มจาก <b>'+escH(weakName)+'</b> ก่อน อ่านเฉลยทีละข้อแล้วลองใหม่ ทุกรอบที่เล่นซ้ำคือคะแนนที่เพิ่มขึ้นในห้องสอบจริง'; }
+    else { lvl='ความพร้อมสอบ: เริ่มต้น'; big='ทุกคนเริ่มจากจุดนี้ '+nick;
+      body='คะแนนรอบนี้คือแผนที่บอกว่าควรเริ่มตรงไหน ไม่ใช่ตัวตัดสินความสามารถ กลับไปที่ <b>'+escH(weakName)+'</b> ทำห้องทดลองให้ครบ แล้วกลับมาทดสอบอีกครั้ง ความเข้าใจเกิดจากการลงมือซ้ำ'; }
+    var add = d>0 ? ' · พัฒนาขึ้น <b>+'+d+' ข้อ</b> จากก่อนเรียน แสดงว่าการเรียนรอบนี้ได้ผลจริง'
+            : d===0 ? (p>=67?' · รักษามาตรฐานได้คงที่ทั้งก่อนและหลังเรียน':' · คะแนนยังคงที่ ลองเปลี่ยนวิธีทบทวนด้วยการทำห้องทดลองซ้ำ')
+            : ' · คะแนนลดลงเล็กน้อยเป็นเรื่องปกติเมื่อเจอคำถามชุดใหม่ อย่าเพิ่งท้อ';
+    return '<span class="lvl">'+lvl+'</span><p class="big">'+escH(big)+'</p><p>'+body+add+'</p>';
+  }
+  function saveResult(id, pre, post, max){
+    try{
+      var all=JSON.parse(localStorage.getItem(RES_KEY)||'{}'); var k=id.sid||MASK;
+      all[k]=all[k]||{}; var old=all[k][CFG.game]||{};
+      all[k][CFG.game]={pre:pre, post:post, max:max, best:Math.max(post, old.best||0), nick:id.nick||'', at:new Date().toISOString(), plays:(old.plays||0)+1};
+      localStorage.setItem(RES_KEY, JSON.stringify(all));
+    }catch(e){}
+  }
+  var built=false;
+  function buildDash(){
+    var sec=$('#scr-summary'); if(!sec) return null;
+    var panel=sec.querySelector('.panel'); if(!panel) return null;
+    if(built) return panel;
+    built=true;
+    var tag=panel.querySelector('.tag'), h2=panel.querySelector('h2');
+    var head=el('div','gnr-head'); if(tag) head.appendChild(tag); if(h2) head.appendChild(h2);
+    head.appendChild(el('span','gnr-when','')); panel.insertBefore(head, panel.firstChild);
+    var dash=el('div','gnr-dash');
+    var a=el('div','gnr-col a'), b=el('div','gnr-col b'), c=el('div','gnr-col c');
+    /* คอลัมน์ A: ตัวตน + ก่อน/หลังเรียน */
+    var idb=el('div','gnr-box gnr-id','<div class="ava" id="gnrAva"></div><div><div class="nick" id="gnrNick">—</div><div class="sid"><small>รหัสนักศึกษา</small><span id="gnrSidShow">—</span></div></div><div class="gm" id="gnrGame"></div>');
+    a.appendChild(idb);
+    var sc=el('div','gnr-box gnr-score','<h4>คะแนน Pretest → Posttest</h4>');
+    ['.cmp-grid','#sumMsg'].forEach(function(s){ var x=panel.querySelector(s); if(x) sc.appendChild(x); });
+    a.appendChild(sc);
+    var hud=panel.querySelector('.hud'); if(hud) a.appendChild(hud);
+    /* คอลัมน์ B: เรดาร์ + จุดเด่น/จุดด้อย */
+    var rb=el('div','gnr-box gnr-radar','<h4>เรดาร์ทักษะรายด้าน</h4>');
+    var cb=panel.querySelector('.chartbox'); if(cb) rb.appendChild(cb);
+    b.appendChild(rb);
+    b.appendChild(el('div','gnr-sw','<div class="sw good"><h5>จุดเด่น</h5><div id="gnrGood"></div></div><div class="sw weak"><h5>ควรเสริม</h5><div id="gnrWeak"></div></div>'));
+    /* คอลัมน์ C: กำลังใจ + แท็บรายละเอียด + ปุ่ม */
+    c.appendChild(el('div','gnr-cheer',''));
+    var tabs=el('div','gnr-tabs'), body=el('div','gnr-tabbody');
+    var panes=[['คำแนะนำ','#sumAdvice'],['รายหัวข้อ','#sumDistrictStars'],['รายบท','#sumAxisRows'],['เหรียญตรา','#sumBadges']];
+    if(panel.querySelector('#sumPlan')){
+      var pw=el('div','gnr-plan'); pw.style.cssText='gap:10px';
+      ['#sumPlan','#sumPitLinks'].forEach(function(s){ var x=panel.querySelector(s); if(x){ x.style.display='grid'; pw.appendChild(x);} });
+      panes.push(['แผนซ้อม',pw]);
+    }
+    panes.forEach(function(p,i){
+      var node=(typeof p[1]==='string')?panel.querySelector(p[1]):p[1]; if(!node) return;
+      body.appendChild(node);
+      var bt=el('button','',p[0]); bt.type='button';
+      bt.addEventListener('click',function(){ Array.prototype.forEach.call(tabs.children,function(x){x.classList.remove('on');}); Array.prototype.forEach.call(body.children,function(x){x.classList.remove('on');}); bt.classList.add('on'); node.classList.add('on'); });
+      tabs.appendChild(bt);
+    });
+    if(tabs.firstChild){ tabs.firstChild.classList.add('on'); body.firstChild.classList.add('on'); }
+    c.appendChild(tabs); c.appendChild(body);
+    var br=panel.querySelector('.btn-row');
+    if(br){ var hm=el('a','btn','หน้ารวมเกม'); hm.href='index.html'; hm.style.textAlign='center'; hm.style.textDecoration='none'; br.appendChild(hm); c.appendChild(br); }
+    c.appendChild(el('div','gnr-note','ภาพหน้าจอนี้ใช้เป็นหลักฐานผลการฝึกได้ · ปุ่ม CSV ด้านบนบันทึกคะแนนพร้อมรหัสนักศึกษาส่งอาจารย์'));
+    dash.appendChild(a); dash.appendChild(b); dash.appendChild(c);
+    panel.appendChild(dash);
+    sec.classList.add('gnr-done');
+    var st=document.createElement('style'); st.textContent='.gnr-tabbody>.badges.on{display:flex !important;flex-wrap:wrap;gap:6px}';
+    document.head.appendChild(st);
+    return panel;
+  }
+  function fitDash(){
+    var d=document.querySelector('.gnr-dash'); if(!d) return;
+    if(window.innerWidth<=980){ d.style.removeProperty('--gnr-dash-h'); return; }
+    var top=d.getBoundingClientRect().top+window.scrollY;
+    var h=Math.max(430, window.innerHeight-top-22);
+    d.style.setProperty('--gnr-dash-h', h+'px');
+  }
+  function enhanceSummary(){
+    var panel=buildDash(); if(!panel) return;
+    var id=getId()||{sid:MASK, nick:''};
+    var nick=(typeof state!=='undefined' && state.name)||id.nick||'ผู้เล่น';
+    var max=maxQ(), pre=+(state.pre||0), post=+(state.post||0);
+    $('#gnrNick').textContent=nick;
+    $('#gnrSidShow').textContent=id.sid||MASK;
+    var ava=$('#chipAva'); $('#gnrAva').innerHTML=ava?ava.innerHTML:'';
+    var who=$('#sumWho');
+    $('#gnrGame').textContent=CFG.title+' · GNR1007'+(who&&who.textContent?' · '+who.textContent.split('·').slice(1).join('·').trim():'');
+    document.querySelector('.gnr-when').textContent=new Date().toLocaleString('th-TH',{dateStyle:'medium',timeStyle:'short'});
+    var ax=axes(), good=ax.filter(function(x){return x.post>=100;}), weak=ax.filter(function(x){return x.post<=50;});
+    good.sort(function(p,q){return q.post-p.post;}); weak.sort(function(p,q){return p.post-q.post;});
+    function li(x){ var dd=x.post-x.pre; return '<li><span>'+escH(x.label)+'</span><span>'+x.post+'%'+(dd?(' ('+(dd>0?'+':'')+dd+')'):'')+'</span></li>'; }
+    var best=ax.slice().sort(function(p,q){return q.post-p.post;})[0];
+    $('#gnrGood').innerHTML=good.length?'<ul>'+good.slice(0,4).map(li).join('')+'</ul>':'<div class="none">ยังไม่มีหัวข้อที่ได้เต็ม'+(best?' · ใกล้ที่สุดคือ '+escH(best.label)+' ('+best.post+'%)':'')+'</div>';
+    $('#gnrWeak').innerHTML=weak.length?'<ul>'+weak.slice(0,4).map(li).join('')+'</ul>':'<div class="none">ไม่มีหัวข้อที่ต่ำกว่า 50% ยอดเยี่ยมมาก</div>';
+    var weakName=weak.length?weak[0].label:(ax.slice().sort(function(p,q){return p.post-q.post;})[0]||{label:'หัวข้อที่ได้คะแนนน้อยที่สุด'}).label;
+    document.querySelector('.gnr-cheer').innerHTML=cheer(nick, pre, post, max, weakName);
+    saveResult({sid:id.sid, nick:nick}, pre, post, max);
+    styleChart();
+    requestAnimationFrame(function(){ fitDash(); setTimeout(function(){ fitDash(); try{ if(radarChart) radarChart.resize(); }catch(e){} },120); });
+  }
+
+  /* ---------------- ห่อฟังก์ชันเดิมของเกม ---------------- */
+  function wrap(){
+    if(typeof showSummary==='function'){
+      var _s=showSummary;
+      showSummary=function(){ var r=_s.apply(this,arguments); try{ enhanceSummary(); }catch(e){ console.warn('gnr summary',e); } return r; };
+    }
+    if(typeof drawRadar==='function'){
+      var _d=drawRadar;
+      drawRadar=function(){ var r=_d.apply(this,arguments); styleChart(); return r; };
+    }
+    if(typeof goto_==='function'){
+      var _g=goto_;
+      goto_=function(id){ var r=_g.apply(this,arguments); document.body.classList.toggle('gnr-sum', id==='scr-summary'); queueSvgFix(); return r; };
+    }
+    if(typeof exportCSV==='function'){
+      var _x=exportCSV;
+      exportCSV=function(){
+        var id=getId(), old=state.name;
+        state.name=(old||'')+' | '+((id&&id.sid)||MASK);
+        try{ return _x.apply(this,arguments); } finally { state.name=old; }
+      };
+    }
+  }
+
+  document.addEventListener('click',function(e){ if(e.target.closest && e.target.closest('#btnTheme')) setTimeout(onTheme,30); });
+  window.addEventListener('resize',function(){ if(document.body.classList.contains('gnr-sum')) fitDash(); });
+
+  setupChrome(); setupLogin(); setupArcade(); wrap();
+  if(window.MutationObserver){ new MutationObserver(function(ms){ for(var i=0;i<ms.length;i++){ var n=ms[i].target; if(n.closest && !n.closest('#arcade') && !n.closest('.chartbox')){ queueSvgFix(); return; } } }).observe(document.body,{childList:true,subtree:true}); }
+  queueSvgFix();
+  var foot=document.querySelector('footer .fmono'); if(foot) foot.textContent+=' · UI v7.1';
+})();
+
+/* ---------- 5) จอคอมพิวเตอร์: จัดหน้าบทเรียนเป็น 2 คอลัมน์ (UI v7.1) ----------
+   ห่อเนื้อหาเป็นกลุ่ม (หัวข้อ h3 ติดกับเนื้อหาถัดไป · ห้องทดลองทั้งชุดเป็นกลุ่มเดียว) แล้วให้ CSS แบ่งคอลัมน์
+   ย้ายโหนดเดิม ไม่คัดลอก จึงไม่กระทบ id/ตัวจัดการเหตุการณ์ของเกม · จอเล็กกว่า 1200px กลุ่มเป็น display:contents (เหมือนเดิม) */
+(function(){
+  'use strict';
+  var IDS=/^scr-(lesson\d|pitwalk)$/;
+  function blk(){ var d=document.createElement('div'); d.className='gnr-blk'; return d; }
+  function isText(n){ return n.tagName==='P' || n.classList.contains('status-line') || n.classList.contains('readout-line'); }
+  function build(sec){
+    var panel=sec.querySelector(':scope>.panel'); if(!panel||panel.querySelector('.gnr-flow')) return;
+    var kids=[].slice.call(panel.children), i=0;
+    while(i<kids.length && (kids[i].classList.contains('tag')||/^H[12]$/.test(kids[i].tagName))) i++;   /* หัวเรื่องอยู่นอกคอลัมน์ */
+    var end=kids.length; if(end>i && kids[end-1].classList.contains('btn-row')) end--;                     /* ปุ่มไปต่อท้ายสุดอยู่นอกคอลัมน์ */
+    var body=kids.slice(i,end); if(body.length<3) return;
+    var flow=document.createElement('div'); flow.className='gnr-flow';
+    panel.insertBefore(flow, kids[end]||null);
+    var cur=null, keep=0, lab=false;
+    body.forEach(function(n){
+      if(n.tagName==='H3'){ lab=/ห้องทดลอง|LAB|ทดลอง/i.test(n.textContent); cur=blk(); if(lab) cur.classList.add('gnr-lab'); flow.appendChild(cur); cur.appendChild(n); keep=1; return; }
+      if(lab){ cur.appendChild(n); return; }
+      if(cur && keep){ cur.appendChild(n); if(!isText(n)) keep=0; return; }
+      if(isText(n) && cur && cur.lastElementChild && isText(cur.lastElementChild)){ cur.appendChild(n); return; }
+      cur=blk(); flow.appendChild(cur); cur.appendChild(n);
+      if(isText(n)) keep=1; else keep=0;   /* ย่อหน้าบรรยายติดกับภาพ/ตารางที่ตามมา */
+    });
+    sec.classList.add('gnr-cols');
+  }
+  /* ย่อทั้งหน้าลงเล็กน้อย (ไม่ต่ำกว่า 80% · จอกว้าง >= 1700px ไม่ต่ำกว่า 75%) เมื่อเนื้อหายาวเกินจอไม่มาก เพื่อให้ไม่ต้องเลื่อน · เฉพาะจอคอม (กว้าง >= 1100px และใช้เมาส์) */
+  var MINZ=0.8, fitT=0, fitting=false;
+  function desk(){ return innerWidth>=1100 && !(window.matchMedia && matchMedia('(pointer:coarse)').matches); }
+  function fit(){
+    if(fitting) return; fitting=true;
+    var a=document.querySelector('.screen.active'), z=1;
+    [].slice.call(document.querySelectorAll('.screen')).forEach(function(s){ if(s!==a) s.style.zoom=''; });
+    if(a && desk() && !document.body.classList.contains('gnr-sum')){
+      a.style.zoom='';
+      var doc=document.documentElement.scrollHeight, h=a.getBoundingClientRect().height, over=doc-innerHeight;
+      if(over>2 && h>0){ z=Math.max(innerWidth>=1700?0.75:MINZ, Math.floor((h-over-6)/h*100)/100); }
+      a.style.zoom = z<1 ? String(z) : '';
+    } else if(a){ a.style.zoom=''; }
+    fitting=false;
+  }
+  function queueFit(){ clearTimeout(fitT); fitT=setTimeout(fit,60); }
+  window.GNR_fit=fit;
+  function sync(){
+    var a=document.querySelector('.screen.active');
+    document.body.classList.toggle('gnr-wide', !!(a && IDS.test(a.id)));
+    queueFit();
+  }
+  window.addEventListener('resize',queueFit);
+  if(window.ResizeObserver){ var ro=new ResizeObserver(function(){ if(!fitting) queueFit(); }); [].slice.call(document.querySelectorAll('.screen')).forEach(function(s){ var p=s.querySelector(':scope>.panel'); if(p) ro.observe(p); }); }
+  [].slice.call(document.querySelectorAll('.screen')).forEach(function(s){ if(/^scr-lesson\d$/.test(s.id)) build(s); });   /* pitwalk: ขยายกว้าง + การ์ด 2 คอลัมน์ด้วย CSS */
+  sync();
+  if(window.MutationObserver){ var mo=new MutationObserver(sync); [].slice.call(document.querySelectorAll('.screen')).forEach(function(s){ mo.observe(s,{attributes:true,attributeFilter:['class']}); }); }
+})();
+</script>
+<!-- GNR-CORE:END -->
+</body>
+</html>

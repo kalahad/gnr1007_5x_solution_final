@@ -1,0 +1,2691 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<script>(function(){try{var t=localStorage.getItem('gnr1007_theme');if(!t){t=(window.matchMedia&&window.matchMedia('(prefers-color-scheme: light)').matches)?'light':'dark';}document.documentElement.setAttribute('data-theme',t);}catch(e){}})();</script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>CPU CITY : เมืองแห่งหน่วยประมวลผล | GNR1007</title>
+<meta name="description" content="เกมเรียนรู้ลำดับชั้นหน่วยความจำ Compiler กับ Interpreter และการจำแนกเครือข่าย LAN MAN WAN — GNR1007 วันที่ 1 บทที่ 1-2 · ผศ.ดร.กุลวลัญช์ วรุณสิน มหาวิทยาลัยรามคำแหง">
+<meta name="theme-color" content="#04070f">
+<meta property="og:title" content="CPU CITY : เมืองแห่งหน่วยประมวลผล">
+<meta property="og:description" content="ตรวจงาน 3 เขตของเมืองซีพียู วัดผลก่อน-หลังเรียนด้วยระบบดาว 6 ดวง (1 ดาว = ตอบถูก 1 ข้อ)">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='18' fill='%2304070f'/><rect x='30' y='30' width='40' height='40' rx='6' fill='%2322d3ee'/><rect x='40' y='40' width='20' height='20' rx='3' fill='%2304070f'/><g stroke='%2334d399' stroke-width='7' stroke-linecap='round'><path d='M30 42H16M30 58H16M70 42h14M70 58h14M42 30V16M58 30V16M42 70v14M58 70v14'/></g></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+/* ================================================================
+   CPU CITY : เมืองแห่งหน่วยประมวลผล  v6.21 "CLIMB MODE (TAP-ONLY)"
+   Single-file Web App — HTML + CSS + JavaScript (ไม่มี backend)
+   วิชา GNR1007 การโปรแกรมคอมพิวเตอร์สำหรับวิศวกร — เนื้อหาวันที่ 1 (บทที่ 1-2)
+   เขต 1 ลำดับชั้นหน่วยความจำ · เขต 2 Compiler/Interpreter · เขต 3 การจำแนกเครือข่าย
+   ผู้พัฒนา: ผศ.ดร.กุลวลัญช์ วรุณสิน
+   สาขาวิศวกรรมคอมพิวเตอร์ คณะวิศวกรรมศาสตร์ มหาวิทยาลัยรามคำแหง
+   เอนจิน CLIMB MODE / ระบบดาว 6 ดวง / เรดาร์ / CSV ยกมาจาก LOGIC LABYRINTH v6.21
+   ================================================================ */
+:root{
+  --bg:#04070f; --panel:rgba(var(--panel-rgb),.86); --panel2:rgba(var(--panel2-rgb),.94);
+  --ember:#22d3ee; --ember-dim:rgba(34,211,238,.28);
+  --corner:#34d399; --gold:#fbbf24; --gold2:#ffd76a; --red:#fb7185;
+  --text:#e6edf6; --muted:#8ca0b8; --line:rgba(34,211,238,.22);
+  /* ชื่อพ้องสำหรับสไตล์ห้องทดลองที่ยกมาจาก CPU CITY รุ่นเดิม */
+  --cyan:#22d3ee; --cyan-dim:rgba(34,211,238,.28); --green:#34d399;
+  --amber:#fbbf24; --purple:#a78bfa; --pink:#f472b6;
+  --radius:16px; --shadow:0 10px 40px rgba(0,0,0,.6);
+  --font:'Kanit','Sarabun','Noto Sans Thai','Segoe UI',Tahoma,sans-serif;
+  --mono:'IBM Plex Mono','Consolas',monospace; --bg-grad-mid:#081326; --ink-panel-rgb:4,7,15; --panel-rgb:12,20,38; --panel2-rgb:16,26,48;}
+:root[data-theme="light"]{ --bg:#f4f6fa; --panel:rgba(255,255,255,.90); --panel2:rgba(255,255,255,.97); --ember:#0fa6bd; --ember-dim:rgba(15,166,189,.16); --corner:#24a878; --gold:#be8a03; --gold2:#ebac00; --red:#e40627; --text:#141b26; --muted:#5c6b80; --line:rgba(15,166,189,.28); --bg-grad-mid:#e9edf3; --ink-panel-rgb:255,255,255; --panel-rgb:255,255,255; --panel2-rgb:244,247,251;
+  color-scheme:light;
+}
+:root{color-scheme:dark;}
+
+
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html{scroll-behavior:smooth}
+body{margin:0;font-family:var(--font);color:var(--text);background:var(--bg);min-height:100vh;overflow-x:hidden;line-height:1.65}
+body::before{content:'';position:fixed;inset:0;z-index:-2;
+  background:radial-gradient(900px 600px at 12% -10%, rgba(34,211,238,.15), transparent 60%),
+             radial-gradient(800px 600px at 92% 8%, rgba(52,211,153,.12), transparent 60%),
+             radial-gradient(700px 500px at 50% 110%, rgba(251,191,36,.09), transparent 60%),
+             linear-gradient(180deg,var(--bg),var(--bg-grad-mid) 60%,var(--bg))}
+body::after{content:'';position:fixed;inset:0;z-index:-1;pointer-events:none;opacity:.4;
+  background-image:linear-gradient(rgba(34,211,238,.05) 1px,transparent 1px),
+                   linear-gradient(90deg,rgba(34,211,238,.05) 1px,transparent 1px);
+  background-size:44px 44px;-webkit-mask-image:radial-gradient(circle at 50% 35%,#000 30%,transparent 85%);
+  mask-image:radial-gradient(circle at 50% 35%,#000 30%,transparent 85%)}
+.wrap{max-width:1100px;margin:0 auto;padding:16px 16px 20px}
+
+#topbar{position:sticky;top:0;z-index:50;backdrop-filter:blur(14px);display:none;
+  background:linear-gradient(180deg,rgba(var(--ink-panel-rgb),.95),rgba(var(--ink-panel-rgb),.65));border-bottom:1px solid var(--line)}
+#topbar.show{display:block}
+.topbar-in{max-width:1100px;margin:0 auto;padding:8px 14px}
+.tb-top{display:flex;align-items:center;gap:8px;flex-wrap:nowrap}
+.brand{display:flex;align-items:center;gap:9px;font-weight:600;letter-spacing:.4px;font-size:.88rem;white-space:nowrap;flex:0 0 auto}
+.brand .dot{width:10px;height:10px;border-radius:50%;background:var(--ember);box-shadow:0 0 12px var(--ember);animation:pulse 1.8s infinite}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.45;transform:scale(.7)}}
+.tb-right{display:flex;gap:7px;align-items:center;flex:0 0 auto}
+.icon-btn{min-width:36px;height:36px;padding:0 9px;border-radius:11px;display:grid;place-items:center;cursor:pointer;
+  background:rgba(34,211,238,.08);border:1px solid var(--line);color:var(--ember);transition:.22s;font-family:var(--mono);font-size:.72rem;font-weight:700}
+.icon-btn:hover{border-color:var(--ember);box-shadow:0 0 14px var(--ember-dim);transform:translateY(-1px)}
+.icon-btn.off{color:var(--muted);opacity:.6}
+.player-chip{display:flex;align-items:center;gap:7px;font-size:.75rem;color:var(--ember);
+  border:1px dashed var(--ember-dim);padding:3px 11px 3px 4px;border-radius:999px;font-family:var(--mono);max-width:150px}
+.player-chip svg{width:24px;height:24px;flex:0 0 24px}
+.player-chip .pn{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.tb-xp-mini{display:flex;align-items:center;gap:6px;flex:0 0 auto}
+.tb-xp-mini .lvl{font-family:var(--mono);font-size:.62rem;color:var(--corner);white-space:nowrap;letter-spacing:.5px}
+.tb-xp-mini .bar{width:76px;height:6px;margin:0;flex:0 0 auto}
+
+#navrail{display:flex;gap:5px;overflow-x:auto;padding:2px 0;scrollbar-width:thin;flex:1 1 auto;min-width:70px}
+#navrail::-webkit-scrollbar{height:4px}
+#navrail::-webkit-scrollbar-thumb{background:var(--ember-dim);border-radius:9px}
+.navpill{flex:0 0 auto;display:flex;flex-direction:column;align-items:center;gap:2px;padding:5px 8px;border-radius:12px;
+  border:1px solid var(--line);background:rgba(var(--panel2-rgb),.7);cursor:default;opacity:.38;min-width:56px;transition:.25s}
+.navpill svg{width:17px;height:17px;color:var(--muted)}
+.navpill span{font-size:.56rem;color:var(--muted);white-space:nowrap;font-family:var(--mono);letter-spacing:.4px}
+.navpill .ps{font-size:.58rem;letter-spacing:1px;color:var(--gold2);min-height:.9em}
+.navpill.unlocked{opacity:1;cursor:pointer}
+.navpill.unlocked:hover{border-color:var(--ember);transform:translateY(-2px);box-shadow:0 6px 18px rgba(34,211,238,.16)}
+.navpill.current{border-color:var(--ember);background:rgba(34,211,238,.13);box-shadow:0 0 0 2px rgba(34,211,238,.10)}
+.navpill.current svg,.navpill.current span{color:var(--ember)}
+.navpill.done svg,.navpill.done span{color:var(--corner)}
+.navpill.locked-shake{animation:shake .35s}
+@media (max-width:780px){
+  .tb-top{flex-wrap:wrap}
+  .brand{order:1}
+  .tb-xp-mini{order:2}
+  .tb-right{order:3;margin-left:auto}
+  #navrail{order:4;flex:1 1 100%;margin-top:2px}
+}
+
+.screen{display:none}
+.screen.active{display:block;animation:fadeUp .5s cubic-bezier(.2,.8,.2,1)}
+@keyframes fadeUp{from{opacity:0;transform:translateY(22px)}to{opacity:1;transform:none}}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-7px)}75%{transform:translateX(7px)}}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:22px;
+  box-shadow:var(--shadow);backdrop-filter:blur(10px);position:relative;overflow:hidden}
+.panel::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;
+  background:linear-gradient(90deg,transparent,var(--ember),transparent);opacity:.7}
+.panel+.panel{margin-top:16px}
+h1,h2,h3{margin:0 0 10px;font-weight:600;letter-spacing:.3px}
+h1{font-size:clamp(1.4rem,5vw,2rem)}
+h2{font-size:1.22rem;color:var(--ember)}
+h3{font-size:1rem;color:var(--corner)}
+p{margin:0 0 12px}
+.muted{color:var(--muted);font-size:.9rem}
+.mono{font-family:var(--mono)}
+.tag{display:inline-block;font-size:.68rem;letter-spacing:2px;text-transform:uppercase;color:var(--ember);
+  border:1px solid var(--ember-dim);padding:3px 12px;border-radius:999px;margin-bottom:12px;font-family:var(--mono)}
+.card{background:var(--panel2);border:1px solid var(--line);border-radius:14px;padding:16px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+
+.btn{font-family:var(--font);font-size:.93rem;font-weight:500;cursor:pointer;padding:11px 24px;border-radius:12px;
+  border:1px solid var(--line);background:rgba(34,211,238,.08);color:var(--text);transition:.25s;min-height:44px}
+.btn:hover:not(:disabled){transform:translateY(-2px);border-color:var(--ember);box-shadow:0 8px 26px rgba(34,211,238,.20)}
+.btn.primary{background:linear-gradient(135deg,var(--ember),var(--gold));color:#04070f;border:none;font-weight:600;
+  box-shadow:0 8px 28px rgba(34,211,238,.28)}
+.btn.pink{background:linear-gradient(135deg,var(--corner),var(--gold));color:#04070f;border:none;font-weight:600}
+.btn.ghost{background:transparent}
+.btn.sm{padding:8px 15px;font-size:.82rem;min-height:40px}
+.btn:disabled{opacity:.4;cursor:not-allowed;transform:none;box-shadow:none}
+.btn-row{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px}
+
+#scr-welcome .hero{min-height:calc(100vh - 40px);display:flex;flex-direction:column;align-items:center;
+  justify-content:center;text-align:center;padding:22px 8px;gap:2px}
+.cityart{width:min(520px,94vw);filter:drop-shadow(0 0 26px rgba(34,211,238,.3));animation:float 6s ease-in-out infinite}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-9px)}}
+.title{font-size:clamp(1.5rem,5.6vw,2.7rem);font-weight:700;line-height:1.2;margin:8px 0 2px;
+  background:linear-gradient(100deg,#22d3ee,#fbbf24 45%,#34d399);-webkit-background-clip:text;background-clip:text;color:transparent}
+.subtitle{color:var(--muted);max-width:620px;margin:0 auto 18px;font-size:.95rem}
+.login-card{width:min(560px,94vw);text-align:left}
+label{display:block;font-size:.84rem;color:var(--ember);margin-bottom:7px;font-weight:500}
+input[type=text]{width:100%;padding:13px 16px;border-radius:12px;font-family:var(--font);font-size:1rem;
+  background:rgba(var(--ink-panel-rgb),.75);border:1px solid var(--line);color:var(--text);outline:none;transition:.25s}
+input[type=text]:focus{border-color:var(--ember);box-shadow:0 0 0 4px rgba(34,211,238,.14)}
+input[type=text]::placeholder{color:#4a5d75}
+.err{color:var(--red);font-size:.82rem;margin-top:8px;display:none}
+.err.show{display:block;animation:shake .35s}
+.feature-row{display:flex;gap:7px;flex-wrap:wrap;justify-content:center;margin-top:18px}
+.feature-row span{font-size:.7rem;color:var(--muted);border:1px solid var(--line);padding:4px 11px;border-radius:999px;font-family:var(--mono)}
+.avatar-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(62px,1fr));gap:9px;margin-top:4px}
+.avatar-opt{border:2px solid transparent;background:rgba(var(--ink-panel-rgb),.6);border-radius:14px;padding:5px;cursor:pointer;
+  transition:.2s;display:grid;place-items:center;position:relative;outline:1px solid var(--line)}
+.avatar-opt svg{width:100%;height:auto;display:block}
+.avatar-opt:hover{transform:translateY(-4px) scale(1.05)}
+.avatar-opt.sel{border-color:var(--ember);box-shadow:0 0 0 3px rgba(34,211,238,.22),0 8px 22px rgba(34,211,238,.22);outline-color:transparent}
+.avatar-opt.sel::after{content:'\2713';position:absolute;right:-4px;top:-6px;width:19px;height:19px;border-radius:50%;
+  background:var(--corner);color:#04070f;font-size:.7rem;display:grid;place-items:center;font-weight:700}
+
+.hud{display:flex;gap:9px;flex-wrap:wrap;margin-bottom:12px}
+.stat{flex:1 1 84px;background:var(--panel2);border:1px solid var(--line);border-radius:12px;padding:8px 10px;text-align:center;min-width:80px}
+.stat b{display:block;font-family:var(--mono);font-size:1.12rem;color:var(--ember);line-height:1.3}
+.stat small{color:var(--muted);font-size:.63rem;letter-spacing:1px;text-transform:uppercase}
+.stat.combo b{color:var(--gold)}.stat.score b{color:var(--corner)}.stat.star b{color:var(--gold2)}
+.bar{height:8px;border-radius:999px;background:rgba(255,255,255,.06);overflow:hidden;margin:6px 0 12px}
+.bar>i{display:block;height:100%;width:0;border-radius:999px;background:linear-gradient(90deg,var(--ember),var(--corner));transition:width .6s cubic-bezier(.2,.8,.2,1)}
+.bar.xp>i{background:linear-gradient(90deg,var(--gold),var(--ember))}
+
+.stage{display:flex;justify-content:center;padding:8px 0 4px;border-radius:14px;
+  background:radial-gradient(ellipse at center,rgba(34,211,238,.08),transparent 68%)}
+.stage svg{width:100%;max-width:520px;height:auto;display:block}
+.dcard{display:flex;gap:14px;align-items:center;background:var(--panel2);border:1px solid var(--line);
+  border-radius:16px;padding:14px 16px;margin-top:4px}
+.dcard .ico{flex:0 0 74px}
+.dcard .ico svg{width:74px;height:74px}
+.skillcard{border:1px solid rgba(52,211,153,.4);background:linear-gradient(135deg,rgba(52,211,153,.12),rgba(var(--ink-panel-rgb),.5));
+  border-radius:16px;padding:16px 18px;margin-top:12px}
+.skillcard .sk-name{color:var(--corner);font-weight:600;font-size:1.05rem}
+
+.q-box{background:rgba(var(--ink-panel-rgb),.5);border:1px solid var(--line);border-radius:16px;padding:15px 16px;margin-top:12px;transition:.3s}
+.q-box.answered{border-color:rgba(255,255,255,.08)}
+.q-box.focusnow{border-color:var(--ember);box-shadow:0 0 0 3px rgba(34,211,238,.10)}
+.qmeta{display:flex;justify-content:space-between;align-items:center;gap:8px;font-family:var(--mono);
+  font-size:.68rem;letter-spacing:1.2px;color:var(--muted);margin-bottom:6px}
+.q-type{color:var(--corner);border:1px solid rgba(52,211,153,.35);padding:2px 9px;border-radius:999px;font-size:.63rem}
+.q-text{font-size:1.02rem;font-weight:500;margin:8px 0 4px}
+.choices{display:grid;gap:9px;margin-top:10px}
+.choice{font-family:var(--font);font-size:.94rem;padding:12px 14px;border-radius:12px;cursor:pointer;
+  background:rgba(var(--panel-rgb),.9);border:1px solid var(--line);color:var(--text);transition:.2s;text-align:left;
+  display:flex;gap:11px;align-items:flex-start;min-height:44px;width:100%}
+.choice .k{flex:0 0 22px;height:22px;border-radius:7px;display:grid;place-items:center;font-family:var(--mono);
+  font-size:.72rem;background:rgba(34,211,238,.12);color:var(--ember);border:1px solid var(--line);margin-top:1px}
+.choice:hover:not(:disabled){border-color:var(--ember);transform:translateY(-2px);box-shadow:0 6px 20px rgba(34,211,238,.16)}
+.choice.correct{background:linear-gradient(135deg,rgba(52,211,153,.28),rgba(52,211,153,.08));border-color:var(--corner);color:var(--corner);font-weight:600}
+.choice.correct .k{background:var(--corner);color:#04070f;border-color:transparent}
+.choice.wrong{background:linear-gradient(135deg,rgba(251,113,133,.26),rgba(251,113,133,.06));border-color:var(--red);color:var(--red)}
+.choice.wrong .k{background:var(--red);color:#04070f;border-color:transparent}
+.choice:disabled{cursor:default}
+.explain{margin-top:11px;border-radius:0 12px 12px 0;padding:10px 13px;border-left:3px solid var(--gold);
+  background:rgba(251,191,36,.09);display:none;font-size:.88rem}
+.explain.show{display:block;animation:fadeUp .3s}
+.floaty{position:fixed;left:50%;top:24%;transform:translateX(-50%);font-family:var(--mono);font-weight:700;
+  font-size:1.4rem;pointer-events:none;z-index:120;text-shadow:0 0 20px currentColor;animation:floatUp 1.1s ease-out forwards}
+@keyframes floatUp{0%{opacity:0;transform:translate(-50%,10px) scale(.8)}25%{opacity:1;transform:translate(-50%,-6px) scale(1.1)}100%{opacity:0;transform:translate(-50%,-70px) scale(1)}}
+
+.tbl-wrap{overflow-x:auto;border-radius:12px;border:1px solid var(--line);margin-top:10px}
+table{width:100%;border-collapse:collapse;font-size:.86rem;min-width:460px}
+th,td{padding:9px 11px;text-align:left;border-bottom:1px solid rgba(255,255,255,.06)}
+th{background:rgba(34,211,238,.10);color:var(--ember);font-weight:600}
+tbody tr:hover{background:rgba(34,211,238,.05)}
+
+/* ---------- Lab 1: Precedence Ring ---------- */
+.codebox{font-family:var(--mono);font-size:1rem;background:rgba(var(--ink-panel-rgb),.8);border:1px solid var(--line);
+  border-radius:14px;padding:16px 14px;overflow-x:auto;text-align:center;min-height:2.4em}
+.codebox b{color:var(--gold2)}
+.status-line{margin-top:10px;font-size:.9rem;min-height:2.4em;border-radius:0 12px 12px 0;padding:9px 13px;
+  border-left:3px solid var(--line);background:rgba(var(--ink-panel-rgb),.5)}
+.status-line.ok{border-color:var(--corner)}
+.status-line.no{border-color:var(--red)}
+
+/* ---------- Lab 2: Prefix/Postfix odometer ---------- */
+.gaugebox{display:flex;flex-direction:column;align-items:center;gap:4px;margin:14px 0 8px}
+.odometer{font-family:var(--mono);font-weight:700;font-size:1.5rem;letter-spacing:1px;color:var(--ember);
+  background:rgba(var(--ink-panel-rgb),.7);border:2px solid var(--line);border-radius:12px;padding:12px 20px;min-width:240px;text-align:center;
+  transition:.15s}
+.odometer.ping{color:var(--gold2);border-color:var(--gold2);animation:ovburst .5s ease}
+@keyframes ovburst{0%{transform:scale(1)}30%{transform:scale(1.08)}100%{transform:scale(1)}}
+.odolabel{font-family:var(--mono);font-size:.72rem;letter-spacing:1.5px;color:var(--muted);text-transform:uppercase}
+
+/* ---------- Lab 3: Modulo / Logic grid ---------- */
+.netgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px;margin-top:10px}
+.netgrid button{padding:9px 6px;font-size:.8rem;font-family:var(--mono)}
+.badge-net{display:inline-block;padding:4px 14px;border-radius:999px;font-size:.78rem;border:1px solid;margin-top:8px;font-family:var(--mono)}
+.badge-net.MOD{color:var(--corner);border-color:var(--corner);background:rgba(52,211,153,.1)}
+.badge-net.LOGIC{color:var(--gold);border-color:var(--gold);background:rgba(251,191,36,.1)}
+
+/* ---------- Stars ---------- */
+.star-row{display:flex;gap:clamp(4px,1.8vw,10px);justify-content:center;align-items:center;margin:14px 0 6px;flex-wrap:wrap}
+.star{width:clamp(30px,12.4vw,54px);height:clamp(30px,12.4vw,54px);position:relative;opacity:0;transform:scale(2.2) rotate(-22deg)}
+.star.in{animation:starIn .5s cubic-bezier(.3,1.6,.4,1) forwards}
+@keyframes starIn{to{opacity:1;transform:scale(1) rotate(0)}}
+.star svg{width:100%;height:100%;display:block}
+.star.full svg{filter:drop-shadow(0 0 14px rgba(255,215,106,.75))}
+.star.empty{opacity:.32}
+.star-row.sm .star{width:26px;height:26px}
+.star-row.xs .star{width:17px;height:17px;gap:3px}
+.star-row.xs{gap:3px;margin:2px 0 0}
+.starline{font-family:var(--mono);letter-spacing:3px;color:var(--gold2);font-size:.9rem}
+
+#reveal{position:fixed;inset:0;z-index:200;display:none;place-items:center;text-align:center;padding:20px;
+  background:radial-gradient(circle at 50% 45%,rgba(var(--ink-panel-rgb),.97),rgba(var(--ink-panel-rgb),.99));overflow-y:auto}
+#reveal.show{display:grid}
+.rv-stage{max-width:600px;width:100%}
+.rv-line{font-family:var(--mono);letter-spacing:6px;font-size:clamp(.85rem,3.2vw,1.2rem);color:var(--ember);opacity:0}
+.rv-score{font-family:var(--mono);font-size:clamp(2.6rem,13vw,5rem);font-weight:700;line-height:1.05;opacity:0;
+  background:linear-gradient(100deg,#22d3ee,#fbbf24,#34d399);-webkit-background-clip:text;background-clip:text;color:transparent;
+  filter:drop-shadow(0 0 30px rgba(34,211,238,.45))}
+.rv-rank{font-size:clamp(1.4rem,6.4vw,2.6rem);font-weight:700;opacity:0;letter-spacing:2px;
+  background:linear-gradient(100deg,var(--gold2),#fff6d0,var(--gold));-webkit-background-clip:text;background-clip:text;color:transparent}
+.rv-sub{color:var(--muted);opacity:0;font-size:.92rem;margin-top:6px}
+.rv-in{animation:rvIn .7s cubic-bezier(.2,.9,.2,1) forwards}
+@keyframes rvIn{from{opacity:0;transform:translateY(24px) scale(.92)}to{opacity:1;transform:none}}
+#confetti{position:fixed;inset:0;pointer-events:none;z-index:210;display:none}
+
+.cmp-grid{display:grid;grid-template-columns:1fr auto 1fr;gap:10px;align-items:stretch;margin:6px 0 2px}
+.cmp-col{background:rgba(var(--ink-panel-rgb),.6);border:1px solid var(--line);border-radius:14px;padding:14px 10px;text-align:center}
+.cmp-col small{color:var(--muted);font-size:.64rem;letter-spacing:1.2px;text-transform:uppercase;font-family:var(--mono)}
+.cmp-col b{display:block;font-size:1.5rem;font-family:var(--mono);color:var(--ember);line-height:1.4}
+.cmp-col.post b{color:var(--corner)}
+.cmp-arrow{display:flex;align-items:center;justify-content:center;color:var(--gold2);font-size:1.4rem;font-family:var(--mono)}
+.delta{text-align:center;margin-top:12px;font-size:1.05rem;font-weight:600;color:var(--corner)}
+.delta.flat{color:var(--gold)}.delta.down{color:var(--red)}
+.dstars{display:grid;gap:9px;margin-top:10px}
+.dstar-row{display:grid;grid-template-columns:1fr auto auto;gap:10px;align-items:center;background:rgba(var(--ink-panel-rgb),.5);
+  border:1px solid var(--line);border-radius:12px;padding:9px 12px;font-size:.86rem}
+.dstar-row .lbl{min-width:0}
+.badges{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin:13px 0 4px}
+.badge{border:1px solid var(--ember-dim);background:rgba(34,211,238,.08);border-radius:999px;padding:6px 15px;
+  font-size:.78rem;display:flex;gap:7px;align-items:center;animation:fadeUp .5s backwards}
+.badge b{color:var(--ember);font-weight:600}
+.badge.locked{opacity:.35;border-style:dashed}
+.advice{list-style:none;padding:0;margin:8px 0 0;display:grid;gap:8px}
+.advice li{display:flex;gap:9px;align-items:flex-start;font-size:.88rem;background:rgba(var(--ink-panel-rgb),.5);
+  border:1px solid var(--line);border-radius:11px;padding:9px 12px}
+.advice li::before{content:'\25B8';color:var(--gold);font-weight:700}
+.chartbox{position:relative;width:100%;height:330px;margin-top:10px}
+#radarFallback{width:100%;height:100%;display:none}
+
+#toast{position:fixed;left:50%;bottom:22px;transform:translate(-50%,26px);z-index:180;opacity:0;pointer-events:none;
+  background:rgba(var(--panel-rgb),.97);border:1px solid var(--ember-dim);border-radius:999px;padding:9px 20px;
+  font-size:.84rem;transition:.4s cubic-bezier(.2,.8,.2,1);box-shadow:var(--shadow);max-width:90vw;text-align:center}
+#toast.show{opacity:1;transform:translate(-50%,0)}
+
+footer{border-top:1px solid var(--line);margin-top:26px;padding:18px 16px 30px;text-align:center;
+  background:linear-gradient(180deg,transparent,rgba(var(--ink-panel-rgb),.7))}
+footer p{margin:0;font-size:.8rem;color:var(--muted);line-height:1.8}
+footer b{color:var(--ember);font-weight:600}
+footer .fmono{font-family:var(--mono);font-size:.68rem;color:#5b708a;letter-spacing:1px}
+
+@media (max-width:860px){
+  .grid2{grid-template-columns:1fr}
+  .wrap{padding:12px 12px 16px}
+  .panel{padding:15px}
+  .panel+.panel{margin-top:12px}
+  h2{font-size:1.08rem}
+  .star{width:44px;height:44px}
+  .brand span{display:none}
+  .dcard{flex-direction:column;text-align:center;gap:8px}
+  .dcard .ico{flex:none}
+}
+@media (max-width:430px){
+  .cmp-grid{grid-template-columns:1fr}
+  .cmp-arrow{transform:rotate(90deg);padding:2px 0}
+  .q-text{font-size:.96rem}
+  .choice{font-size:.9rem;padding:11px 12px}
+  .btn{padding:10px 18px;font-size:.88rem}
+  .player-chip{max-width:104px}
+  .odometer{font-size:1.15rem;padding:10px 12px;min-width:190px}
+}
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.01ms !important;animation-iteration-count:1 !important;transition-duration:.05s !important}
+  .star{opacity:1;transform:none}
+}
+
+.howto{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:8px;margin:14px 0}
+.howto .hk{display:flex;gap:10px;align-items:baseline;padding:9px 12px;border-radius:11px;
+  border:1px solid var(--line);background:var(--panel)}
+.howto .hk b{font-family:var(--mono);color:var(--ember);font-size:.8rem;white-space:nowrap}
+.howto .hk span{color:var(--muted);font-size:.82rem}
+#arcade{position:fixed;inset:0;z-index:90;display:none;background:var(--bg);flex-direction:column}
+#arcade.show{display:flex}
+.ac-top{position:relative;flex:0 0 auto;height:32vh;min-height:168px;max-height:300px;border-bottom:1px solid var(--line);overflow:hidden}
+#acv{display:block;width:100%;height:100%}
+.ac-hud{position:absolute;top:8px;left:8px;right:8px;display:flex;gap:6px;align-items:center;flex-wrap:wrap;pointer-events:none}
+.ac-chip{display:inline-flex;align-items:center;gap:5px;padding:4px 10px;border-radius:999px;font-size:.72rem;
+  color:var(--muted);background:var(--panel);border:1px solid var(--line)}
+.ac-chip b{color:var(--text);font-family:var(--mono)}
+.ac-chip.hot{border-color:var(--gold);color:var(--gold);box-shadow:0 0 14px var(--ember-dim)}
+.ac-exit{pointer-events:auto;margin-left:auto}
+.ac-bar{position:absolute;left:0;right:0;bottom:0;height:5px;background:rgba(0,0,0,.45)}
+.ac-bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--corner),var(--gold));transition:width .55s cubic-bezier(.2,.9,.3,1.25)}
+.ac-play{flex:1 1 auto;overflow-y:auto;padding:14px;display:flex;justify-content:center;-webkit-overflow-scrolling:touch}
+.ac-card{width:min(680px,100%);height:max-content;background:var(--panel2);border:1px solid var(--line);
+  border-radius:18px;padding:18px;box-shadow:var(--shadow)}
+.ac-card h2{margin:0 0 8px}
+.ac-card .choice{padding:15px 14px;font-size:.98rem}
+#acEnd{position:fixed;inset:0;display:none;place-items:center;padding:14px;background:rgba(0,0,0,.82);z-index:10;overflow:auto}
+#acEnd.show{display:grid}
+#acEnd .ac-card{max-height:92vh;overflow:auto}
+.ac-mini{display:flex;gap:16px;align-items:center;justify-content:center;flex-wrap:wrap;margin:14px 0 6px;
+  padding:12px;border-radius:14px;border:1px solid var(--line);background:var(--panel)}
+.ac-mini svg{width:190px;height:172px;flex:0 0 auto}
+.ac-mini .legend{font-size:.76rem;color:var(--muted);line-height:2;text-align:left}
+.ac-mini .legend i{display:inline-block;width:11px;height:11px;border-radius:3px;margin-right:7px;vertical-align:middle}
+.ac-mini .legend b{color:var(--text);font-family:var(--mono)}
+@media(max-width:560px){
+  .ac-top{height:27vh;min-height:140px}
+  .ac-chip{font-size:.66rem;padding:3px 8px}
+  .ac-play{padding:10px}
+  .ac-card{padding:14px;border-radius:14px}
+  .ac-card .choice{padding:16px 12px}
+  .ac-mini{gap:10px;padding:10px}
+  .ac-mini svg{width:158px;height:144px}
+  .ac-mini .legend{font-size:.7rem;line-height:1.85}
+}
+
+/* โค้ดหลายบรรทัดต้องรักษาการขึ้นบรรทัดและชิดซ้ายเสมอ */
+.codebox{white-space:pre-wrap;text-align:left;font-size:.92rem;line-height:1.62}
+.qcode{margin:10px 0;font-size:.86rem;padding:12px 12px}
+.q-text{line-height:1.6}
+@media(max-width:560px){ .codebox{font-size:.82rem} .qcode{font-size:.78rem;padding:10px} }
+
+/* ---------- theme extras ---------- */
+
+.torch{display:flex;gap:10px;flex-wrap:wrap;margin:12px 0}
+.gate{flex:1 1 150px;min-width:150px;padding:12px 14px;border-radius:12px;border:1px solid var(--line);
+  background:rgba(var(--panel-rgb),.6);transition:.28s;position:relative;overflow:hidden}
+.gate .gt{font-family:var(--mono);font-size:.82rem;color:var(--muted)}
+.gate .gr{font-weight:600;margin-top:4px;font-size:.92rem}
+.gate.testing{border-color:var(--gold);box-shadow:0 0 16px rgba(251,191,36,.35);transform:translateY(-2px)}
+.gate.passed{border-color:var(--corner);background:rgba(52,211,153,.10)}
+.gate.failed{opacity:.4}
+.gate.skipped{opacity:.22;filter:grayscale(.6)}
+.gate .flag{position:absolute;top:8px;right:10px;font-family:var(--mono);font-size:.68rem;letter-spacing:1px;color:var(--muted)}
+.gate.passed .flag{color:var(--corner)}
+.gate.failed .flag{color:var(--red)}
+.trapgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:8px;margin:10px 0}
+.swrow{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:10px 0}
+.toggle{padding:9px 14px;border-radius:11px;cursor:pointer;font-family:var(--mono);font-size:.8rem;font-weight:700;
+  border:1px solid var(--line);background:rgba(34,211,238,.08);color:var(--muted);transition:.2s}
+.toggle.on{color:var(--bg);background:var(--corner);border-color:var(--corner)}
+.toggle.off{color:var(--bg);background:var(--red);border-color:var(--red)}
+.tape{font-family:var(--mono);font-size:1.05rem;letter-spacing:2px;min-height:46px;display:flex;align-items:center;
+  gap:8px;flex-wrap:wrap;padding:12px 14px;border-radius:12px;background:rgba(var(--ink-panel-rgb),.7);border:1px solid var(--line)}
+.tape span{padding:3px 9px;border-radius:8px;background:rgba(34,211,238,.16);animation:tapein .3s ease}
+@keyframes tapein{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+
+
+/* v6.01 — ตัวดำเนินการในข้อความบรรยาย ต้องอ่านออกว่าเป็นสองขีดหรือขีดเดียว */
+.q-text code.ic,.explain code.ic,.choice code.ic,.qmeta code.ic{
+  font-family:var(--mono);font-size:.94em;letter-spacing:.09em;
+  background:rgba(255,255,255,.07);border:1px solid var(--line);
+  border-radius:4px;padding:1px 5px;white-space:nowrap;color:var(--gold)}
+
+/* ================================================================
+   ห้องทดลองประจำเกม + ตาราง/สถานการณ์ในตัวข้อสอบ
+   ================================================================ */
+.track{position:relative;height:88px;background:linear-gradient(180deg,rgba(var(--ink-panel-rgb),.75),rgba(var(--panel2-rgb),.6));
+  border:1px solid var(--line);border-radius:14px;margin:12px 0 4px;overflow:hidden}
+.track::after{content:'';position:absolute;left:0;right:0;bottom:22px;height:1px;
+  background:repeating-linear-gradient(90deg,var(--cyan-dim) 0 12px,transparent 12px 24px);opacity:.7}
+.track .goal{position:absolute;right:8px;top:8px;bottom:8px;width:16px;border-radius:5px;
+  background:repeating-linear-gradient(45deg,#e6edf6 0 6px,#1b2436 6px 12px);opacity:.55}
+.runner{position:absolute;bottom:14px;left:8px;width:40px;height:46px;transition:left .1s linear}
+.runner svg{width:100%;height:100%;filter:drop-shadow(0 0 10px rgba(34,211,238,.6))}
+.runner.go svg{animation:bob .28s infinite}
+@keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-4px)}}
+.trail{position:absolute;bottom:16px;left:8px;height:3px;width:0;border-radius:999px;
+  background:linear-gradient(90deg,transparent,var(--cyan));opacity:.75;transition:width .1s linear}
+.speedbtns{display:grid;grid-template-columns:repeat(auto-fit,minmax(112px,1fr));gap:8px}
+.readout-line{margin-top:8px;color:var(--cyan);min-height:2.6em;font-family:var(--mono);font-size:.82rem}
+.timechips{display:grid;grid-template-columns:repeat(auto-fit,minmax(96px,1fr));gap:7px;margin-top:9px}
+.timechips div{background:rgba(var(--ink-panel-rgb),.65);border:1px solid var(--line);border-radius:11px;padding:7px 8px;text-align:center}
+.timechips b{display:block;font-family:var(--mono);font-size:.86rem;color:var(--cyan)}
+.timechips small{font-size:.6rem;color:var(--muted);letter-spacing:.6px;text-transform:uppercase}
+.timechips div.hit{border-color:var(--green);box-shadow:0 0 14px rgba(52,211,153,.25)}
+.netgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(118px,1fr));gap:8px;margin-top:10px}
+.netgrid button{padding:11px 6px;font-size:.8rem}
+.netstage{margin-top:12px;border:1px solid var(--line);border-radius:14px;background:rgba(var(--ink-panel-rgb),.6);padding:6px}
+.netstage svg{width:100%;height:auto;max-height:230px;display:block}
+.ring{transition:opacity .5s, r .8s cubic-bezier(.2,.8,.2,1)}
+.badge-net{display:inline-block;padding:3px 13px;border-radius:999px;font-size:.78rem;border:1px solid;font-family:var(--mono)}
+.badge-net.LAN{color:var(--green);border-color:var(--green);background:rgba(52,211,153,.1)}
+.badge-net.MAN{color:var(--amber);border-color:var(--amber);background:rgba(251,191,36,.1)}
+.badge-net.WAN{color:var(--cyan);border-color:var(--cyan);background:rgba(34,211,238,.1)}
+.status-line.no{border-left-color:var(--red)}
+#codeDemo{text-align:left;white-space:normal;padding:12px 10px}
+#codeDemo .ln{display:block;padding:4px 8px;border-radius:6px;transition:.25s;white-space:pre-wrap}
+#codeDemo .ln.run{background:rgba(52,211,153,.18);color:var(--green)}
+#codeDemo .ln.err{background:rgba(251,113,133,.22);color:var(--red);font-weight:600}
+#codeDemo .ln.scan{background:rgba(34,211,238,.14)}
+
+/* ตารางและสถานการณ์ที่ฝังอยู่ในตัวคำถาม — ต้องเลื่อนแนวนอนได้เองบนจอ 390px */
+.qtbl{overflow-x:auto;-webkit-overflow-scrolling:touch;border:1px solid var(--line);
+  border-radius:12px;margin:10px 0;background:rgba(var(--ink-panel-rgb),.55)}
+.qtbl table{width:100%;min-width:0;border-collapse:collapse;font-size:.82rem}
+.qtbl th,.qtbl td{padding:7px 9px;text-align:left;border-bottom:1px solid rgba(255,255,255,.06)}
+.qtbl th{background:rgba(34,211,238,.10);color:var(--ember);font-weight:600;white-space:nowrap}
+.qtbl tr:last-child td{border-bottom:none}
+.qsit{margin:10px 0;padding:12px 14px;border-radius:12px;text-align:left;
+  background:rgba(var(--ink-panel-rgb),.6);border:1px solid var(--line);border-left:3px solid var(--gold);
+  font-size:.92rem;line-height:1.7}
+@media(max-width:560px){
+  .qtbl table{font-size:.76rem}
+  .qtbl th,.qtbl td{padding:6px 7px}
+  .qsit{font-size:.86rem;padding:10px 11px}
+}
+</style>
+</head>
+<body>
+
+<canvas id="confetti"></canvas>
+
+
+<div id="arcade" aria-hidden="true" role="dialog" aria-label="ด่านไต่ตึกซีพียู">
+  <div class="ac-top">
+    <canvas id="acv"></canvas>
+    <div class="ac-hud">
+      <span class="ac-chip" id="acTag">ARCADE</span>
+      <span class="ac-chip">ข้อ <b id="acProg">0/6</b></span>
+      <span class="ac-chip">ชั้น <b id="acFloor">0</b></span>
+      <span class="ac-chip" id="acComboChip">Combo <b id="acCombo">0</b></span>
+      <span class="ac-chip">เวลา <b id="acTime">0:00</b></span>
+      <button class="icon-btn ac-exit" id="acExit" title="ออกจากด่าน (Esc)">ESC</button>
+    </div>
+    <div class="ac-bar"><i id="acBar"></i></div>
+  </div>
+  <div class="ac-play"><div class="ac-card" id="acQCard"></div></div>
+  <div id="acEnd"><div class="ac-card">
+    <h2 id="acEndTitle">จบด่าน</h2>
+    <p id="acEndBody" class="muted"></p>
+    <div class="ac-mini" id="acMini"></div>
+    <div class="btn-row"><button class="btn primary" id="acEndGo" style="flex:1">ดูผล</button></div>
+  </div></div>
+</div>
+
+
+<div id="reveal" role="dialog" aria-modal="true" aria-labelledby="rvL1">
+  <div class="rv-stage">
+    <div class="rv-line" id="rvL1">PRETEST COMPLETE</div>
+    <div class="star-row" id="rvStars"></div>
+    <div class="rv-rank" id="rvRank">—</div>
+    <div class="rv-score" id="rvScore">0/6</div>
+    <div class="rv-line" id="rvL2" style="letter-spacing:3px">RAW SCORE</div>
+    <div class="rv-sub" id="rvSub"></div>
+    <button class="btn primary" id="rvGo" style="margin-top:20px;display:none">ไปต่อ</button>
+  </div>
+</div>
+
+<header id="topbar">
+  <div class="topbar-in">
+    <div class="tb-top">
+      <div class="brand"><i class="dot"></i><span>CPU CITY</span></div>
+      <div class="tb-xp-mini">
+        <span class="lvl" id="lvlTxt">LV.1</span>
+        <div class="bar xp"><i id="xpBar"></i></div>
+        <span class="lvl" id="xpTxt">0 XP</span>
+      </div>
+      <div id="navrail"></div>
+      <div class="tb-right">
+        <button class="icon-btn" id="btnSound" title="เปิด/ปิดเสียง" aria-label="เปิดหรือปิดเสียง">SND</button>
+        <button class="icon-btn" id="btnCsv" title="บันทึกคะแนนเป็นไฟล์ CSV" aria-label="บันทึกคะแนนเป็นไฟล์ CSV">CSV</button>
+        <button class="icon-btn" id="btnReset" title="เริ่มภารกิจใหม่" aria-label="เริ่มภารกิจใหม่">RST</button>
+        <button class="icon-btn" id="btnTheme" title="สลับโหมดสว่าง/มืด" aria-label="สลับโหมดสว่างหรือมืด">🌓</button>
+        <div class="player-chip" id="chipName"><span id="chipAva"></span><span class="pn" id="chipTxt">—</span></div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<div class="wrap">
+
+<!-- ===== 0) WELCOME ===== -->
+<section id="scr-welcome" class="screen active">
+  <div class="hero">
+    <svg class="cityart" viewBox="0 0 480 300" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="ภาพเมืองซีพียู">
+  <defs>
+    <linearGradient id="gSky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="rgba(34,211,238,.20)"/><stop offset="100%" stop-color="rgba(34,211,238,0)"/>
+    </linearGradient>
+    <filter id="fGlow2"><feGaussianBlur stdDeviation="3" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+  </defs>
+  <rect x="0" y="0" width="480" height="300" rx="18" fill="#04070f"/>
+  <rect x="0" y="0" width="480" height="300" rx="18" fill="url(#gSky)"/>
+  <g stroke="rgba(34,211,238,.22)" stroke-width="1">
+    <path d="M0 60H480M0 110H480M0 160H480M0 210H480"/>
+    <path d="M60 0V300M140 0V300M240 0V300M340 0V300M420 0V300"/>
+  </g>
+  <g fill="#0d1a30" stroke="#22d3ee" stroke-width="2">
+    <rect x="40" y="180" width="52" height="80" rx="4"/>
+    <rect x="104" y="140" width="46" height="120" rx="4"/>
+    <rect x="286" y="152" width="50" height="108" rx="4"/>
+    <rect x="348" y="192" width="58" height="68" rx="4"/>
+  </g>
+  <g fill="#34d399" opacity=".85">
+    <rect x="50" y="192" width="8" height="8"/><rect x="66" y="192" width="8" height="8"/><rect x="50" y="212" width="8" height="8"/>
+    <rect x="114" y="154" width="8" height="8"/><rect x="130" y="154" width="8" height="8"/><rect x="114" y="176" width="8" height="8"/>
+    <rect x="296" y="166" width="8" height="8"/><rect x="316" y="166" width="8" height="8"/><rect x="296" y="188" width="8" height="8"/>
+    <rect x="358" y="206" width="8" height="8"/><rect x="378" y="206" width="8" height="8"/>
+  </g>
+  <rect x="176" y="104" width="128" height="92" rx="10" fill="#0d1a30" stroke="#22d3ee" stroke-width="2.4"/>
+  <rect x="196" y="124" width="88" height="52" rx="6" fill="#22d3ee" filter="url(#fGlow2)"/>
+  <text x="240" y="156" text-anchor="middle" font-size="17" font-weight="700" fill="#04070f" font-family="IBM Plex Mono,monospace">CPU</text>
+  <g stroke="#22d3ee" stroke-width="2.6" stroke-linecap="round" opacity=".85">
+    <path d="M176 122h-22M176 150h-22M176 178h-22M304 122h22M304 150h22M304 178h22"/>
+    <path d="M200 104V84M240 104V78M280 104V84M200 196v20M240 196v22M280 196v20"/>
+  </g>
+  <circle cx="240" cy="150" r="66" fill="none" stroke="#22d3ee" stroke-width="1" opacity=".5">
+    <animate attributeName="r" values="66;118;66" dur="3.4s" repeatCount="indefinite"/>
+    <animate attributeName="opacity" values=".5;0;.5" dur="3.4s" repeatCount="indefinite"/>
+  </circle>
+  <circle cx="120" cy="248" r="5" fill="#fbbf24" filter="url(#fGlow2)"/>
+  <circle cx="368" cy="248" r="5" fill="#fbbf24" filter="url(#fGlow2)"/>
+  <text x="240" y="286" text-anchor="middle" font-size="10" letter-spacing="3" fill="#8ca0b8" font-family="IBM Plex Mono,monospace">MEMORY &#183; TRANSLATION &#183; NETWORK</text>
+</svg>
+    <h1 class="title">CPU CITY : เมืองแห่งหน่วยประมวลผล</h1>
+    <p class="subtitle">สวมบทบาท <b>วิศวกรประจำเมือง</b> ตรวจงานสามเขตของ CPU City ตั้งแต่ย่านความเร็วที่ต้องคำนวณเวลาเข้าถึงจริง สำนักงานแปลภาษาที่ต้องอ่านโค้ด C ให้ออก ไปจนถึงเขตปกครองเครือข่ายที่ต้องจำแนก LAN MAN WAN จากสถานการณ์จริง สะสม XP และดาว วัดพัฒนาการก่อน–หลังเรียน</p>
+    <div class="panel login-card">
+      <span class="tag">City Engineer Registration</span>
+      <label for="playerName">ชื่อผู้เล่น (ใช้แสดงบนใบรายงานผล)</label>
+      <input type="text" id="playerName" maxlength="24" autocomplete="off" placeholder="เช่น สมาร์ท / รหัส 67xxxxx">
+      <div class="err" id="nameErr">กรุณากรอกชื่อก่อนเริ่มภารกิจ</div>
+      <label style="margin-top:16px">เลือกอวตารประจำตัว</label>
+      <div class="avatar-grid" id="avatarGrid"></div>
+      <div class="btn-row">
+        <button class="btn primary" id="btnStart" style="flex:1">เริ่มภารกิจ</button>
+      </div>
+      <div style="display:flex;gap:8px;margin-top:10px">
+        <button class="btn sm ghost" id="wSound" style="flex:1">เสียง: เปิด</button>
+        <button class="btn sm ghost" id="wResume" style="flex:1;display:none">เล่นต่อจากเดิม</button>
+      </div>
+    </div>
+    <div class="feature-row"><span>โหมดไต่ตึก · เล่นด้วยการตอบอย่างเดียว</span><span>GNR1007 วันที่ 1</span><span>บทที่ 1–2 · หน่วยความจำ / การแปลภาษา / เครือข่าย</span><span>PRETEST / POSTTEST</span><span>ระบบดาว 6 ดวง · 1 ดาว = 1 ข้อ</span><span>XP &amp; COMBO</span><span>ส่งออกคะแนน CSV</span></div>
+  </div>
+</section>
+
+<!-- ===== PRETEST ===== -->
+<section id="scr-pretest" class="screen">
+  <div class="panel">
+    <span class="tag">Checkpoint 00 · Pretest</span>
+    <h2>ด่านทดสอบก่อนเรียน</h2>
+    <p class="muted">6 ข้อ (สุ่มจากแต่ละเขต เขตละ 2 ข้อ) เล่นในโหมดอาร์เคด — ตอบตามความเข้าใจปัจจุบัน
+      ไม่ต้องกังวลถ้ายังไม่รู้คำตอบ คะแนนชุดนี้คือ <b>เส้นฐาน</b> ที่จะใช้เทียบกับหลังเรียน</p>
+    <div class="howto">
+      <div class="hk"><b>แตะ</b><span>เล่นด้วยการแตะคำตอบอย่างเดียว ไม่มีปุ่มเดิน ไม่มีปุ่มกระโดด</span></div>
+      <div class="hk"><b>ตอบถูก</b><span>วิศวกรไต่ตึกซีพียูขึ้น 1 ชั้น ทันที · ต่อเนื่องหลายข้อได้โบนัส Combo</span></div>
+      <div class="hk"><b>ตอบผิด</b><span>ไม่ตกลงมา ไม่มีแพ้ — อ่านเฉลยแล้วไปข้อถัดไปได้เลย</span></div>
+      <div class="hk"><b>อ่านก่อนตอบ</b><span>ทุกข้อมีตาราง โค้ด หรือสถานการณ์ให้อ่าน ไม่มีข้อไหนตอบได้ด้วยการท่องจำล้วน</span></div>
+      <div class="hk"><b>จบด่าน</b><span>ตอบครบทุกข้อ = ดูผล พร้อมกราฟเรดาร์บอกจุดแข็ง-จุดอ่อนทันที</span></div>
+      <div class="hk"><b>ดาว</b><span>ตอบถูก 1 ข้อ = 1 ดาว เต็ม 6 ข้อ = 6 ดาว ตัวเลขดาวกับคะแนนจึงตรงกันเสมอ</span></div>
+    </div>
+    <div class="btn-row"><button class="btn primary" id="preLaunch" style="flex:1">เริ่มด่านทดสอบก่อนเรียน</button></div>
+  </div>
+</section>
+
+<!-- ===== PREVIEW 1 ===== -->
+<section id="scr-preview1" class="screen">
+  <div class="panel">
+    <span class="tag">Before District 01</span>
+    <h2>กำลังจะเข้าสู่: ย่านความเร็ว (Speed Avenue)</h2>
+    <div class="dcard">
+      <div class="ico"><svg viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg">
+        <rect x="30" y="30" width="20" height="20" rx="4" fill="#22d3ee"/>
+        <rect x="20" y="20" width="40" height="40" rx="6" fill="none" stroke="#a78bfa" stroke-width="2.6"/>
+        <rect x="12" y="12" width="56" height="56" rx="8" fill="none" stroke="#34d399" stroke-width="2.2" stroke-dasharray="5 4"/>
+        <rect x="4" y="4" width="72" height="72" rx="10" fill="none" stroke="#fbbf24" stroke-width="2" stroke-dasharray="4 5"/>
+      </svg></div>
+      <div><div class="skillcard" style="margin:0">
+        <div class="sk-name">ทักษะที่จะได้: อ่านตารางเวลาเข้าถึงแล้วคำนวณได้</div>
+        <p class="muted" style="margin:6px 0 0">รู้ลำดับ Register &gt; Cache &gt; RAM &gt; SSD &gt; HDD จากตัวเลขจริง คำนวณเวลารวมเมื่อมี cache hit และ miss และไม่หลงกับดัก bit กับ byte</p>
+      </div></div>
+    </div>
+    <div class="btn-row"><button class="btn primary" data-goto="scr-lesson1">เข้าเขตนี้</button></div>
+  </div>
+</section>
+
+<!-- ===== DISTRICT 1 ===== -->
+<section id="scr-lesson1" class="screen">
+  <div class="panel">
+    <span class="tag">District 01 &#183; Speed Avenue</span>
+    <h2>ย่านความเร็ว: Register &rarr; Cache &rarr; RAM &rarr; SSD/HDD</h2>
+    <div class="stage"><svg viewBox="0 0 420 210" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="แผนผังลำดับชั้นหน่วยความจำ">
+      <defs>
+        <linearGradient id="d1chip" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stop-color="#22d3ee"/><stop offset="100%" stop-color="#34d399"/>
+        </linearGradient>
+        <filter id="d1glow"><feGaussianBlur stdDeviation="3" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+      </defs>
+      <rect x="10" y="10" width="400" height="190" rx="14" fill="rgba(var(--ink-panel-rgb),.6)" stroke="rgba(34,211,238,.18)"/>
+      <rect x="22" y="20" width="376" height="170" rx="12" fill="none" stroke="#fbbf24" stroke-width="1.6" stroke-dasharray="5 4"/>
+      <text x="392" y="35" text-anchor="end" font-family="IBM Plex Mono,monospace" font-size="10" fill="#fbbf24">HDD / SSD</text>
+      <rect x="62" y="36" width="296" height="138" rx="12" fill="none" stroke="#34d399" stroke-width="1.6" stroke-dasharray="5 4"/>
+      <text x="352" y="51" text-anchor="end" font-family="IBM Plex Mono,monospace" font-size="10" fill="#34d399">RAM</text>
+      <rect x="108" y="54" width="204" height="102" rx="12" fill="none" stroke="#a78bfa" stroke-width="1.8" stroke-dasharray="5 4"/>
+      <text x="306" y="69" text-anchor="end" font-family="IBM Plex Mono,monospace" font-size="10" fill="#a78bfa">CACHE</text>
+      <rect x="160" y="78" width="100" height="56" rx="10" fill="url(#d1chip)" filter="url(#d1glow)"/>
+      <rect x="172" y="90" width="76" height="32" rx="6" fill="#04070f"/>
+      <text x="210" y="104" text-anchor="middle" font-family="IBM Plex Mono,monospace" font-size="10" fill="#22d3ee">REGISTER</text>
+      <text x="210" y="116" text-anchor="middle" font-family="IBM Plex Mono,monospace" font-size="8" fill="#34d399">IN CPU</text>
+      <g stroke="#22d3ee" stroke-width="2.5" stroke-linecap="round" opacity=".8">
+        <path d="M150 88h-10M150 106h-10M150 124h-10M270 88h10M270 106h10M270 124h10"/>
+      </g>
+      <circle cx="210" cy="106" r="52" fill="none" stroke="#22d3ee" stroke-width="1" opacity=".5">
+        <animate attributeName="r" values="52;96;52" dur="3.2s" repeatCount="indefinite"/>
+        <animate attributeName="opacity" values=".55;0;.55" dur="3.2s" repeatCount="indefinite"/>
+      </circle>
+      <text x="210" y="192" text-anchor="middle" font-family="IBM Plex Mono,monospace" font-size="9" fill="#8ca0b8">ยิ่งใกล้ CPU ยิ่งเร็ว &#183; ยิ่งไกล ยิ่งจุมากแต่ช้า</text>
+    </svg></div>
+    <p>ลองนึกภาพ CPU เป็นพนักงานคนหนึ่งที่กำลังทำงาน ยิ่งของอยู่ใกล้ตัว ยิ่งหยิบได้เร็ว <b>ตัวเลขในตารางนี้คือชุดเดียวกับที่ใช้ในทุกข้อสอบของเขตนี้</b> จึงควรจำให้แม่น</p>
+    <div class="tbl-wrap"><table>
+      <tr><th>หน่วยเก็บ</th><th>เปรียบเหมือน</th><th>เวลาเข้าถึงต่อครั้ง</th></tr>
+      <tr><td>Register</td><td>ของบนโต๊ะทำงาน หยิบใช้ได้ทันที</td><td>1 ns</td></tr>
+      <tr><td>Cache</td><td>ตู้ลิ้นชักข้างโต๊ะ</td><td>5 ns</td></tr>
+      <tr><td>RAM</td><td>คลังเก็บของในตึกเดียวกัน</td><td>100 ns</td></tr>
+      <tr><td>SSD</td><td>โกดังปลายซอย</td><td>100,000 ns</td></tr>
+      <tr><td>HDD</td><td>โกดังชานเมือง ต้องเดินทางไปเอา</td><td>10,000,000 ns</td></tr>
+    </table></div>
+    <p class="muted" style="margin-top:10px">หลักการเดียวจบ: <b>ยิ่งใกล้ CPU ยิ่งเร็ว แต่ยิ่งจุน้อยและยิ่งแพงต่อ GB</b> — ยิ่งไกล ยิ่งจุมากและถูกลง แต่ยิ่งช้า</p>
+    <div class="tbl-wrap"><table>
+      <tr><th>จุดหลอกข้อสอบ กว.</th><th>ข้อเท็จจริง</th></tr>
+      <tr><td>Cache เร็วกว่า Register เพราะชื่อฟังดูเป็นตัวเร่งความเร็ว</td><td>Register อยู่<b>ใน</b> CPU จึงเร็วกว่าเสมอ ข้อสอบชอบวาง Cache ไว้ตัวเลือกแรกให้รีบตอบ</td></tr>
+      <tr><td>ตัวเลขความเร็วเยอะแปลว่าเสียเวลาเยอะ</td><td>เวลารวม = จำนวนครั้ง <b>&times;</b> เวลาต่อครั้ง เสมอ อ่านครั้งเดียวจาก HDD กินเวลาเท่าอ่าน RAM หนึ่งแสนครั้ง</td></tr>
+      <tr><td>2 MB ส่งด้วย 8 Mbps ใช้เวลา 0.25 วินาที</td><td>ต้องแปลง byte เป็น bit ก่อน จึงเป็น 16 Mbit &divide; 8 Mbps = <b>2 วินาที</b> — b เล็กคือ bit, B ใหญ่คือ byte</td></tr>
+    </table></div>
+
+    <h3 style="margin-top:18px">ห้องทดลอง: แข่งส่งพัสดุ (Courier Race)</h3>
+    <p class="muted">กดปุ่มเพื่อดูว่าการวิ่งไปหยิบข้อมูลจากแต่ละที่ใช้เวลาต่างกันแค่ไหน — ลองให้ครบทั้ง 4 ปุ่มเพื่อรับ XP เต็ม</p>
+    <div class="speedbtns">
+      <button class="btn sm" data-courier="Register|300|1 ns">Register</button>
+      <button class="btn sm" data-courier="Cache|650|5 ns">Cache</button>
+      <button class="btn sm" data-courier="RAM|1500|100 ns">RAM</button>
+      <button class="btn sm" data-courier="HDD/SSD|3200|SSD 100,000 ns / HDD 10,000,000 ns">HDD / SSD</button>
+    </div>
+    <div class="track">
+      <div class="goal"></div>
+      <div class="trail" id="courierTrail"></div>
+      <div class="runner" id="courierRunner"><svg viewBox="0 0 40 46" xmlns="http://www.w3.org/2000/svg">
+        <ellipse cx="20" cy="43" rx="11" ry="2.6" fill="#22d3ee" opacity=".22"/>
+        <rect x="12" y="18" width="16" height="18" rx="5" fill="#22d3ee"/>
+        <rect x="15" y="22" width="10" height="8" rx="2" fill="#04070f"/>
+        <circle cx="20" cy="11" r="7.5" fill="#34d399"/>
+        <rect x="16" y="8" width="8" height="4" rx="2" fill="#04070f"/>
+        <path d="M12 26 L5 32M28 26 L35 32" stroke="#22d3ee" stroke-width="3" stroke-linecap="round"/>
+        <path d="M16 36 L14 44M24 36 L26 44" stroke="#34d399" stroke-width="3.4" stroke-linecap="round"/>
+      </svg></div>
+    </div>
+    <div class="timechips" id="courierChips">
+      <div data-c="Register"><b>1 ns</b><small>Register</small></div>
+      <div data-c="Cache"><b>5 ns</b><small>Cache</small></div>
+      <div data-c="RAM"><b>100 ns</b><small>RAM</small></div>
+      <div data-c="HDD/SSD"><b>1e5&#8211;1e7 ns</b><small>SSD/HDD</small></div>
+    </div>
+    <div class="readout-line" id="courierReadout">เลือกหน่วยเก็บข้อมูลเพื่อเริ่มการทดลอง</div>
+
+    <div class="btn-row"><button class="btn primary" data-quiz="check1">ไปทำด่านฝึกหัดเขตนี้</button></div>
+  </div>
+</section>
+
+<section id="scr-check1" class="screen">
+  <div class="panel">
+    <span class="tag">Checkpoint &#183; District 01</span>
+    <h2>ด่านฝึกหัด: ย่านความเร็ว</h2>
+    <p class="muted">3 ข้อ เล่นในโหมดอาร์เคด ทำผิดได้ ไม่มีผลต่อคะแนนดาว — จุดประสงค์คือให้แน่ใจว่าเข้าใจก่อนไปเขตถัดไป</p>
+    <div class="status-line" id="check1Result">ยังไม่ได้ลงด่านฝึกหัดนี้</div>
+    <div class="btn-row"><button class="btn primary" data-requiz="check1" style="flex:1">เริ่มด่านฝึกหัด (สุ่มข้อใหม่ทุกครั้ง)</button></div>
+    <div class="btn-row" id="check1Next" style="display:none">
+      <button class="btn primary" data-goto="scr-preview2">ไปเขตถัดไป</button>
+    </div>
+  </div>
+</section>
+
+<!-- ===== PREVIEW 2 ===== -->
+<section id="scr-preview2" class="screen">
+  <div class="panel">
+    <span class="tag">Before District 02</span>
+    <h2>กำลังจะเข้าสู่: สำนักงานแปลภาษา (Translation Bureau)</h2>
+    <div class="dcard">
+      <div class="ico"><svg viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg">
+        <rect x="10" y="16" width="26" height="48" rx="4" fill="none" stroke="#22d3ee" stroke-width="2.6"/>
+        <rect x="44" y="16" width="26" height="48" rx="4" fill="none" stroke="#a78bfa" stroke-width="2.6"/>
+        <path d="M16 28h14M16 38h14M16 48h9" stroke="#22d3ee" stroke-width="2.4" stroke-linecap="round"/>
+        <path d="M50 28h14M50 38h14M50 48h9" stroke="#a78bfa" stroke-width="2.4" stroke-linecap="round"/>
+        <path d="M36 40h8" stroke="#fbbf24" stroke-width="3" stroke-linecap="round"/>
+      </svg></div>
+      <div><div class="skillcard" style="margin:0">
+        <div class="sk-name">ทักษะที่จะได้: อ่านโค้ด C แล้วบอกได้ว่าพังตอนไหน</div>
+        <p class="muted" style="margin:6px 0 0">แยก syntax error ตอนแปล ออกจาก runtime error ตอนรัน และ logic error ที่ compiler ตรวจให้ไม่ได้ พร้อมรู้ว่า warning ต่างจาก error อย่างไร</p>
+      </div></div>
+    </div>
+    <div class="btn-row"><button class="btn primary" data-goto="scr-lesson2">เข้าเขตนี้</button></div>
+  </div>
+</section>
+
+<!-- ===== DISTRICT 2 ===== -->
+<section id="scr-lesson2" class="screen">
+  <div class="panel">
+    <span class="tag">District 02 &#183; Translation Bureau</span>
+    <h2>สำนักงานแปลภาษา: Compiler vs Interpreter</h2>
+    <div class="stage"><svg viewBox="0 0 420 200" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="เปรียบเทียบ Compiler กับ Interpreter">
+      <defs>
+        <marker id="ahC" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="#22d3ee"/></marker>
+        <marker id="ahI" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="#a78bfa"/></marker>
+        <filter id="d2glow"><feGaussianBlur stdDeviation="2.6" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+      </defs>
+      <rect x="6" y="6" width="408" height="188" rx="14" fill="rgba(var(--ink-panel-rgb),.55)" stroke="rgba(34,211,238,.16)"/>
+      <text x="20" y="30" font-family="IBM Plex Mono,monospace" font-size="10" fill="#22d3ee">COMPILER &#8212; แปลทั้งไฟล์ก่อน แล้วค่อยรัน</text>
+      <rect x="20" y="40" width="86" height="42" rx="8" fill="#0d1a30" stroke="#22314d"/>
+      <text x="63" y="66" text-anchor="middle" font-size="10" fill="#e6edf6">Source Code</text>
+      <path d="M110 61 H152" stroke="#22d3ee" stroke-width="2" marker-end="url(#ahC)"/>
+      <rect x="158" y="38" width="92" height="46" rx="10" fill="#22d3ee" filter="url(#d2glow)"/>
+      <text x="204" y="66" text-anchor="middle" font-size="11" fill="#04070f" font-weight="700">COMPILER</text>
+      <path d="M254 61 H296" stroke="#22d3ee" stroke-width="2" marker-end="url(#ahC)"/>
+      <rect x="302" y="40" width="96" height="42" rx="8" fill="#34d399"/>
+      <text x="350" y="60" text-anchor="middle" font-size="10" fill="#04070f" font-weight="700">RUN เร็ว</text>
+      <text x="350" y="73" text-anchor="middle" font-size="8" fill="#04070f">(.exe พร้อมใช้)</text>
+      <line x1="20" y1="98" x2="400" y2="98" stroke="rgba(255,255,255,.08)"/>
+      <text x="20" y="118" font-family="IBM Plex Mono,monospace" font-size="10" fill="#a78bfa">INTERPRETER &#8212; แปลและรันสลับกันทีละบรรทัด</text>
+      <rect x="20" y="128" width="86" height="42" rx="8" fill="#0d1a30" stroke="#22314d"/>
+      <text x="63" y="154" text-anchor="middle" font-size="10" fill="#e6edf6">Source Code</text>
+      <path d="M110 149 H152" stroke="#a78bfa" stroke-width="2" stroke-dasharray="4 3" marker-end="url(#ahI)"/>
+      <rect x="158" y="126" width="92" height="46" rx="10" fill="#a78bfa" filter="url(#d2glow)"/>
+      <text x="204" y="149" text-anchor="middle" font-size="10" fill="#0b0616" font-weight="700">INTERPRETER</text>
+      <text x="204" y="161" text-anchor="middle" font-size="8" fill="#0b0616">line by line</text>
+      <path d="M254 149 H296" stroke="#a78bfa" stroke-width="2" stroke-dasharray="4 3" marker-end="url(#ahI)"/>
+      <rect x="302" y="128" width="96" height="42" rx="8" fill="#fbbf24"/>
+      <text x="350" y="148" text-anchor="middle" font-size="10" fill="#04070f" font-weight="700">RUN ทีละบรรทัด</text>
+      <text x="350" y="161" text-anchor="middle" font-size="8" fill="#04070f">(เห็นผลทันที)</text>
+      <circle cx="204" cy="61" r="4" fill="#ffd76a" filter="url(#d2glow)">
+        <animate attributeName="opacity" values="1;.25;1" dur="2s" repeatCount="indefinite"/></circle>
+    </svg></div>
+    <p>คอมพิวเตอร์เข้าใจแค่ภาษาเครื่อง โปรแกรมที่เราเขียนจึงต้องผ่านนักแปลก่อนเสมอ ซึ่งมีสองแบบ</p>
+    <div class="tbl-wrap"><table>
+      <tr><th></th><th>Compiler</th><th>Interpreter</th></tr>
+      <tr><td>วิธีทำงาน</td><td>แปลทั้งไฟล์ให้เสร็จก่อน แล้วค่อยรัน</td><td>แปลและรันไปทีละบรรทัด</td></tr>
+      <tr><td>ความเร็วตอนรัน</td><td>เร็วกว่า เพราะแปลไว้ล่วงหน้าแล้ว</td><td>ช้ากว่า เพราะแปลสดทุกครั้ง</td></tr>
+      <tr><td>เจอ error ตอนไหน</td><td>ก่อนรันเลย ยังไม่ทำงานสักบรรทัด</td><td>เมื่อรันมาถึงบรรทัดนั้นพอดี</td></tr>
+      <tr><td>ตัวอย่างภาษา</td><td>C, C++</td><td>Python, JavaScript</td></tr>
+    </table></div>
+    <p style="margin-top:12px">สายการแปลของไฟล์ <code>.c</code> มีสี่ขั้น และแต่ละขั้นล้มด้วยเหตุผลคนละอย่าง</p>
+    <div class="codebox">hello.c  &#8594;  [Compile]  &#8594;  hello.obj  &#8594;  [Link + Library]  &#8594;  hello.exe  &#8594;  [Run]</div>
+    <div class="tbl-wrap"><table>
+      <tr><th>ชนิดข้อผิดพลาด</th><th>ล้มที่ขั้นใด</th><th>ตัวอย่าง</th></tr>
+      <tr><td>Syntax error</td><td>Compile — ไม่ได้ไฟล์ .obj</td><td>ลืม <code>;</code> ท้ายบรรทัด · ใช้ตัวแปรที่ไม่ได้ประกาศ</td></tr>
+      <tr><td>Link error</td><td>Link — ไวยากรณ์ถูกแล้ว แต่ต่อชิ้นส่วนไม่ครบ</td><td>เรียกฟังก์ชันที่ประกาศต้นแบบไว้แต่ไม่มีตัวจริง · สะกดชื่อฟังก์ชันผิด</td></tr>
+      <tr><td>Runtime error</td><td>Run — ได้ .exe แล้วแต่พังตอนทำงาน</td><td>หารด้วยศูนย์ที่ค่ามาจากตัวแปร</td></tr>
+      <tr><td>Logic error</td><td>ไม่ล้มเลย แต่ผลลัพธ์ผิด</td><td>เขียน <code>sum = i</code> แทน <code>sum += i</code> · เขียน <code>=+</code> แทน <code>+=</code></td></tr>
+      <tr><td>Warning</td><td>ไม่ล้ม — ได้ .exe และรันได้</td><td>ประกาศตัวแปรแล้วไม่ได้ใช้</td></tr>
+    </table></div>
+
+    <h3 style="margin-top:18px">ห้องทดลอง: ลองแปลโค้ดที่มีบัคอยู่บรรทัด 4</h3>
+    <p class="muted">กดทั้งสองปุ่มเพื่อเห็นด้วยตาว่าสองวิธีแปลหยุดคนละจังหวะกัน — ลองให้ครบทั้งสองแบบเพื่อรับ XP</p>
+    <div class="codebox" id="codeDemo"><span class="ln" data-n="1">1  printf("เริ่มทำงาน");</span><span class="ln" data-n="2">2  int x = 10;</span><span class="ln" data-n="3">3  int y = 5;</span><span class="ln" data-n="4">4  int z = x / 0    &lt;&#8212; บรรทัดนี้มีปัญหา</span><span class="ln" data-n="5">5  printf("%d", z);</span></div>
+    <div class="btn-row">
+      <button class="btn sm" data-demo="compile">แปลแบบ Compile</button>
+      <button class="btn sm" data-demo="interpret">แปลแบบ Interpret</button>
+    </div>
+    <div class="status-line" id="demoStatus">เลือกวิธีแปลเพื่อดูว่าเจอบัคตอนไหน</div>
+
+    <div class="btn-row"><button class="btn primary" data-quiz="check2">ไปทำด่านฝึกหัดเขตนี้</button></div>
+  </div>
+</section>
+
+<section id="scr-check2" class="screen">
+  <div class="panel">
+    <span class="tag">Checkpoint &#183; District 02</span>
+    <h2>ด่านฝึกหัด: สำนักงานแปลภาษา</h2>
+    <p class="muted">3 ข้อ เล่นในโหมดอาร์เคด ทำผิดได้ ไม่มีผลต่อคะแนนดาว</p>
+    <div class="status-line" id="check2Result">ยังไม่ได้ลงด่านฝึกหัดนี้</div>
+    <div class="btn-row"><button class="btn primary" data-requiz="check2" style="flex:1">เริ่มด่านฝึกหัด (สุ่มข้อใหม่ทุกครั้ง)</button></div>
+    <div class="btn-row" id="check2Next" style="display:none">
+      <button class="btn primary" data-goto="scr-preview3">ไปเขตถัดไป</button>
+    </div>
+  </div>
+</section>
+
+<!-- ===== PREVIEW 3 ===== -->
+<section id="scr-preview3" class="screen">
+  <div class="panel">
+    <span class="tag">Before District 03</span>
+    <h2>กำลังจะเข้าสู่: เขตปกครองเครือข่าย (Network Zones)</h2>
+    <div class="dcard">
+      <div class="ico"><svg viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="40" cy="40" r="9" fill="#34d399"/>
+        <circle cx="40" cy="40" r="20" fill="none" stroke="#fbbf24" stroke-width="2.4" stroke-dasharray="4 4"/>
+        <circle cx="40" cy="40" r="33" fill="none" stroke="#22d3ee" stroke-width="2.2" stroke-dasharray="5 5"/>
+        <circle cx="40" cy="12" r="3.2" fill="#8ca0b8"/><circle cx="68" cy="40" r="3.2" fill="#8ca0b8"/>
+        <circle cx="40" cy="68" r="3.2" fill="#8ca0b8"/><circle cx="12" cy="40" r="3.2" fill="#8ca0b8"/>
+      </svg></div>
+      <div><div class="skillcard" style="margin:0">
+        <div class="sk-name">ทักษะที่จะได้: จำแนก LAN / MAN / WAN จากสถานการณ์จริง</div>
+        <p class="muted" style="margin:6px 0 0">ตัดสินจากพื้นที่ครอบคลุมเท่านั้น ไม่ใช่จากความเร็วหรือจำนวนเครื่อง พร้อมแยกหน้าที่ของ Switch กับ Router ให้ขาด</p>
+      </div></div>
+    </div>
+    <div class="btn-row"><button class="btn primary" data-goto="scr-lesson3">เข้าเขตนี้</button></div>
+  </div>
+</section>
+
+<!-- ===== DISTRICT 3 ===== -->
+<section id="scr-lesson3" class="screen">
+  <div class="panel">
+    <span class="tag">District 03 &#183; Network Zones</span>
+    <h2>เขตปกครองเครือข่าย: LAN / MAN / WAN</h2>
+    <p>เครือข่ายคอมพิวเตอร์แบ่งตาม <b>ขนาดพื้นที่ครอบคลุม</b> เป็นหลัก ไม่ได้แบ่งตามความเร็วหรือจำนวนเครื่อง</p>
+    <div class="tbl-wrap"><table>
+      <tr><th>ประเภท</th><th>ขอบเขตโดยประมาณ</th><th>ตัวอย่าง</th></tr>
+      <tr><td>LAN (Local Area Network)</td><td>ห้องเดียวถึงกลุ่มอาคารในพื้นที่ผืนเดียว ต่ำกว่า 1&#8211;2 กม.</td><td>Wi-Fi ในบ้าน &#183; ห้องแล็บ &#183; Campus LAN ของโรงงาน</td></tr>
+      <tr><td>MAN (Metropolitan Area Network)</td><td>ระดับเมืองหนึ่งเมือง ราวสิบถึงหลายสิบกิโลเมตร</td><td>เชื่อมสำนักงานเทศบาลทั่วเมือง &#183; สองวิทยาเขตในจังหวัดเดียว</td></tr>
+      <tr><td>WAN (Wide Area Network)</td><td>กว้างเกินกว่าเมืองเดียว ข้ามภูมิภาคหรือข้ามประเทศ</td><td>เครือข่ายสาขาธนาคารทั่วประเทศ &#183; อินเทอร์เน็ต</td></tr>
+    </table></div>
+    <div class="tbl-wrap" style="margin-top:12px"><table>
+      <tr><th>อุปกรณ์</th><th>หน้าที่</th><th>ตัวช่วยจำ</th></tr>
+      <tr><td>Switch</td><td>เชื่อมเครื่องที่อยู่ในเครือข่าย<b>เดียวกัน</b>ให้คุยกันได้</td><td>ทำงาน<b>ภายใน</b></td></tr>
+      <tr><td>Router</td><td>เชื่อมเครือข่ายที่<b>ต่างกัน</b>เข้าด้วยกัน เช่น LAN ออกสู่อินเทอร์เน็ต</td><td>ทำงาน<b>ระหว่าง</b></td></tr>
+    </table></div>
+    <p class="muted" style="margin-top:10px">จุดหลอกที่พบบ่อยที่สุดคือการสลับ MAN กับ WAN เพราะเห็นตัวเลขกิโลเมตรแล้วรู้สึกว่าไกล — ให้ถามตัวเองว่า <b>ยังอยู่ในเมืองเดียวกันหรือไม่</b> ถ้ายังอยู่คือ MAN ถ้าเกินออกไปคือ WAN</p>
+
+    <h3 style="margin-top:18px">ห้องทดลอง: ตัวจำแนกเครือข่าย</h3>
+    <p class="muted">เลือกระยะทางการเชื่อมต่อ แล้วดูวงครอบคลุมบนแผนที่ขยายตามจริง — ลองให้ครบทั้ง 5 ปุ่มเพื่อรับ XP เต็ม</p>
+    <div class="netgrid">
+      <button class="btn sm" data-net="ในห้องเดียวกัน ~10 ม.|LAN|1">ในห้องเดียวกัน</button>
+      <button class="btn sm" data-net="ทั้งมหาวิทยาลัย ~1 กม.|LAN|2">ทั้งมหาวิทยาลัย</button>
+      <button class="btn sm" data-net="ทั่วเมือง ~25 กม.|MAN|3">ทั่วเมือง</button>
+      <button class="btn sm" data-net="ข้ามจังหวัดทั่วประเทศ ~1,200 กม.|WAN|4">ทั่วประเทศไทย</button>
+      <button class="btn sm" data-net="ข้ามทวีป ทั่วโลก|WAN|5">ทั่วโลก</button>
+    </div>
+    <div class="netstage"><svg viewBox="0 0 420 220" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="แผนที่ขอบเขตเครือข่าย">
+      <defs>
+        <radialGradient id="d3core"><stop offset="0%" stop-color="#34d399"/><stop offset="100%" stop-color="#0d5f45"/></radialGradient>
+        <filter id="d3glow"><feGaussianBlur stdDeviation="3" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+      </defs>
+      <rect x="0" y="0" width="420" height="220" rx="12" fill="rgba(var(--ink-panel-rgb),.5)"/>
+      <g stroke="rgba(34,211,238,.10)">
+        <path d="M0 40H420M0 80H420M0 120H420M0 160H420M0 200H420"/>
+        <path d="M40 0V220M100 0V220M160 0V220M220 0V220M280 0V220M340 0V220M400 0V220"/>
+      </g>
+      <circle id="netRing3" class="ring" cx="210" cy="110" r="0" fill="rgba(34,211,238,.07)" stroke="#22d3ee" stroke-width="1.6" opacity="0"/>
+      <circle id="netRing2" class="ring" cx="210" cy="110" r="0" fill="rgba(251,191,36,.07)" stroke="#fbbf24" stroke-width="1.6" opacity="0"/>
+      <circle id="netRing1" class="ring" cx="210" cy="110" r="0" fill="rgba(52,211,153,.10)" stroke="#34d399" stroke-width="1.8" opacity="0"/>
+      <g id="netNodes" opacity="0">
+        <circle cx="140" cy="70" r="3.4" fill="#8ca0b8"/><circle cx="286" cy="66" r="3.4" fill="#8ca0b8"/>
+        <circle cx="118" cy="158" r="3.4" fill="#8ca0b8"/><circle cx="300" cy="156" r="3.4" fill="#8ca0b8"/>
+        <circle cx="60" cy="110" r="3.4" fill="#8ca0b8"/><circle cx="368" cy="112" r="3.4" fill="#8ca0b8"/>
+      </g>
+      <circle cx="210" cy="110" r="15" fill="url(#d3core)" filter="url(#d3glow)"/>
+      <text x="210" y="114" text-anchor="middle" font-family="IBM Plex Mono,monospace" font-size="9" fill="#04070f" font-weight="700">YOU</text>
+      <text id="netLabel" x="210" y="208" text-anchor="middle" font-family="IBM Plex Mono,monospace" font-size="10" fill="#8ca0b8">เลือกระยะทางเพื่อดูขอบเขต</text>
+    </svg></div>
+    <div id="netResult" class="status-line">ยังไม่ได้เลือกระยะทาง</div>
+
+    <div class="btn-row"><button class="btn primary" data-quiz="check3">ไปทำด่านฝึกหัดเขตนี้</button></div>
+  </div>
+</section>
+
+<section id="scr-check3" class="screen">
+  <div class="panel">
+    <span class="tag">Checkpoint &#183; District 03</span>
+    <h2>ด่านฝึกหัด: เขตปกครองเครือข่าย</h2>
+    <p class="muted">3 ข้อ เล่นในโหมดอาร์เคด ทำผิดได้ ไม่มีผลต่อคะแนนดาว</p>
+    <div class="status-line" id="check3Result">ยังไม่ได้ลงด่านฝึกหัดนี้</div>
+    <div class="btn-row"><button class="btn primary" data-requiz="check3" style="flex:1">เริ่มด่านฝึกหัด (สุ่มข้อใหม่ทุกครั้ง)</button></div>
+    <div class="btn-row" id="check3Next" style="display:none">
+      <button class="btn primary" id="goPost">ไปด่านทดสอบหลังเรียน</button>
+    </div>
+  </div>
+</section>
+
+<!-- ===== POSTTEST ===== -->
+<section id="scr-posttest" class="screen">
+  <div class="panel">
+    <span class="tag">Checkpoint 04 &#183; Posttest</span>
+    <h2>ด่านทดสอบหลังเรียน</h2>
+    <p class="muted">6 ข้อใหม่ (เขตละ 2 ข้อ) เพื่อวัดความเข้าใจหลังผ่านครบทั้ง 3 เขตของ CPU City — เล่นในโหมดอาร์เคดเช่นเดียวกับก่อนเรียน เพื่อให้เทียบผลกันได้อย่างเป็นธรรม</p>
+    <div class="howto">
+      <div class="hk"><b>แตะ</b><span>เล่นด้วยการแตะคำตอบอย่างเดียว ไม่มีปุ่มเดิน ไม่มีปุ่มกระโดด</span></div>
+      <div class="hk"><b>ตอบถูก</b><span>วิศวกรไต่ตึกซีพียูขึ้น 1 ชั้น ทันที · ต่อเนื่องหลายข้อได้โบนัส Combo</span></div>
+      <div class="hk"><b>ตอบผิด</b><span>ไม่ตกลงมา ไม่มีแพ้ — อ่านเฉลยแล้วไปข้อถัดไปได้เลย</span></div>
+      <div class="hk"><b>ไม่ซ้ำเดิม</b><span>ระบบเลี่ยงข้อที่เคยออกในรอบก่อนเรียนให้อัตโนมัติ</span></div>
+      <div class="hk"><b>จบด่าน</b><span>ตอบครบทุกข้อ = ดูผล พร้อมกราฟเรดาร์บอกจุดแข็ง-จุดอ่อนทันที</span></div>
+      <div class="hk"><b>ดาว</b><span>ตอบถูก 1 ข้อ = 1 ดาว เต็ม 6 ข้อ = 6 ดาว ตัวเลขดาวกับคะแนนจึงตรงกันเสมอ</span></div>
+    </div>
+    <div class="btn-row"><button class="btn primary" id="postLaunch" style="flex:1">เริ่มด่านทดสอบหลังเรียน</button></div>
+  </div>
+</section>
+
+<!-- ===== SUMMARY ===== -->
+<section id="scr-summary" class="screen">
+  <div class="panel">
+    <span class="tag">City Inspection Report</span>
+    <h2>สรุปผลภารกิจ CPU CITY</h2>
+    <p class="muted" id="sumWho">—</p>
+    <div class="cmp-grid">
+      <div class="cmp-col">
+        <small>Pretest</small>
+        <div class="star-row sm" id="sumPreStars"></div>
+        <b id="sumPre">-</b>
+        <small id="sumPreRank">—</small>
+      </div>
+      <div class="cmp-arrow">&#8594;</div>
+      <div class="cmp-col post">
+        <small>Posttest</small>
+        <div class="star-row sm" id="sumPostStars"></div>
+        <b id="sumPost">-</b>
+        <small id="sumPostRank">—</small>
+      </div>
+    </div>
+    <div class="delta" id="sumMsg"></div>
+
+    <h3 style="margin-top:20px">ดาวรายเขต (Posttest)</h3>
+    <p class="muted">ใช้เกณฑ์เดียวกับคะแนนรวมคือ 1 ดาว = ตอบถูก 1 ข้อ แต่ละเขตมี 2 ข้อ จึงเต็ม 2 ดาว — ใช้ดูว่ายังอ่อนเขตไหน</p>
+    <div class="dstars" id="sumDistrictStars"></div>
+
+    <h3 style="margin-top:20px">กราฟทักษะรายด้าน (Pretest vs Posttest)</h3>
+    <p class="muted">แต่ละแกนคำนวณจาก 2 ข้อของเขตนั้นในแบบทดสอบ (0/1/2 &rarr; 0%/50%/100%) ยกเว้นแกนภาพรวมที่คิดจากทั้ง 6 ข้อ</p>
+    <div class="chartbox"><canvas id="skillRadarChart"></canvas><svg id="radarFallback" viewBox="0 0 340 300" xmlns="http://www.w3.org/2000/svg"></svg></div>
+
+    <h3 style="margin-top:20px">เหรียญตราที่ได้รับ</h3>
+    <div class="badges" id="sumBadges"></div>
+
+    <h3 style="margin-top:20px">ข้อเสนอแนะเฉพาะบุคคล</h3>
+    <ul class="advice" id="sumAdvice"></ul>
+
+    <div class="hud" style="margin-top:18px">
+      <div class="stat"><b id="sumXp">0</b><small>XP รวม</small></div>
+      <div class="stat combo"><b id="sumCombo">0</b><small>Combo สูงสุด</small></div>
+      <div class="stat star"><b id="sumStarTotal">0</b><small>ดาวหลังเรียน</small></div>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn primary" id="btnReview">ทบทวนเขตที่ได้ดาวน้อยที่สุด</button>
+      <button class="btn" id="btnAgain">เริ่มภารกิจใหม่</button>
+    </div>
+  </div>
+</section>
+
+</div>
+
+<footer>
+  <p><b>GNR1007</b> · การโปรแกรมคอมพิวเตอร์สำหรับวิศวกร — วันที่ 1 (บทที่ 1-2)</p>
+  <p>ผศ.ดร.กุลวลัญช์ วรุณสิน · สาขาวิศวกรรมคอมพิวเตอร์ คณะวิศวกรรมศาสตร์ มหาวิทยาลัยรามคำแหง</p>
+  <p class="fmono">CPU CITY v6.21 — CLIMB MODE (TAP-ONLY) · MOBILE FIRST · SINGLE-FILE BUILD</p>
+</footer>
+
+<div id="toast" role="status" aria-live="polite"></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<script>
+
+/* ============ 1) UTILITIES ============ */
+const $  = s => document.querySelector(s);
+const $$ = s => Array.from(document.querySelectorAll(s));
+const clamp = (v,a,b) => Math.max(a, Math.min(b, v));
+const pick  = a => a[Math.floor(Math.random()*a.length)];
+const REDUCED = !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
+function shuffle(arr){const a=arr.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
+function pickN(arr,n){ return shuffle(arr).slice(0,n); }
+function esc(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+let toastT=null;
+function toast(msg,ms){const t=$('#toast');t.textContent=msg;t.classList.add('show');clearTimeout(toastT);toastT=setTimeout(()=>t.classList.remove('show'),ms||2600);}
+
+/* ============ 2) SOUND ENGINE (Web Audio, สังเคราะห์เอง) ============ */
+const SFX={on:true,ctx:null,ready:false,master:null,
+  init(){this.ready=true;if(this.ctx)return;try{const AC=window.AudioContext||window.webkitAudioContext;if(!AC)return;this.ctx=new AC();this.master=this.ctx.createGain();this.master.gain.value=0.20;this.master.connect(this.ctx.destination);}catch(e){this.ctx=null;}},
+  note(f,at,dur,type,vol){if(!this.on||!this.ctx)return;const c=this.ctx,o=c.createOscillator(),g=c.createGain();o.type=type||'sine';o.frequency.value=f;const t0=c.currentTime+(at||0);g.gain.setValueAtTime(0.0001,t0);g.gain.exponentialRampToValueAtTime(vol||0.4,t0+0.012);g.gain.exponentialRampToValueAtTime(0.0001,t0+(dur||0.15));o.connect(g);g.connect(this.master);o.start(t0);o.stop(t0+(dur||0.15)+0.03);},
+  noise(dur,vol){if(!this.on||!this.ctx)return;const c=this.ctx,n=Math.floor(c.sampleRate*dur);const buf=c.createBuffer(1,n,c.sampleRate),d=buf.getChannelData(0);for(let i=0;i<n;i++)d[i]=(Math.random()*2-1)*(1-i/n);const src=c.createBufferSource();src.buffer=buf;const f=c.createBiquadFilter();f.type='lowpass';f.frequency.value=1200;const g=c.createGain();g.gain.value=vol||0.3;src.connect(f);f.connect(g);g.connect(this.master);src.start();},
+  play(name){if(!this.ready)return;this.init();if(!this.on||!this.ctx)return;if(this.ctx.state==='suspended')this.ctx.resume();
+    switch(name){
+      case 'click':   this.note(700,0,.06,'square',.16); break;
+      case 'select':  this.note(1100,0,.05,'triangle',.14); break;
+      case 'correct': [523.25,659.25,783.99].forEach((f,i)=>this.note(f,i*.07,.22,'triangle',.42)); break;
+      case 'wrong':   this.note(196,0,.18,'sawtooth',.28); this.note(146.8,.1,.3,'sawtooth',.26); break;
+      case 'combo':   [783.99,1046.5,1318.5].forEach((f,i)=>this.note(f,i*.05,.18,'sine',.38)); break;
+      case 'star':    this.note(120,0,.09,'square',.42); this.noise(.12,.22); this.note(1174.7,.05,.3,'sine',.34); break;
+      case 'unlock':  [392,523.25,659.25,880].forEach((f,i)=>this.note(f,i*.09,.26,'triangle',.34)); break;
+      case 'bell':    this.note(1400,0,.05,'square',.3); this.note(1400,.08,.05,'square',.3); break;
+      case 'ping':    this.note(1046.5,0,.14,'sine',.32); break;
+      case 'tick':    this.note(880,0,.04,'square',.14); break;
+      case 'alarm':   this.note(320,0,.16,'sawtooth',.3); this.note(240,.16,.22,'sawtooth',.3); break;
+      case 'fanfare': [523.25,659.25,783.99,1046.5,1318.5].forEach((f,i)=>this.note(f,i*.11,.4,'triangle',.42)); break;
+    }}};
+function updSoundBtns(){const label='เสียง: '+(SFX.on?'เปิด':'ปิด');const w=$('#wSound');if(w)w.textContent=label;const b=$('#btnSound');if(b){b.classList.toggle('off',!SFX.on);b.textContent=SFX.on?'SND':'MUTE';b.title=label;}}
+
+/* ============ 3) CONFETTI ============ */
+let confettiRAF=null;
+function confetti(ms){
+  if(REDUCED) return;
+  const cv=$('#confetti'),ctx=cv.getContext('2d');
+  cv.width=innerWidth;cv.height=innerHeight;cv.style.display='block';
+  const cols=['#22d3ee','#34d399','#fbbf24','#ffd76a','#fb7185','#6ee7b7'];
+  const ps=Array.from({length:140},()=>({x:Math.random()*cv.width,y:-20-Math.random()*cv.height*0.6,r:4+Math.random()*6,vy:1.6+Math.random()*3.4,vx:-1.4+Math.random()*2.8,a:Math.random()*Math.PI,va:-0.14+Math.random()*0.28,c:pick(cols)}));
+  const stop=Date.now()+(ms||4000);cancelAnimationFrame(confettiRAF);
+  (function loop(){ctx.clearRect(0,0,cv.width,cv.height);ps.forEach(p=>{p.x+=p.vx;p.y+=p.vy;p.a+=p.va;if(p.y>cv.height+20){p.y=-20;p.x=Math.random()*cv.width;}ctx.save();ctx.translate(p.x,p.y);ctx.rotate(p.a);ctx.fillStyle=p.c;ctx.fillRect(-p.r/2,-p.r/2,p.r,p.r*1.6);ctx.restore();});if(Date.now()<stop)confettiRAF=requestAnimationFrame(loop);else{ctx.clearRect(0,0,cv.width,cv.height);cv.style.display='none';}})();
+}
+
+/* ============ 4) QUESTION BANK ============
+   36 ข้อ · เขตละ 12 ข้อ · ทุกข้อมีสิ่งเร้าที่ต้องอ่านจริง
+   เกณฑ์: ถ้าลบตาราง โค้ด หรือสถานการณ์ทิ้ง จะตอบไม่ได้
+   เขต 2 ตรวจด้วย gcc 13.3 (-std=c17) ทุกข้อ · เขต 1 และ 3 ตรวจด้วยสคริปต์คำนวณซ้ำ
+   ================================================= */
+/* ตารางเวลาเข้าถึงมาตรฐาน ใช้ร่วมกันในเขต 1 */
+const TT = '<div class="qtbl"><table><tr><th>หน่วยเก็บข้อมูล</th><th>เวลาเข้าถึงต่อครั้ง</th></tr>'+
+  '<tr><td>Register</td><td>1 ns</td></tr>'+
+  '<tr><td>Cache</td><td>5 ns</td></tr>'+
+  '<tr><td>RAM</td><td>100 ns</td></tr>'+
+  '<tr><td>SSD</td><td>100,000 ns</td></tr>'+
+  '<tr><td>HDD</td><td>10,000,000 ns</td></tr></table></div>';
+
+const BANK = {
+  /* ---------------- เขต 1 · ย่านความเร็ว (Memory Hierarchy) ---------------- */
+  district1:[
+    {q:'ตารางด้านล่างคือเวลาเข้าถึงจริงของหน่วยเก็บข้อมูลแต่ละระดับ'+TT+'โปรแกรมหนึ่งต้องอ่านข้อมูล 1,000 ครั้ง เดิมอ่านจาก RAM ทุกครั้ง ถ้าปรับให้อ่านจาก Cache ได้ครบทั้ง 1,000 ครั้ง จะประหยัดเวลาไปกี่นาโนวินาที',
+     c:['95,000 ns','100,000 ns','5,000 ns','95 ns'],a:0,
+     e:'อ่านจาก RAM ทั้งหมดใช้ 1,000 &times; 100 = 100,000 ns · อ่านจาก Cache ทั้งหมดใช้ 1,000 &times; 5 = 5,000 ns · ผลต่างคือ 100,000 &minus; 5,000 = <b>95,000 ns</b> — ตัวเลือก 100,000 คือเวลาเดิมทั้งก้อน ไม่ใช่ส่วนที่ประหยัดได้ และตัวเลือก 5,000 คือเวลาใหม่'},
+
+    {q:'ตารางด้านล่างคือเวลาเข้าถึงจริงของหน่วยเก็บข้อมูลแต่ละระดับ'+TT+'ระบบหนึ่งอ่านข้อมูลทั้งหมด 1,000 ครั้ง โดยหาเจอใน Cache 900 ครั้ง (hit) และต้องไปอ่านจาก RAM อีก 100 ครั้ง (miss) เวลารวมทั้งหมดเป็นเท่าใด',
+     c:['14,500 ns','100,000 ns','5,000 ns','10,000 ns'],a:0,
+     e:'ส่วนที่ hit ใช้ 900 &times; 5 = 4,500 ns ส่วนที่ miss ใช้ 100 &times; 100 = 10,000 ns รวมเป็น <b>14,500 ns</b> — สังเกตว่า miss เพียง 10% ของทั้งหมด แต่กินเวลาถึงสองในสามของเวลารวม นี่คือเหตุผลที่ระบบจริงพยายามดัน hit rate ให้สูงที่สุด'},
+
+    {q:'ตารางด้านล่างคือเวลาเข้าถึงจริงของหน่วยเก็บข้อมูลแต่ละระดับ'+TT+'พิจารณาระบบสองแบบต่อไปนี้<div class="qcode codebox">ระบบ ก : อ่านจาก SSD  20 ครั้ง\n\nระบบ ข : อ่านจาก HDD   1 ครั้ง</div>ระบบใดใช้เวลาน้อยกว่า และน้อยกว่าอยู่กี่นาโนวินาที',
+     c:['ระบบ ก น้อยกว่า 8,000,000 ns','ระบบ ข น้อยกว่า 8,000,000 ns','ระบบ ก น้อยกว่า 2,000,000 ns','เท่ากันพอดี'],a:0,
+     e:'ระบบ ก ใช้ 20 &times; 100,000 = 2,000,000 ns ส่วนระบบ ข ใช้ 1 &times; 10,000,000 = 10,000,000 ns ผลต่างคือ <b>8,000,000 ns</b> โดยระบบ ก เร็วกว่า — การอ่าน SSD ถึง 20 ครั้ง ยังเร็วกว่าการแตะ HDD เพียงครั้งเดียว เพราะ HDD ช้ากว่า SSD ถึง 100 เท่า'},
+
+    {q:'ตารางด้านล่างคือเวลาเข้าถึงจริงของหน่วยเก็บข้อมูลแต่ละระดับ'+TT+'จากตัวเลขในตาราง Cache ช้ากว่า Register กี่เท่า และ RAM ช้ากว่า Cache กี่เท่า',
+     c:['5 เท่า และ 20 เท่า','20 เท่า และ 5 เท่า','5 เท่า และ 100 เท่า','1 เท่า และ 95 เท่า'],a:0,
+     e:'Cache &divide; Register = 5 &divide; 1 = <b>5 เท่า</b> และ RAM &divide; Cache = 100 &divide; 5 = <b>20 เท่า</b> — ระยะห่างของแต่ละขั้นไม่เท่ากัน ยิ่งลงไปชั้นล่างช่องว่างยิ่งถ่างขึ้นเรื่อย ๆ'},
+
+    {q:'วิศวกรวัดเวลาเข้าถึงของหน่วยเก็บ 4 ระดับในเครื่องหนึ่ง แต่ยังไม่ได้ติดป้ายชื่อ ได้ผลดังตาราง<div class="qtbl"><table><tr><th>หน่วย</th><th>เวลาเข้าถึงต่อครั้ง</th></tr><tr><td>ก</td><td>100 ns</td></tr><tr><td>ข</td><td>5 ns</td></tr><tr><td>ค</td><td>10,000,000 ns</td></tr><tr><td>ง</td><td>1 ns</td></tr></table></div>หน่วยใดคือ Register และหน่วยใดคือ Cache',
+     c:['ง คือ Register และ ข คือ Cache','ข คือ Register และ ง คือ Cache','ก คือ Register และ ข คือ Cache','ง คือ Register และ ก คือ Cache'],a:0,
+     e:'Register อยู่ในตัว CPU จึงเร็วที่สุดเสมอ ตรงกับหน่วย <b>ง</b> ที่ 1 ns ส่วน Cache เร็วรองลงมา ตรงกับหน่วย <b>ข</b> ที่ 5 ns — ข้อสอบ กว. ชอบวาง Cache ไว้เป็นตัวเลือกแรกให้รีบตอบ จำหลักเดียวจบว่าตัดสินจากระยะทางถึง CPU ไม่ใช่จากชื่อที่ฟังดูเร็ว'},
+
+    {q:'ร้านคอมพิวเตอร์ติดป้ายราคาไว้ดังนี้<div class="qtbl"><table><tr><th>หน่วยเก็บ</th><th>ความจุ</th><th>ราคา</th></tr><tr><td>RAM</td><td>16 GB</td><td>1,600 บาท</td></tr><tr><td>SSD</td><td>500 GB</td><td>2,500 บาท</td></tr><tr><td>HDD</td><td>2,000 GB</td><td>2,000 บาท</td></tr></table></div>หน่วยใดมีราคาต่อ 1 GB ถูกที่สุด และถูกกว่า RAM กี่เท่า',
+     c:['HDD ถูกที่สุด ถูกกว่า RAM 100 เท่า','SSD ถูกที่สุด ถูกกว่า RAM 20 เท่า','HDD ถูกที่สุด ถูกกว่า RAM 20 เท่า','RAM ถูกที่สุดอยู่แล้ว'],a:0,
+     e:'RAM 1,600 &divide; 16 = 100 บาทต่อ GB · SSD 2,500 &divide; 500 = 5 บาทต่อ GB · HDD 2,000 &divide; 2,000 = 1 บาทต่อ GB <b>HDD จึงถูกที่สุด</b> และ 100 &divide; 1 = <b>100 เท่า</b> — ตัวเลขชุดนี้ยืนยันหลักของลำดับชั้นหน่วยความจำว่ายิ่งไกล CPU ยิ่งช้า แต่ยิ่งจุมากและถูกลงมาก'},
+
+    {q:'ไฟล์ขนาด 2 MB ถูกส่งผ่านลิงก์ความเร็ว 8 Mbps<div class="qtbl"><table><tr><th>หน่วยที่กำหนดให้</th><th>ค่า</th></tr><tr><td>1 MB</td><td>1,000,000 byte</td></tr><tr><td>1 byte</td><td>8 bit</td></tr><tr><td>1 Mbps</td><td>1,000,000 bit ต่อวินาที</td></tr></table></div>การส่งไฟล์นี้ใช้เวลาอย่างน้อยกี่วินาที',
+     c:['2 วินาที','0.25 วินาที','16 วินาที','8 วินาที'],a:0,
+     e:'2 MB = 2,000,000 byte = 16,000,000 bit = 16 Mbit เมื่อหารด้วย 8 Mbps ได้ <b>2 วินาที</b> — ตัวเลือก 0.25 เกิดจากการเอา 2 &divide; 8 ตรง ๆ โดยลืมแปลง byte เป็น bit จำไว้ว่า b ตัวเล็กคือ bit ส่วน B ตัวใหญ่คือ byte และ 8 bit = 1 byte'},
+
+    {q:'ตารางด้านล่างคือเวลาเข้าถึงจริงของหน่วยเก็บข้อมูลแต่ละระดับ'+TT+'พิจารณาโปรแกรมสองฉบับที่อ่านข้อมูล 500 ครั้งเท่ากัน<div class="qcode codebox">ฉบับ ก : อ่านจาก RAM ครบทั้ง 500 ครั้ง\n\nฉบับ ข : เจอใน Cache 400 ครั้ง\n         และต้องไปอ่าน RAM อีก 100 ครั้ง</div>ฉบับ ก และฉบับ ข ใช้เวลาเท่าใดตามลำดับ',
+     c:['50,000 ns และ 12,000 ns','50,000 ns และ 2,000 ns','5,000 ns และ 12,000 ns','50,000 ns และ 10,000 ns'],a:0,
+     e:'ฉบับ ก ใช้ 500 &times; 100 = <b>50,000 ns</b> ส่วนฉบับ ข ใช้ (400 &times; 5) + (100 &times; 100) = 2,000 + 10,000 = <b>12,000 ns</b> — ตัวเลือก 2,000 นับเฉพาะส่วนที่ hit และลืมบวกส่วนที่ต้องลงไป RAM'},
+
+    {q:'ตารางด้านล่างคือเวลาเข้าถึงจริงของหน่วยเก็บข้อมูลแต่ละระดับ'+TT+'การอ่านข้อมูลจาก HDD เพียง 1 ครั้ง กินเวลาเท่ากับการอ่านจาก RAM กี่ครั้ง',
+     c:['100,000 ครั้ง','10,000 ครั้ง','1,000,000 ครั้ง','100 ครั้ง'],a:0,
+     e:'10,000,000 &divide; 100 = <b>100,000 ครั้ง</b> — ตัวเลขนี้อธิบายว่าทำไมโปรแกรมที่แตะดิสก์บ่อยจึงช้าอย่างรู้สึกได้ ขณะที่โปรแกรมซึ่งทำงานอยู่ใน RAM ล้วน ๆ ยังลื่นไหล'},
+
+    {q:'ตารางสเปกต่อไปนี้ควรเป็นไปตามหลัก "ยิ่งเร็วยิ่งจุน้อย" แต่มีอยู่หนึ่งแถวที่ขัดกับหลักนี้<div class="qtbl"><table><tr><th>แถว</th><th>หน่วยเก็บ</th><th>เวลาเข้าถึง</th><th>ความจุ</th></tr><tr><td>1</td><td>Register</td><td>1 ns</td><td>256 byte</td></tr><tr><td>2</td><td>Cache</td><td>5 ns</td><td>32 MB</td></tr><tr><td>3</td><td>RAM</td><td>100 ns</td><td>16 MB</td></tr><tr><td>4</td><td>SSD</td><td>100,000 ns</td><td>500 GB</td></tr></table></div>แถวใดขัดกับหลักดังกล่าว',
+     c:['แถวที่ 3','แถวที่ 1','แถวที่ 2','แถวที่ 4'],a:0,
+     e:'แถวที่ 3 คือ RAM ซึ่งช้ากว่า Cache (100 ns เทียบกับ 5 ns) แต่กลับมีความจุ<b>น้อยกว่า</b> Cache (16 MB เทียบกับ 32 MB) ขัดกับหลักที่ว่ายิ่งไกล CPU ยิ่งช้าแต่ยิ่งจุมาก ในเครื่องจริง RAM ต้องจุมากกว่า Cache หลายร้อยถึงหลายพันเท่า'},
+
+    {q:'ตารางด้านล่างคือเวลาเข้าถึงจริงของหน่วยเก็บข้อมูลแต่ละระดับ'+TT+'โปรแกรมหนึ่งทำงานสามขั้นตอนตามนี้<div class="qcode codebox">ขั้นที่ 1 : อ่านจาก SSD          2 ครั้ง\nขั้นที่ 2 : อ่านจาก RAM        300 ครั้ง\nขั้นที่ 3 : อ่านจาก Register 10,000 ครั้ง</div>ขั้นตอนใดกินเวลามากที่สุด และกินเวลาเท่าใด',
+     c:['ขั้นที่ 1 · 200,000 ns','ขั้นที่ 3 · 10,000 ns','ขั้นที่ 2 · 30,000 ns','ขั้นที่ 3 · 200,000 ns'],a:0,
+     e:'ขั้นที่ 1 = 2 &times; 100,000 = <b>200,000 ns</b> · ขั้นที่ 2 = 300 &times; 100 = 30,000 ns · ขั้นที่ 3 = 10,000 &times; 1 = 10,000 ns ขั้นที่ 1 ทำงานน้อยครั้งที่สุดแต่กินเวลามากที่สุด เพราะจำนวนครั้งไม่ได้กำหนดเวลารวมเพียงลำพัง ต้องคูณด้วยเวลาต่อครั้งเสมอ'},
+
+    {q:'ตารางด้านล่างคือเวลาเข้าถึงจริงของหน่วยเก็บข้อมูลแต่ละระดับ'+TT+'ระบบต้องการให้เวลาเฉลี่ยต่อการอ่านหนึ่งครั้งไม่เกิน 24 ns โดยเมื่อ hit จะอ่านจาก Cache และเมื่อ miss จะอ่านจาก RAM อัตรา hit ต่ำสุดที่ยังผ่านเกณฑ์คือเท่าใด',
+     c:['80%','75%','85%','90%'],a:0,
+     e:'ให้ h คืออัตรา hit เวลาเฉลี่ย = 5h + 100(1 &minus; h) = 100 &minus; 95h ต้องการ 100 &minus; 95h &le; 24 จึงได้ 95h &ge; 76 และ h &ge; 0.8 หรือ <b>80%</b> ตรวจย้อนกลับ: 0.8 &times; 5 + 0.2 &times; 100 = 4 + 20 = 24 ns พอดี'}
+  ],
+
+  /* ---------------- เขต 2 · สำนักงานแปลภาษา (Compiler / Interpreter) ---------------- */
+  district2:[
+    {q:'พิจารณาโปรแกรมภาษา C ต่อไปนี้<div class="qcode codebox">#include &lt;stdio.h&gt;\nint main(void) {\n    printf("A\\n");\n    printf("B\\n");\n    printf("C\\n")\n    return 0;\n}</div>ถ้านำโค้ดชุดนี้ไปแปลด้วย compiler เทียบกับการรันแบบ interpreter ทีละบรรทัด ผลจะต่างกันอย่างไร',
+     c:['compiler ไม่พิมพ์อะไรเลย ส่วน interpreter พิมพ์ A และ B ก่อนแล้วจึงหยุด','ทั้งสองแบบพิมพ์ A B C เหมือนกัน','compiler พิมพ์ A B แล้วหยุด ส่วน interpreter ไม่พิมพ์อะไรเลย','ทั้งสองแบบไม่พิมพ์อะไรเลย'],a:0,
+     e:'บรรทัด <code>printf("C\\n")</code> ขาดเครื่องหมาย ; ท้ายบรรทัด gcc รายงาน <code>error: expected \';\' before \'return\'</code> การแปลจึงล้มทั้งไฟล์ ไม่ได้โปรแกรมที่รันได้ จึงไม่พิมพ์อะไรเลยแม้แต่บรรทัดแรก ขณะที่ interpreter แปลและรันไปทีละบรรทัด บรรทัด A และ B ทำงานสำเร็จไปก่อนแล้ว จึงเห็นผลออกมาก่อนจะไปสะดุดที่บรรทัดเสีย นี่คือความต่างที่สำคัญที่สุดของสองวิธีแปล'},
+
+    {q:'พิจารณาโปรแกรมภาษา C ต่อไปนี้<div class="qcode codebox">#include &lt;stdio.h&gt;\nint main(void) {\n    int a = 10, b = 0;\n    printf("START\\n");\n    printf("%d\\n", a / b);\n    printf("END\\n");\n    return 0;\n}</div>เมื่อนำไปแปลด้วย gcc จะเกิดอะไรขึ้น และข้อผิดพลาดปรากฏในขั้นตอนใด',
+     c:['คอมไพล์ผ่าน ได้ไฟล์ที่รันได้ แต่เกิดข้อผิดพลาดตอนรัน','คอมไพล์ไม่ผ่าน เพราะ compiler ตรวจพบการหารด้วยศูนย์','คอมไพล์ผ่านและรันจนจบโดยไม่มีปัญหา','คอมไพล์ไม่ผ่าน เพราะประกาศตัวแปรสองตัวในบรรทัดเดียวไม่ได้'],a:0,
+     e:'ไวยากรณ์ทุกบรรทัดถูกต้อง compiler จึงแปลผ่านและสร้างไฟล์ที่รันได้ตามปกติ แต่ค่าของ b เป็น 0 ก็ต่อเมื่อโปรแกรมทำงานจริง การหารด้วยศูนย์จึงเป็น <b>runtime error</b> ไม่ใช่ <b>syntax error</b> — compiler ตรวจได้เฉพาะความถูกต้องของไวยากรณ์ ไม่ได้ทำนายค่าที่จะเกิดขึ้นตอนรัน'},
+
+    {q:'พิจารณาโปรแกรมภาษา C ต่อไปนี้ ซึ่ง gcc รายงานว่า <code>error: expected \',\' or \';\' before \'printf\'</code> ที่บรรทัดที่ 5<div class="qcode codebox">1  #include &lt;stdio.h&gt;\n2  int main(void) {\n3      int x = 5;\n4      int y = 10\n5      printf("%d\\n", x + y);\n6      return 0;\n7  }</div>บรรทัดใดคือบรรทัดที่เขียนผิดจริง ๆ',
+     c:['บรรทัดที่ 4 แต่ gcc รายงานที่บรรทัดที่ 5','บรรทัดที่ 5 ตามที่ gcc รายงาน','บรรทัดที่ 3','บรรทัดที่ 2'],a:0,
+     e:'บรรทัดที่ 4 ขาดเครื่องหมาย ; ปิดท้าย แต่ compiler ยังไม่รู้ว่าขาดจนกว่าจะอ่านโทเคนตัวถัดไปเจอ ซึ่งคือคำว่า printf ที่บรรทัดที่ 5 จึงชี้ตำแหน่งความผิดพลาดไว้ที่บรรทัดที่ 5 <b>บทเรียนสำคัญ: เมื่อ gcc ฟ้องที่บรรทัดใด ให้ตรวจบรรทัดก่อนหน้าด้วยเสมอ</b> โดยเฉพาะเมื่อข้อความ error พูดถึงเครื่องหมาย ; หรือ ,'},
+
+    {q:'พิจารณาโปรแกรมภาษา C ต่อไปนี้<div class="qcode codebox">#include &lt;stdio.h&gt;\n#define SQ(x) x*x\nint main(void) {\n    printf("%d\\n", SQ(2+3));\n    return 0;\n}</div>โปรแกรมจะพิมพ์อะไร',
+     c:['11','25','13','คอมไพล์ไม่ผ่าน'],a:0,
+     e:'ก่อนถึงขั้นคอมไพล์จริง preprocessor จะแทนที่ข้อความแบบตรงตัวก่อน <code>SQ(2+3)</code> จึงกลายเป็น <code>2+3*2+3</code> ไม่ใช่ <code>(2+3)*(2+3)</code> เมื่อคิดตามลำดับความสำคัญของตัวดำเนินการได้ 2 + 6 + 3 = <b>11</b> — นี่คือเหตุผลที่การเขียนแมโครควรใส่วงเล็บครอบพารามิเตอร์เสมอ เช่น <code>#define SQ(x) ((x)*(x))</code>'},
+
+    {q:'พิจารณาโปรแกรมภาษา C ต่อไปนี้ ซึ่งประกาศต้นแบบของฟังก์ชัน calc ไว้ แต่ไม่ได้เขียนตัวฟังก์ชันไว้ที่ใดในไฟล์เลย<div class="qcode codebox">#include &lt;stdio.h&gt;\nint calc(int n);\nint main(void) {\n    printf("%d\\n", calc(3));\n    return 0;\n}</div>เมื่อสั่งแปลและสร้างโปรแกรม จะหยุดที่ขั้นตอนใดของสายการแปล และได้ไฟล์ที่รันได้หรือไม่',
+     c:['หยุดที่ขั้น Link และไม่ได้ไฟล์ที่รันได้','หยุดที่ขั้น Compile และไม่ได้ไฟล์ที่รันได้','ผ่านทุกขั้น ได้ไฟล์ที่รันได้ตามปกติ','หยุดที่ขั้น Compile แต่ยังได้ไฟล์ที่รันได้'],a:0,
+     e:'สายการแปลคือ <code>.c &rarr; Compile &rarr; .obj &rarr; Link &rarr; .exe</code> ขั้น Compile ผ่านได้เพราะมีต้นแบบ <code>int calc(int n);</code> บอกรูปแบบการเรียกไว้แล้ว แต่ขั้น Link หาตัวฟังก์ชันจริงไม่เจอ จึงฟ้อง <code>undefined reference to \'calc\'</code> และหยุดลง <b>ไม่ได้ไฟล์ที่รันได้</b> — ข้อผิดพลาดตอน Link ต่างจากตอน Compile ตรงที่ไวยากรณ์ถูกหมดแล้ว แต่ยังต่อชิ้นส่วนไม่ครบ'},
+
+    {q:'โปรแกรมต่อไปนี้ตั้งใจหาผลรวมของ 1 ถึง 5 (ซึ่งควรได้ 15)<div class="qcode codebox">#include &lt;stdio.h&gt;\nint main(void) {\n    int sum = 0, i;\n    for (i = 1; i &lt;= 5; i<code class="ic">++</code>)\n        sum = i;\n    printf("%d\\n", sum);\n    return 0;\n}</div>โปรแกรมนี้คอมไพล์ผ่านหรือไม่ และพิมพ์อะไรออกมา',
+     c:['คอมไพล์ผ่าน และพิมพ์ 5','คอมไพล์ไม่ผ่าน เพราะ sum ไม่ได้บวกสะสม','คอมไพล์ผ่าน และพิมพ์ 15','คอมไพล์ผ่าน และพิมพ์ 0'],a:0,
+     e:'บรรทัด <code>sum = i;</code> เป็นการกำหนดค่าทับ ไม่ใช่การบวกสะสม (ซึ่งต้องเขียน <code>sum = sum + i;</code> หรือ <code>sum += i;</code>) เมื่อลูปจบ i รอบสุดท้ายที่เข้าตัวลูปคือ 5 ค่า sum จึงเป็น <b>5</b> ไวยากรณ์ทุกบรรทัดถูกต้อง compiler จึงแปลผ่านโดยไม่ฟ้องอะไร นี่คือ <b>logic error</b> ที่ compiler ตรวจให้ไม่ได้ ต้องอาศัยการไล่โค้ดด้วยตัวเองเท่านั้น'},
+
+    {q:'พิจารณาโปรแกรมสองฉบับต่อไปนี้ ซึ่งต่างกันเฉพาะการสลับตำแหน่งของเครื่องหมาย + กับ = ในบรรทัดที่สี่<div class="qcode codebox">/* ฉบับ ก */\n#include &lt;stdio.h&gt;\nint main(void) {\n    int total = 3;\n    total += 5;\n    printf("%d\\n", total);\n    return 0;\n}\n\n/* ฉบับ ข */\n#include &lt;stdio.h&gt;\nint main(void) {\n    int total = 3;\n    total =+ 5;\n    printf("%d\\n", total);\n    return 0;\n}</div>ฉบับ ก และฉบับ ข พิมพ์อะไรตามลำดับ',
+     c:['8 และ 5','8 และ 8','8 และ คอมไพล์ไม่ผ่าน','5 และ 8'],a:0,
+     e:'ฉบับ ก ใช้ <code>+=</code> ซึ่งหมายถึงบวกเพิ่ม ได้ 3 + 5 = <b>8</b> ส่วนฉบับ ข เขียน <code>=+</code> ซึ่งภาษา C อ่านว่า "กำหนดค่าเท่ากับจำนวนบวกห้า" จึงทับค่าเดิมทิ้งไปเลย ได้ <b>5</b> จุดสำคัญคือ<b>ทั้งสองฉบับคอมไพล์ผ่านหมด</b> ไม่มี error และไม่มี warning ให้เห็น การพิมพ์สลับที่เพียงตัวอักษรเดียวจึงกลายเป็นบั๊กที่หายากมาก'},
+
+    {q:'พิจารณาโปรแกรมภาษา C ต่อไปนี้<div class="qcode codebox">#include &lt;stdio.h&gt;\nint main(void) {\n    int a = 3;\n    printf("%d\\n", a + b);\n    return 0;\n}</div>เมื่อนำไปแปลด้วย gcc จะเกิดอะไรขึ้น',
+     c:['คอมไพล์ไม่ผ่าน เพราะไม่ได้ประกาศตัวแปร b และไม่พิมพ์อะไรเลย','คอมไพล์ผ่าน โดยถือว่า b มีค่าเป็น 0 จึงพิมพ์ 3','คอมไพล์ผ่าน แต่พิมพ์ค่าขยะออกมา','คอมไพล์ผ่าน แต่เกิดข้อผิดพลาดตอนรัน'],a:0,
+     e:'gcc รายงาน <code>error: \'b\' undeclared (first use in this function)</code> ภาษา C บังคับให้ประกาศตัวแปรก่อนใช้เสมอ และ compiler ตรวจเรื่องนี้ได้ตั้งแต่ขั้นแปล จึงหยุดก่อนที่โปรแกรมจะได้ทำงานแม้แต่บรรทัดเดียว ไม่มีการเดาค่าให้เป็นศูนย์แต่อย่างใด'},
+
+    {q:'พิจารณาโปรแกรมภาษา C ต่อไปนี้<div class="qcode codebox">#include &lt;stdio.h&gt;\nint main(void) {\n    printf("A\\tB\\n");\n    printf("C\\\\D\\n");\n    printf("50%%\\n");\n    return 0;\n}</div>โปรแกรมจะพิมพ์ข้อความสามบรรทัดว่าอะไรบ้าง',
+     c:['A เว้นระยะแท็บ B / C\\D / 50%','A\\tB / C\\\\D / 50%%','AB / CD / 50%','A เว้นระยะแท็บ B / C\\\\D / 50%%'],a:0,
+     e:'ลำดับหลบหนี (escape sequence) ถูกแปลตั้งแต่ตอนคอมไพล์ ไม่ได้พิมพ์ออกมาตรงตัว <code>\\t</code> คือแท็บ · <code>\\\\</code> คือแบ็กสแลชหนึ่งตัว · <code>%%</code> ในสตริงรูปแบบของ printf คือเครื่องหมายเปอร์เซ็นต์หนึ่งตัว ผลจึงเป็น A แท็บ B แล้ว C\\D แล้ว 50% ตามลำดับ'},
+
+    {q:'พิจารณาโปรแกรมภาษา C ต่อไปนี้ สังเกตการสะกดชื่อฟังก์ชันในบรรทัดที่ห้า<div class="qcode codebox">#include &lt;stdio.h&gt;\nint main(void) {\n    printf("1 ");\n    printf("2 ");\n    prinf("3 ");\n    printf("4 ");\n    return 0;\n}</div>ถ้าแปลด้วย compiler เทียบกับการรันแบบ interpreter ทีละบรรทัด ผลจะต่างกันอย่างไร',
+     c:['compiler ไม่ได้โปรแกรมที่รันได้จึงไม่พิมพ์อะไรเลย ส่วน interpreter พิมพ์ 1 และ 2 ก่อนแล้วจึงหยุด','ทั้งสองแบบพิมพ์ 1 2 4 โดยข้ามบรรทัดที่ผิดไป','ทั้งสองแบบพิมพ์ 1 2 3 4','compiler พิมพ์ 1 2 แล้วหยุด ส่วน interpreter ไม่พิมพ์อะไรเลย'],a:0,
+     e:'ชื่อฟังก์ชันสะกดผิดเป็น prinf ซึ่งไม่มีอยู่ในไลบรารีใด ๆ gcc เตือนตั้งแต่ขั้นแปลแล้วไปล้มที่ขั้น Link ด้วยข้อความ <code>undefined reference to \'prinf\'</code> จึง<b>ไม่ได้ไฟล์ที่รันได้เลย</b> ผลคือไม่มีอะไรถูกพิมพ์ออกมาแม้แต่บรรทัดแรก ส่วน interpreter ทำงานไปทีละบรรทัด บรรทัด 1 และ 2 สำเร็จไปก่อนแล้วจึงหยุดตรงบรรทัดที่ห้า'},
+
+    {q:'นักศึกษาสั่งแปลโปรแกรมแล้วเห็นข้อความบนหน้าจอดังนี้<div class="qcode codebox">$ gcc main.c -o main.exe -Wall\nmain.c: In function \'main\':\nmain.c:4:9: warning: unused variable \'y\'\n    4 |     int y = 10;\n      |         ^\n$</div>จากข้อความนี้ ได้ไฟล์ main.exe หรือไม่ และรันได้หรือไม่',
+     c:['ได้ไฟล์ main.exe และรันได้ตามปกติ','ไม่ได้ไฟล์ เพราะการแปลล้มเหลว','ได้ไฟล์ แต่รันแล้วจะหยุดกลางคันทันที','ไม่ได้ไฟล์ ต้องลบตัวแปร y ทิ้งก่อนจึงจะแปลได้'],a:0,
+     e:'ข้อความนี้ขึ้นต้นด้วยคำว่า <b>warning</b> ไม่ใช่ <b>error</b> คำเตือนหมายถึง compiler แปลผ่านแล้ว แต่พบสิ่งที่น่าสงสัยจึงบอกให้ทราบ ในที่นี้คือประกาศตัวแปร y ไว้แต่ไม่ได้ใช้ ไฟล์ main.exe จึงถูกสร้างและรันได้ตามปกติ สังเกตด้วยว่าบรรทัดสุดท้ายกลับมาเป็นเครื่องหมาย $ ซึ่งแปลว่าคำสั่งจบลงเรียบร้อย'},
+
+    {q:'พิจารณาโปรแกรมภาษา C ต่อไปนี้ สังเกตว่าค่าที่ printf คืนกลับมาถูกเก็บไว้ในตัวแปร n<div class="qcode codebox">#include &lt;stdio.h&gt;\nint main(void) {\n    int n = printf("HELLO");\n    printf("|%d\\n", n);\n    return 0;\n}</div>โปรแกรมจะพิมพ์อะไร',
+     c:['HELLO|5','HELLO|0','HELLO|1','คอมไพล์ไม่ผ่าน เพราะ printf ไม่คืนค่า'],a:0,
+     e:'ฟังก์ชัน printf คืนค่าเป็น<b>จำนวนอักขระที่พิมพ์สำเร็จ</b> คำว่า HELLO มี 5 ตัวอักษร n จึงเท่ากับ 5 ผลบนจอคือ <b>HELLO|5</b> โดยข้อความ HELLO ถูกพิมพ์ก่อนตั้งแต่ตอนที่เรียกใช้ในบรรทัดประกาศตัวแปรแล้ว ไม่ใช่บรรทัดหลัง'}
+  ],
+
+  /* ---------------- เขต 3 · เขตปกครองเครือข่าย (Network Classification) ---------------- */
+  district3:[
+    {q:'พิจารณาสถานการณ์ต่อไปนี้<div class="qsit">บริษัทแห่งหนึ่งมีอาคาร 3 หลังอยู่ในนิคมอุตสาหกรรมเดียวกัน ระยะห่างระหว่างอาคารที่ไกลที่สุดคือ 800 เมตร ทั้งสามอาคารเชื่อมกันด้วยสายไฟเบอร์ที่บริษัทวางเองทั้งหมด ไม่ผ่านผู้ให้บริการภายนอก</div>เครือข่ายนี้จัดเป็นประเภทใด',
+     c:['LAN','MAN','WAN','ไม่จัดเป็นประเภทใดเลย'],a:0,
+     e:'ระยะ 800 เมตรอยู่ในพื้นที่ต่อเนื่องผืนเดียวที่องค์กรเป็นเจ้าของสายเอง จึงยังเป็น <b>LAN</b> (กรณีที่กินหลายอาคารแบบนี้มักเรียกเจาะจงว่า Campus LAN) ส่วน MAN ต้องครอบคลุมระดับเมืองซึ่งวัดกันเป็นสิบกิโลเมตรขึ้นไป และตามปกติต้องเช่าวงจรจากผู้ให้บริการเพราะพาดสายข้ามที่สาธารณะเองไม่ได้'},
+
+    {q:'พิจารณาสถานการณ์ต่อไปนี้<div class="qsit">เทศบาลนครแห่งหนึ่งเชื่อมสำนักงาน 12 แห่งที่กระจายอยู่ทั่วเขตเทศบาล รัศมีไกลที่สุดจากศูนย์กลางคือ 25 กิโลเมตร โดยเช่าวงจรไฟเบอร์จากผู้ให้บริการภายในเมือง</div>เครือข่ายนี้จัดเป็นประเภทใด',
+     c:['MAN','LAN','WAN','PAN'],a:0,
+     e:'ขอบเขตครอบคลุม "ทั้งเมือง" ในระดับสิบกิโลเมตรขึ้นไปแต่ไม่ข้ามเมือง ตรงกับนิยามของ <b>MAN</b> (Metropolitan Area Network) พอดี — คำว่า Metropolitan แปลว่ามหานคร ใช้เป็นตัวช่วยจำได้ว่าขอบเขตคือเมืองหนึ่งเมือง'},
+
+    {q:'พิจารณาสถานการณ์ต่อไปนี้<div class="qsit">ธนาคารแห่งหนึ่งเชื่อมสาขา 300 แห่งใน 60 จังหวัดเข้าด้วยกัน ระยะทางระหว่างสาขาที่ไกลที่สุดคือ 1,200 กิโลเมตร โดยใช้วงจรเช่าของผู้ให้บริการโทรคมนาคม</div>เครือข่ายนี้จัดเป็นประเภทใด',
+     c:['WAN','MAN','LAN','MAN เพราะยังอยู่ในประเทศเดียวกัน'],a:0,
+     e:'ขอบเขตข้ามจังหวัดทั่วประเทศในระดับพันกิโลเมตร เกินขอบเขตของเมืองไปมาก จึงเป็น <b>WAN</b> (Wide Area Network) — WAN ไม่จำเป็นต้องข้ามประเทศ ขอเพียงกว้างเกินกว่าเมืองเดียวก็นับแล้ว และอินเทอร์เน็ตคือ WAN ที่ใหญ่ที่สุดในโลก'},
+
+    {q:'พิจารณาสถานการณ์ทั้งสี่ต่อไปนี้<div class="qtbl"><table><tr><th>ข้อ</th><th>สถานการณ์</th></tr><tr><td>ก</td><td>Wi-Fi ภายในบ้านหลังเดียว</td></tr><tr><td>ข</td><td>เชื่อม 8 อาคารในเขตเมืองเดียวกัน รัศมี 15 กม.</td></tr><tr><td>ค</td><td>เชื่อมสำนักงานกรุงเทพฯ กับเชียงใหม่ ระยะ 580 กม.</td></tr><tr><td>ง</td><td>เชื่อมคอมพิวเตอร์ 30 เครื่องในห้องแล็บเดียว</td></tr></table></div>ข้อใดจับคู่ประเภทเครือข่ายได้ถูกต้องครบทั้งสี่',
+     c:['ก = LAN · ข = MAN · ค = WAN · ง = LAN','ก = LAN · ข = LAN · ค = WAN · ง = LAN','ก = LAN · ข = MAN · ค = MAN · ง = LAN','ก = PAN · ข = MAN · ค = WAN · ง = LAN'],a:0,
+     e:'ก และ ง อยู่ในพื้นที่เดียวคือบ้านหนึ่งหลังและห้องหนึ่งห้อง จึงเป็น <b>LAN</b> ทั้งคู่ · ข ครอบคลุมทั้งเมืองในรัศมี 15 กม. จึงเป็น <b>MAN</b> · ค ข้ามภูมิภาคระยะ 580 กม. จึงเป็น <b>WAN</b> — จำนวนเครื่องหรือจำนวนอาคารไม่ได้เป็นเกณฑ์ตัดสิน เกณฑ์เดียวคือพื้นที่ครอบคลุม'},
+
+    {q:'พิจารณาความต้องการของห้องปฏิบัติการต่อไปนี้<div class="qsit">ห้องปฏิบัติการมีคอมพิวเตอร์ 24 เครื่องอยู่ในห้องเดียวกัน ต้องการให้<br>(1) คอมพิวเตอร์ทั้ง 24 เครื่องรับส่งข้อมูลกันเองภายในห้องได้<br>(2) ทั้งห้องออกสู่อินเทอร์เน็ตได้</div>ความต้องการข้อ (1) และข้อ (2) ต้องใช้อุปกรณ์ใดตามลำดับ',
+     c:['(1) Switch · (2) Router','(1) Router · (2) Switch','(1) Switch · (2) Switch อีกตัว','(1) Router · (2) Router อีกตัว'],a:0,
+     e:'<b>Switch</b> ทำหน้าที่เชื่อมเครื่องที่อยู่ในเครือข่ายเดียวกันให้คุยกันได้ จึงตอบข้อ (1) ส่วน <b>Router</b> ทำหน้าที่เชื่อมเครือข่ายที่<b>ต่างกัน</b>เข้าด้วยกัน การพาทั้งห้องออกไปหาอินเทอร์เน็ตคือการข้ามไปอีกเครือข่ายหนึ่ง จึงต้องใช้ Router ตอบข้อ (2) — ตัวช่วยจำคือ Switch ทำงานภายใน ส่วน Router ทำงานระหว่าง'},
+
+    {q:'พิจารณาสถานการณ์ต่อไปนี้<div class="qsit">มหาวิทยาลัยแห่งหนึ่งมี 2 วิทยาเขต อยู่คนละอำเภอแต่ในจังหวัดเดียวกัน ห่างกัน 45 กิโลเมตร แต่ละวิทยาเขตมีเครือข่ายภายในของตัวเองอยู่แล้ว</div>เมื่อเชื่อมเครือข่ายของทั้งสองวิทยาเขตเข้าด้วยกัน เครือข่ายรวมที่ได้จัดเป็นประเภทใด',
+     c:['MAN เพราะครอบคลุมระดับเมือง','LAN เพราะเป็นองค์กรเดียวกัน','WAN เพราะห่างกันถึง 45 กิโลเมตร','ยังคงเป็น LAN สองวงแยกกัน ไม่นับเป็นประเภทใหม่'],a:0,
+     e:'เครือข่ายภายในของแต่ละวิทยาเขตยังเป็น LAN ของตัวเอง แต่เมื่อเชื่อมสองวงเข้าด้วยกันในระยะ 45 กิโลเมตรซึ่งเป็นระดับเมืองหรือจังหวัด ผลรวมที่ได้คือ <b>MAN</b> — ประเภทเครือข่ายตัดสินจากพื้นที่ครอบคลุม ไม่ได้ตัดสินจากว่าเจ้าของเป็นองค์กรเดียวกันหรือไม่'},
+
+    {q:'ตารางต่อไปนี้คือสเปกของลิงก์เชื่อมต่อสามเส้นในระบบหนึ่ง<div class="qtbl"><table><tr><th>เส้น</th><th>ความเร็ว</th><th>ระยะทาง</th><th>ขอบเขต</th></tr><tr><td>ก</td><td>1 Gbps</td><td>80 เมตร</td><td>ภายในอาคารเดียว</td></tr><tr><td>ข</td><td>100 Mbps</td><td>18 กิโลเมตร</td><td>ข้ามเขตในเมืองเดียวกัน</td></tr><tr><td>ค</td><td>50 Mbps</td><td>900 กิโลเมตร</td><td>ข้ามภูมิภาค</td></tr></table></div>เส้นใดคือ WAN และเส้นใดคือ LAN',
+     c:['ค คือ WAN และ ก คือ LAN','ก คือ WAN และ ค คือ LAN','ข คือ WAN และ ก คือ LAN','ค คือ WAN และ ข คือ LAN'],a:0,
+     e:'เส้น ค ระยะ 900 กิโลเมตรข้ามภูมิภาค จึงเป็น <b>WAN</b> ส่วนเส้น ก ระยะ 80 เมตรในอาคารเดียว จึงเป็น <b>LAN</b> (เส้น ข คือ MAN) จุดสำคัญคือ<b>ความเร็วไม่ใช่เกณฑ์จำแนก</b> — ในตารางนี้ WAN กลับเป็นเส้นที่ช้าที่สุดและ LAN เป็นเส้นที่เร็วที่สุด ซึ่งตรงกับความเป็นจริง เพราะยิ่งลากไกลยิ่งรักษาความเร็วสูงได้ยากและแพงขึ้น'},
+
+    {q:'ตารางต่อไปนี้คือรัศมีครอบคลุมของเครือข่ายสามชุด<div class="qtbl"><table><tr><th>ชุด</th><th>รัศมีครอบคลุม</th></tr><tr><td>A</td><td>0.5 กิโลเมตร</td></tr><tr><td>B</td><td>900 กิโลเมตร</td></tr><tr><td>C</td><td>20 กิโลเมตร</td></tr></table></div>จงเรียงทั้งสามชุดจากเล็กไปใหญ่ พร้อมระบุประเภทของแต่ละชุด',
+     c:['A (LAN) &lt; C (MAN) &lt; B (WAN)','A (LAN) &lt; B (MAN) &lt; C (WAN)','C (LAN) &lt; A (MAN) &lt; B (WAN)','B (LAN) &lt; C (MAN) &lt; A (WAN)'],a:0,
+     e:'เรียงตามตัวเลขได้ 0.5 &lt; 20 &lt; 900 จึงเป็น A &lt; C &lt; B และเมื่อเทียบกับขอบเขต ได้ A เป็น <b>LAN</b> (ต่ำกว่าหนึ่งกิโลเมตร) · C เป็น <b>MAN</b> (ระดับเมือง) · B เป็น <b>WAN</b> (ข้ามภูมิภาค) สอดคล้องกับลำดับ LAN &lt; MAN &lt; WAN ที่ต้องท่องให้ขึ้นใจ'},
+
+    {q:'พิจารณาสถานการณ์ต่อไปนี้<div class="qsit">ผู้ใช้ที่บ้านเชื่อมโน้ตบุ๊กเข้ากับเราเตอร์ของตนเองด้วย Wi-Fi แล้วเปิดเว็บไซต์ที่มีเซิร์ฟเวอร์ตั้งอยู่ในประเทศสิงคโปร์</div>ข้อมูลของผู้ใช้เดินทางผ่านเครือข่ายกี่ประเภท และเป็นประเภทใดบ้าง',
+     c:['2 ประเภท คือ LAN ในบ้าน แล้วออกไปเป็น WAN','1 ประเภท คือ WAN เพียงอย่างเดียว','2 ประเภท คือ LAN ในบ้าน แล้วออกไปเป็น MAN','3 ประเภท คือ LAN แล้ว MAN แล้ว WAN เสมอ'],a:0,
+     e:'ช่วงจากโน้ตบุ๊กถึงเราเตอร์ในบ้านเป็นเครือข่ายพื้นที่เล็กภายในบ้านหลังเดียว จึงเป็น <b>LAN</b> จากนั้นข้อมูลออกจากเราเตอร์ผ่านอินเทอร์เน็ตไปยังสิงคโปร์ ซึ่งเป็น <b>WAN</b> — ตัวเลือกที่ระบุว่าต้องผ่าน MAN ด้วยเสมอนั้นไม่ถูก เพราะการจำแนกดูที่ขอบเขตของแต่ละช่วงการเชื่อมต่อจริง ไม่ใช่ไล่ผ่านครบทุกประเภทตามลำดับ'},
+
+    {q:'พิจารณาผังการเชื่อมต่อของสำนักงานสาขาแห่งหนึ่ง<div class="qcode codebox">[PC ห้อง A] --40 ม.-- [Switch] --40 ม.-- [PC ห้อง B]\n                          |\n                      [Router]\n                          |\n         วงจรเช่า 600 กม. ไปสำนักงานใหญ่ กรุงเทพฯ</div>ส่วนที่อยู่เหนือ Router (PC ห้อง A ถึง PC ห้อง B) และลิงก์ 600 กิโลเมตร จัดเป็นเครือข่ายประเภทใดตามลำดับ',
+     c:['LAN และ WAN','LAN และ MAN','MAN และ WAN','WAN และ LAN'],a:0,
+     e:'ส่วนบนคือคอมพิวเตอร์สองเครื่องที่ห่างกันหลักสิบเมตรเชื่อมผ่าน Switch ตัวเดียว จึงเป็น <b>LAN</b> ส่วนลิงก์ 600 กิโลเมตรที่ออกจาก Router ไปสำนักงานใหญ่ ข้ามภูมิภาคแล้ว จึงเป็น <b>WAN</b> — สังเกตตำแหน่งของ Router ที่ทำหน้าที่เป็นประตูเชื่อมระหว่างเครือข่ายสองประเภทได้พอดี'},
+
+    {q:'พิจารณาสถานการณ์ต่อไปนี้<div class="qsit">โรงพยาบาล 5 แห่งกระจายอยู่ในเขตเมืองเดียวกัน ระยะห่างระหว่างโรงพยาบาลที่ไกลที่สุดคือ 30 กิโลเมตร เชื่อมกันด้วยไฟเบอร์ที่เช่าภายในเมือง และแยกออกจากอินเทอร์เน็ตสาธารณะโดยสิ้นเชิงเพื่อความปลอดภัยของข้อมูลผู้ป่วย</div>เครือข่ายนี้จัดเป็นประเภทใด',
+     c:['MAN','WAN','LAN','ไม่จัดเป็นประเภทใด เพราะไม่ได้ต่ออินเทอร์เน็ต'],a:0,
+     e:'ขอบเขต 30 กิโลเมตรภายในเมืองเดียวตรงกับ <b>MAN</b> — ตัวเลือก WAN เป็นจุดหลอกที่พบบ่อยเพราะเห็นเลข 30 กิโลเมตรแล้วรู้สึกว่าไกล แต่ WAN ต้องกว้างเกินกว่าเมืองเดียวขึ้นไป และการแยกออกจากอินเทอร์เน็ตสาธารณะก็ไม่ได้เปลี่ยนประเภทของเครือข่าย เพราะประเภทจำแนกด้วยพื้นที่ครอบคลุมเพียงอย่างเดียว'},
+
+    {q:'เครือข่าย LAN ในห้องปฏิบัติการมีความเร็ว 1 Gbps ต้องส่งไฟล์ขนาด 500 MB<div class="qtbl"><table><tr><th>หน่วยที่กำหนดให้</th><th>ค่า</th></tr><tr><td>1 MB</td><td>8 Mbit</td></tr><tr><td>1 Gbps</td><td>1,000 Mbps</td></tr></table></div>การส่งไฟล์นี้ใช้เวลาอย่างน้อยกี่วินาที',
+     c:['4 วินาที','0.5 วินาที','32 วินาที','8 วินาที'],a:0,
+     e:'500 MB &times; 8 = 4,000 Mbit เมื่อหารด้วย 1,000 Mbps ได้ <b>4 วินาที</b> — ตัวเลือก 0.5 เกิดจากการเอา 500 &divide; 1,000 ตรง ๆ โดยลืมแปลง byte เป็น bit ซึ่งเป็นกับดักหน่วยข้อมูลที่ข้อสอบชอบใช้ร่วมกับโจทย์เครือข่าย'}
+  ]
+};
+const SKILL_LABELS = {district1:'ลำดับชั้นหน่วยความจำ', district2:'Compiler / Interpreter', district3:'การจำแนกเครือข่าย'};
+const DISTRICT_SCREEN = {district1:'scr-preview1', district2:'scr-preview2', district3:'scr-preview3'};
+
+/* ============ 5) STATE + PERSISTENCE ============ */
+const SKEY = 'cpucity_v621_state';
+const state = {
+  name:'', avatar:0, pre:null, post:null,
+  preByD:{district1:0,district2:0,district3:0},
+  postByD:{district1:0,district2:0,district3:0},
+  xp:0, combo:0, maxCombo:0, fastCorrect:false, preTime:0, postTime:0, preIds:[], postIds:[],
+  labs:{lab1:[],lab2:[],lab3:[]},
+  unlocked:['pretest'], visited:{}, screen:'scr-welcome'
+};
+function save(){try{sessionStorage.setItem(SKEY,JSON.stringify(state));}catch(e){}}
+function loadSaved(){try{const raw=sessionStorage.getItem(SKEY);if(!raw)return null;const o=JSON.parse(raw);return (o&&o.name)?o:null;}catch(e){return null;}}
+function clearSaved(){try{sessionStorage.removeItem(SKEY);}catch(e){}}
+
+/* ============ 6) STAR SYSTEM ============ */
+const STAR_TABLE = [
+  {min:6, stars:6, rank:'CITY ARCHITECT',  msg:'อ่านตาราง อ่านโค้ด และจำแนกเครือข่ายได้แม่นครบทั้งสามเขต พร้อมต่อยอดไปบทตัวแปรและชนิดข้อมูลได้ทันที'},
+  {min:5, stars:5, rank:'CHIEF ENGINEER',  msg:'แม่นยำสูง เหลืออีกเพียงจุดเดียวก็เต็ม ลองย้อนอ่านข้อที่พลาดอีกครั้ง'},
+  {min:4, stars:4, rank:'FIELD ENGINEER',  msg:'ผ่านเกณฑ์ความเข้าใจพื้นฐานแล้ว ยังมีช่องว่างให้ฝึกอีกเล็กน้อย'},
+  {min:3, stars:3, rank:'TECHNICIAN',      msg:'เริ่มจับหลักได้ แต่ยังพลาดบางเขต ควรกลับไปทบทวนตารางจุดหลอกของเขตนั้น'},
+  {min:2, stars:2, rank:'APPRENTICE',      msg:'พอมีพื้นฐาน แนะนำให้เล่นห้องทดลองให้ครบทั้ง 3 เขตก่อนสอบใหม่'},
+  {min:0, stars:0, rank:'CITY ROOKIE',     msg:'ยังไม่คุ้นเนื้อหา ไม่เป็นไรเลย นี่คือเหตุผลที่เราต้องตรวจให้ครบทั้งสามเขตของเมือง'}
+];
+const MAX_STARS = 6;   /* เต็ม 6 ข้อ = เต็ม 6 ดาว · 1 ดาว = ตอบถูก 1 ข้อ */
+function starInfo(score){
+  const t = STAR_TABLE.find(t => score >= t.min) || STAR_TABLE[STAR_TABLE.length-1];
+  return {stars: score, rank: t.rank, msg: t.msg};
+}
+const STAR_SVG_FULL = '<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><defs><linearGradient id="sg" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#fff6d0"/><stop offset="55%" stop-color="#ffd76a"/><stop offset="100%" stop-color="#fbbf24"/></linearGradient></defs><path d="M12 2.6l2.9 5.9 6.5.95-4.7 4.58 1.11 6.47L12 17.45 6.19 20.5l1.11-6.47L2.6 9.45l6.5-.95z" fill="url(#sg)" stroke="#ffd76a" stroke-width="1" stroke-linejoin="round"/></svg>';
+const STAR_SVG_EMPTY = '<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M12 2.6l2.9 5.9 6.5.95-4.7 4.58 1.11 6.47L12 17.45 6.19 20.5l1.11-6.47L2.6 9.45l6.5-.95z" fill="none" stroke="#8ca0b8" stroke-width="1.4" stroke-linejoin="round"/></svg>';
+function renderStars(host,filled,total,animate){
+  total=total||MAX_STARS;host.innerHTML='';
+  host.setAttribute('aria-label','ได้ '+filled+' ดาว จาก '+total+' ดาว');
+  for(let i=0;i<total;i++){const d=document.createElement('div');const isFull=i<filled;d.className='star '+(isFull?'full':'empty');d.innerHTML=isFull?STAR_SVG_FULL:STAR_SVG_EMPTY;host.appendChild(d);}
+  const kids=Array.from(host.children);
+  if(!animate||REDUCED){kids.forEach(k=>{k.style.opacity=k.classList.contains('empty')?'.32':'1';k.style.transform='none';});return;}
+  kids.forEach((k,i)=>{setTimeout(()=>{k.classList.add('in');if(k.classList.contains('full'))SFX.play('star');},200+i*190);});
+}
+
+/* ============ 7) XP / LEVEL ============ */
+const XP_PER_LEVEL = 120;
+function addXp(n,label){state.xp+=n;updXp();if(label!==false)floaty('+'+n+' XP','#fbbf24');save();}
+function updXp(){const lvl=Math.floor(state.xp/XP_PER_LEVEL)+1;const into=state.xp%XP_PER_LEVEL;const lt=$('#lvlTxt'),xb=$('#xpBar'),xt=$('#xpTxt');if(lt)lt.textContent='LV.'+lvl;if(xb)xb.style.width=(into/XP_PER_LEVEL*100)+'%';if(xt)xt.textContent=state.xp+' XP';}
+function floaty(txt,color){if(REDUCED)return;const el=document.createElement('div');el.className='floaty';el.textContent=txt;el.style.color=color||'#34d399';document.body.appendChild(el);setTimeout(()=>el.remove(),1200);}
+
+/* ============ 8) NAVIGATION ============ */
+const NAVSTOPS = [
+  {key:'pretest',  label:'PRETEST',   screens:['scr-pretest'], icon:'p'},
+  {key:'d1',       label:'D1 SPEED',  screens:['scr-preview1','scr-lesson1','scr-check1'], icon:'m', district:'district1'},
+  {key:'d2',       label:'D2 TRANSL', screens:['scr-preview2','scr-lesson2','scr-check2'], icon:'c', district:'district2'},
+  {key:'d3',       label:'D3 NETWORK',screens:['scr-preview3','scr-lesson3','scr-check3'], icon:'n', district:'district3'},
+  {key:'posttest', label:'POSTTEST',  screens:['scr-posttest'], icon:'t'},
+  {key:'summary',  label:'REPORT',    screens:['scr-summary'], icon:'s'}
+];
+const ICONS = {
+  p:'<path d="M4 12 L9 17 L20 5" stroke="currentColor" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>',
+  m:'<rect x="7" y="6" width="4" height="12" rx="1" fill="currentColor"/><rect x="14" y="10" width="4" height="8" rx="1" fill="currentColor"/>',
+  c:'<circle cx="9" cy="12" r="5" stroke="currentColor" stroke-width="2" fill="none"/><circle cx="15" cy="12" r="5" stroke="currentColor" stroke-width="2" fill="none"/>',
+  n:'<circle cx="12" cy="12" r="8" stroke="currentColor" stroke-width="2" fill="none"/><path d="M12 12 L12 6 M12 12 L17 12" stroke="currentColor" stroke-width="1.8" fill="none"/>',
+  t:'<path d="M4 12 L9 17 L20 5" stroke="currentColor" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>',
+  s:'<path d="M4 20 V10 M12 20 V4 M20 20 V14" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/>'
+};
+function stopOfScreen(id){ return NAVSTOPS.find(s => s.screens.includes(id)); }
+function renderNav(currentScreen){
+  const host=$('#navrail'); if(!host) return;
+  host.innerHTML=''; const cur=stopOfScreen(currentScreen);
+  NAVSTOPS.forEach(s=>{
+    const isUnlocked=state.unlocked.includes(s.key);
+    const isDone=state.visited[s.key]==='done';
+    const el=document.createElement('div');
+    el.className='navpill'+(isUnlocked?' unlocked':'')+(isDone?' done':'')+(cur&&cur.key===s.key?' current':'');
+    let starTxt='';
+    if(s.district&&state.postByD&&state.post!==null){starTxt='★'.repeat(state.postByD[s.district])+'☆'.repeat(2-state.postByD[s.district]);}
+    el.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true">'+ICONS[s.icon]+'</svg><span>'+s.label+'</span><span class="ps">'+starTxt+'</span>';
+    el.setAttribute('role','button'); el.setAttribute('tabindex',isUnlocked?'0':'-1');
+    el.setAttribute('aria-label',s.label+(isUnlocked?'':' (ยังไม่ปลดล็อก)'));
+    const act=()=>{
+      if(!isUnlocked){el.classList.add('locked-shake');setTimeout(()=>el.classList.remove('locked-shake'),400);toast('เขตนี้ยังไม่ปลดล็อกครับ กรุณาตรวจตามลำดับก่อน');return;}
+      SFX.play('click'); goto_(s.screens[0]);
+      if(s.key==='summary') showSummary();
+    };
+    el.addEventListener('click',act);
+    el.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();act();}});
+    host.appendChild(el);
+  });
+}
+function unlock(key){ if(!state.unlocked.includes(key)){ state.unlocked.push(key); SFX.play('unlock'); } }
+function goto_(id){
+  $$('.screen').forEach(s=>s.classList.remove('active'));
+  const el=document.getElementById(id); if(!el) return;
+  el.classList.add('active'); state.screen=id;
+  const stop=stopOfScreen(id);
+  if(stop){unlock(stop.key); if(!state.visited[stop.key]) state.visited[stop.key]='seen';}
+  $('#topbar').classList.toggle('show', id!=='scr-welcome');
+  renderNav(id);
+  window.scrollTo({top:0,behavior:REDUCED?'auto':'smooth'});
+  save();
+}
+
+/* ============ 9) QUIZ ENGINE — ARCADE ============
+   แบบทดสอบทั้งหมด (ก่อนเรียน / ฝึกหัด / หลังเรียน) เล่นในมินิเกม
+   รูปแบบของมินิเกมกำหนดจากบล็อก ARCADE ด้านล่าง (platform หรือ climb)
+   ================================================= */
+function randomizeChoices(q){const order=shuffle(q.c.map((c,i)=>i));return {q:q.q,e:q.e,c:order.map(i=>q.c[i]),a:order.indexOf(q.a)};}
+/* สุ่มด่านละ 2 ข้อ โดย exclude = รายการ id ที่ห้ามซ้ำ (ใช้กัน Posttest ซ้ำกับ Pretest) */
+function stratifiedSix(exclude){
+  const ex=exclude||[], picks=[];
+  ['district1','district2','district3'].forEach(d=>{
+    const all=BANK[d].map((q,i)=>({q:q,id:d+'#'+i}));
+    let pool=all.filter(o=>ex.indexOf(o.id)<0);
+    if(pool.length<2) pool=all;                       /* กันกรณีคลังไม่พอ */
+    pickN(pool,2).forEach(o=>picks.push(Object.assign({},randomizeChoices(o.q),{district:d,qid:o.id})));
+  });
+  return shuffle(picks);
+}
+const KEYCAPS=['1','2','3','4'];
+
+
+/* ============ ARCADE : CLIMB MODE v6 — TAP ONLY ============
+   ปรับใหม่ทั้งหมดให้ "ไม่ต้องกระโดด ไม่ต้องบังคับทิศทาง"
+   กติกา: ตอบถูก 1 ข้อ = ไต่ขึ้น 1 ชั้น · ตอบผิดไม่ตกลงมา แค่ย่ำอยู่ที่เดิม
+   ผลลัพธ์: เล่นบนมือถือได้ด้วยนิ้วเดียว ไม่มีทักษะนิ้วมาบังคะแนนความเข้าใจ
+   =========================================================== */
+const ACT={floorWord:'ชั้น',topWord:'ยอดตึกซีพียู',groundWord:'ถนนหน้าเมือง',theme:'city'};
+const AC={on:false,mode:null,qs:[],idx:0,answered:0,correct:0,byD:null,score:0,
+  W:0,H:0,raf:null,elapsed:0,last:null,qOpen:false,onDone:null,
+  floor:0,animFrom:0,animTo:0,animT:1,shake:0,glow:0,col:null,dead:false,parts:[],t:0,padT:36};
+
+function acColors(){
+  const cs=getComputedStyle(document.documentElement), g=n=>(cs.getPropertyValue(n)||'').trim();
+  return {bg:g('--bg')||'#04070f',panel:g('--panel2')||'#101a30',ember:g('--ember')||'#22d3ee',
+    corner:g('--corner')||'#34d399',gold:g('--gold')||'#fbbf24',red:g('--red')||'#fb7185',
+    text:g('--text')||'#e6edf6',muted:g('--muted')||'#8ca0b8'};
+}
+function acResize(){
+  const cv=$('#acv'); if(!cv) return;
+  const dpr=Math.min(2,window.devicePixelRatio||1);
+  AC.W=cv.clientWidth||innerWidth; AC.H=cv.clientHeight||200;
+  const hud=document.querySelector('.ac-hud');
+  AC.padT=Math.min(120,((hud&&hud.offsetHeight)||28)+16);
+  cv.width=Math.max(1,AC.W*dpr); cv.height=Math.max(1,AC.H*dpr);
+  const ctx=cv.getContext('2d'); if(ctx&&ctx.setTransform) ctx.setTransform(dpr,0,0,dpr,0,0);
+}
+/* ตำแหน่งชั้นที่ i (0 = พื้น, n = ยอด) — ไต่เฉียงขึ้นเป็นบันไดเวียน */
+function acStepGeom(i){
+  const n=AC.qs.length||1;
+  const padB=30, padT=AC.padT||36;
+  const h=Math.max(60,AC.H-padB-padT);
+  const y=AC.H-padB-(i*(h/n));
+  const w=Math.max(56,Math.min(118,AC.W*0.21));
+  const usable=Math.max(20,AC.W-w-32);
+  const x=16+(n<=1?0:(i/n)*usable);
+  return {x:x,y:y,w:w,h:9};
+}
+function acPuff(x,y,color,n){
+  if(REDUCED) return;
+  for(let k=0;k<(n||14);k++)
+    AC.parts.push({x:x,y:y,vx:(Math.random()-.5)*2.8,vy:-Math.random()*2.8-.3,l:1,c:color,r:1.6+Math.random()*2.2});
+}
+function acStepParts(d){
+  for(let i=AC.parts.length-1;i>=0;i--){
+    const p=AC.parts[i];
+    p.x+=p.vx; p.y+=p.vy; p.vy+=0.055; p.l-=d/900;
+    if(p.l<=0) AC.parts.splice(i,1);
+  }
+}
+/* ---- ฉากหลังตามธีมของแต่ละเกม ---- */
+function acDecor(ctx,c){
+  const t=AC.t, W=AC.W, H=AC.H;
+  /* ลายวงจรพิมพ์ */
+  ctx.globalAlpha=.12; ctx.strokeStyle=c.ember; ctx.lineWidth=1.4;
+  for(let r=0;r<6;r++){
+    const y=14+r*(H/6);
+    ctx.beginPath(); ctx.moveTo(0,y); ctx.lineTo(W*0.32,y);
+    ctx.lineTo(W*0.32+16,y+14); ctx.lineTo(W,y+14); ctx.stroke();
+  }
+  ctx.globalAlpha=.16; ctx.fillStyle=c.ember;
+  for(let k=0;k<9;k++){
+    const px=(k*97)%W, py=20+((k*53)%Math.max(1,H-40));
+    ctx.beginPath(); ctx.arc(px,py,2.2,0,Math.PI*2); ctx.fill();
+  }
+  /* ตึกฉากหลังพร้อมหน้าต่างกะพริบ */
+  ctx.globalAlpha=.22; ctx.fillStyle=c.panel;
+  const towers=[[0.06,0.30],[0.20,0.44],[0.74,0.38],[0.88,0.26]];
+  towers.forEach((tw,i)=>{
+    const bw=Math.max(26,W*0.11), bh=H*tw[1], bx=W*tw[0], by=H-bh;
+    ctx.fillRect(bx,by,bw,bh);
+    ctx.globalAlpha=.30; ctx.fillStyle=c.gold;
+    for(let r=0;r<Math.floor(bh/18);r++) for(let k=0;k<2;k++){
+      const on=((r*3+k*7+i*5+Math.floor(t/620))%5)<2;
+      if(on) ctx.fillRect(bx+7+k*(bw/2),by+8+r*18,5,6);
+    }
+    ctx.globalAlpha=.22; ctx.fillStyle=c.panel;
+  });
+  /* บิต 0/1 ไหลลงมาบาง ๆ */
+  ctx.globalAlpha=.14; ctx.fillStyle=c.corner; ctx.font='10px IBM Plex Mono,monospace';
+  for(let k=0;k<16;k++){
+    const bx=(k*131)%W, by=((k*167+t*0.10)%(H+30))-15;
+    ctx.fillText((k+Math.floor(t/380))%2?'1':'0',bx,by);
+  }
+  ctx.globalAlpha=1;
+}
+function acDraw(){
+  const cv=$('#acv'); if(!cv) return;
+  const ctx=cv.getContext('2d'); if(!ctx) return;
+  const c=AC.col, n=AC.qs.length;
+  ctx.clearRect(0,0,AC.W,AC.H);
+  const bgGrad=ctx.createLinearGradient(0,0,0,AC.H);
+  bgGrad.addColorStop(0,c.panel); bgGrad.addColorStop(1,c.bg);
+  ctx.fillStyle=bgGrad; ctx.fillRect(0,0,AC.W,AC.H);
+  acDecor(ctx,c);
+
+  const sh=AC.shake>0?Math.sin(AC.shake*1.15)*4:0;
+  ctx.save(); ctx.translate(sh,0);
+
+  /* เส้นบันไดเชื่อมชั้น */
+  ctx.strokeStyle=c.ember; ctx.globalAlpha=.30; ctx.lineWidth=2; ctx.setLineDash([5,6]);
+  ctx.beginPath();
+  for(let i=0;i<=n;i++){const g=acStepGeom(i); const cx=g.x+g.w/2;
+    if(i===0) ctx.moveTo(cx,g.y); else ctx.lineTo(cx,g.y);}
+  ctx.stroke(); ctx.setLineDash([]); ctx.globalAlpha=1;
+
+  /* ชั้นทั้งหมด */
+  for(let i=0;i<=n;i++){
+    const g=acStepGeom(i), reached=i<=AC.floor, isTop=(i===n), isNext=(i===AC.floor+1);
+    if(reached && !isTop){
+      ctx.globalAlpha=.22; ctx.fillStyle=c.corner;
+      ctx.fillRect(g.x-3,g.y-3,g.w+6,g.h+6); ctx.globalAlpha=1;
+    }
+    if(isNext && AC.animT>=1){
+      const pu=.35+Math.sin(AC.t/230)*.22;
+      ctx.globalAlpha=pu; ctx.fillStyle=c.gold;
+      ctx.fillRect(g.x-4,g.y-4,g.w+8,g.h+8); ctx.globalAlpha=1;
+    }
+    ctx.fillStyle=isTop?c.gold:(reached?c.ember:(document.documentElement.getAttribute('data-theme')==='light'?'rgba(16,24,38,.20)':'rgba(255,255,255,.16)'));
+    ctx.fillRect(g.x,g.y,g.w,g.h);
+    ctx.globalAlpha=.45; ctx.fillStyle='#000';
+    ctx.fillRect(g.x,g.y+g.h,g.w,4); ctx.globalAlpha=1;
+    ctx.font='11px Kanit,sans-serif';
+    ctx.fillStyle=reached?c.corner:(isNext?c.gold:c.muted);
+    const lab=isTop?ACT.topWord:(i===0?ACT.groundWord:ACT.floorWord+' '+i);
+    const lw=ctx.measureText(lab).width;
+    let lx=Math.max(4,Math.min(g.x+2,AC.W-lw-8));
+    ctx.fillText(lab,lx,isTop?(g.y+g.h+15):(g.y-6));
+    if(i>0&&i<=AC.floor){
+      ctx.beginPath();ctx.arc(g.x+g.w-9,g.y-13,4.6,0,Math.PI*2);
+      ctx.fillStyle=c.gold;ctx.fill();
+    }
+  }
+  /* ธงยอดหอ */
+  const top=acStepGeom(n), fx=top.x+top.w-14, fy=top.y-12;
+  ctx.strokeStyle=c.gold; ctx.lineWidth=2;
+  ctx.beginPath(); ctx.moveTo(fx,fy); ctx.lineTo(fx,fy-20); ctx.stroke();
+  ctx.fillStyle=c.gold; ctx.beginPath();
+  ctx.moveTo(fx,fy-20); ctx.lineTo(fx+15+Math.sin(AC.t/200)*3,fy-15); ctx.lineTo(fx,fy-10); ctx.fill();
+
+  /* ผู้เล่น: ไต่จากชั้น animFrom → animTo แบบโค้งสปริง */
+  const t=Math.min(1,AC.animT), e=t<.5?2*t*t:-1+(4-2*t)*t;
+  const a=acStepGeom(AC.animFrom), b=acStepGeom(AC.animTo);
+  const px=a.x+(b.x-a.x)*e + (a.w/2) + (b.w-a.w)/2*e;
+  const arc=Math.sin(Math.PI*t)*(AC.animFrom===AC.animTo?0:30);
+  const py=a.y+(b.y-a.y)*e-arc;
+  const bob=(AC.animFrom===AC.animTo)?Math.sin(AC.t/300)*1.8:0;
+  if(AC.glow>0){
+    ctx.globalAlpha=Math.min(.5,AC.glow/40);
+    const gg=ctx.createRadialGradient(px,py-34,2,px,py-34,46);
+    gg.addColorStop(0,c.corner); gg.addColorStop(1,'rgba(0,0,0,0)');
+    ctx.fillStyle=gg; ctx.beginPath(); ctx.arc(px,py-34,46,0,Math.PI*2); ctx.fill(); ctx.globalAlpha=1;
+  }
+  const legSw=(AC.animFrom===AC.animTo)?0:Math.sin(t*Math.PI*3)*5;
+  ctx.strokeStyle=c.ember; ctx.lineWidth=4; ctx.lineCap='round';
+  ctx.beginPath(); ctx.moveTo(px-4,py-12+bob); ctx.lineTo(px-6-legSw,py+bob); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(px+4,py-12+bob); ctx.lineTo(px+6+legSw,py+bob); ctx.stroke();
+  ctx.fillStyle=c.ember; ctx.fillRect(px-11,py-38+bob,22,27);
+  ctx.strokeStyle=c.corner; ctx.lineWidth=3.5;
+  ctx.beginPath(); ctx.moveTo(px-10,py-32+bob); ctx.lineTo(px-17,py-40-legSw+bob); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(px+10,py-32+bob); ctx.lineTo(px+17,py-40+legSw+bob); ctx.stroke();
+  ctx.fillStyle=c.corner; ctx.beginPath();ctx.arc(px,py-46+bob,10,0,Math.PI*2);ctx.fill();
+  ctx.fillStyle=c.bg; ctx.fillRect(px-5.5,py-49+bob,3.4,3.4); ctx.fillRect(px+2.2,py-49+bob,3.4,3.4);
+  if(state.combo>=3){
+    ctx.font='13px Kanit,sans-serif'; ctx.fillStyle=c.gold;
+    ctx.fillText('x'+state.combo,px+14,py-50+bob);
+  }
+  /* particles */
+  AC.parts.forEach(p=>{ctx.globalAlpha=Math.max(0,p.l);ctx.fillStyle=p.c;
+    ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,Math.PI*2);ctx.fill();});
+  ctx.globalAlpha=1;
+  ctx.restore();
+
+  ctx.fillStyle=c.muted; ctx.font='12px Kanit,sans-serif'; ctx.textAlign='right';
+  ctx.fillText(AC.W<150?(AC.floor+'/'+n):('ไต่ถึง'+ACT.floorWord+' '+AC.floor+' / '+n),AC.W-12,AC.H-11);
+  ctx.textAlign='left';
+}
+function acLoop(now){
+  if(!AC.on) return;
+  if(AC.last===null)AC.last=now;
+  const d=now-AC.last; AC.last=now; AC.elapsed+=d; AC.t+=d;
+  if(AC.animT<1) AC.animT=Math.min(1,AC.animT+d/640);
+  if(AC.shake>0) AC.shake=Math.max(0,AC.shake-d/22);
+  if(AC.glow>0) AC.glow=Math.max(0,AC.glow-d/26);
+  acStepParts(d);
+  acDraw(); acHud();
+  AC.raf=requestAnimationFrame(acLoop);
+}
+function acHud(){
+  $('#acProg').textContent=AC.answered+'/'+AC.qs.length;
+  $('#acFloor').textContent=AC.floor;
+  $('#acCombo').textContent=state.combo;
+  $('#acComboChip').classList.toggle('hot',state.combo>=3);
+  const bar=$('#acBar'); if(bar) bar.style.width=(AC.qs.length?(AC.floor/AC.qs.length*100):0)+'%';
+  const s=Math.floor(AC.elapsed/1000);
+  $('#acTime').textContent=Math.floor(s/60)+':'+String(s%60).padStart(2,'0');
+}
+function acStart(mode,qs,tag,onDone){
+  AC.on=true;AC.mode=mode;AC.qs=qs;AC.idx=0;AC.answered=0;AC.correct=0;AC.score=0;
+  AC.byD={district1:0,district2:0,district3:0};
+  AC.elapsed=0;AC.last=null;AC.t=0;AC.qOpen=false;AC.onDone=onDone;AC.col=acColors();
+  AC.floor=0;AC.animFrom=0;AC.animTo=0;AC.animT=1;AC.shake=0;AC.glow=0;AC.dead=false;AC.parts=[];
+  state.combo=0;
+  const ov=$('#arcade'); ov.classList.add('show'); ov.setAttribute('aria-hidden','false');
+  document.body.style.overflow='hidden';
+  $('#acTag').textContent=tag; $('#acEnd').classList.remove('show');
+  acResize(); acHud(); acQuestion();
+  SFX.init(); SFX.play('unlock');
+  cancelAnimationFrame(AC.raf); AC.raf=requestAnimationFrame(acLoop);
+}
+function acClose(){
+  AC.on=false; cancelAnimationFrame(AC.raf);
+  const ov=$('#arcade'); ov.classList.remove('show'); ov.setAttribute('aria-hidden','true');
+  document.body.style.overflow='';
+}
+function acAbort(){
+  if(!AC.on) return;
+  if(AC.answered>0 && !confirm('ออกจากด่านนี้หรือไม่ ผลของรอบนี้จะไม่ถูกบันทึก')) return;
+  acClose();
+}
+function acQuestion(){
+  const q=AC.qs[AC.idx], host=$('#acQCard');
+  AC.qOpen=true; host.dataset.done='';
+  host.innerHTML=
+    '<div class="qmeta"><span>ข้อ '+(AC.idx+1)+'/'+AC.qs.length+'</span>'+
+      (q.district?'<span class="q-type">'+SKILL_LABELS[q.district]+'</span>':'')+'</div>'+
+    '<div class="q-text">'+q.q+'</div>'+
+    '<div class="choices">'+q.c.map((c,ci)=>'<button class="choice" data-ci="'+ci+'"><span class="k">'+KEYCAPS[ci]+'</span><span>'+c+'</span></button>').join('')+'</div>'+
+    '<div class="explain" data-ex></div>'+
+    '<div class="btn-row" id="acNextRow" style="display:none"><button class="btn primary" id="acNextQ" style="flex:1">'+
+      (AC.idx===AC.qs.length-1?'จบด่าน · ดูผล':'ข้อถัดไป')+'</button></div>';
+  const t0=Date.now();
+  host.querySelectorAll('.choice').forEach(btn=>{
+    btn.addEventListener('click',()=>{
+      if(host.dataset.done) return;
+      host.dataset.done='1';
+      const ci=+btn.dataset.ci, ex=host.querySelector('[data-ex]');
+      host.querySelectorAll('.choice').forEach(b=>b.disabled=true);
+      if(ci===q.a){
+        btn.classList.add('correct'); AC.correct++;
+        if(q.district) AC.byD[q.district]++;
+        state.combo++; state.maxCombo=Math.max(state.maxCombo,state.combo);
+        const cbonus=Math.min(state.combo-1,4)*5;
+        const gain=(AC.mode==='practice'?12:20+cbonus);
+        addXp(gain,false); AC.score+=100+cbonus*10;
+        AC.animFrom=AC.floor; AC.floor++; AC.animTo=AC.floor; AC.animT=0; AC.glow=40;
+        const g=acStepGeom(AC.floor); acPuff(g.x+g.w/2,g.y,AC.col.corner,16);
+        floaty('ไต่ขึ้น'+ACT.floorWord+' '+AC.floor+' · +'+gain+' XP',AC.col.corner);
+        SFX.play(state.combo>=3?'combo':'correct');
+        if((Date.now()-t0)<8000) state.fastCorrect=true;
+      } else {
+        btn.classList.add('wrong');
+        host.querySelectorAll('.choice')[q.a].classList.add('correct');
+        state.combo=0; addXp(4,false); AC.shake=40; SFX.play('wrong');
+        const g=acStepGeom(AC.floor); acPuff(g.x+g.w/2,g.y,AC.col.red,10);
+        floaty('ยังไม่ขยับ — อ่านเฉลยแล้วไปต่อ',AC.col.red);
+      }
+      ex.innerHTML=q.e; ex.classList.add('show');
+      $('#acNextRow').style.display='flex';
+      $('#acNextQ').onclick=()=>{
+        AC.answered++; AC.idx++;
+        if(AC.idx>=AC.qs.length){ AC.qOpen=false; acFinishRound(); }
+        else { acQuestion(); $('.ac-play').scrollTop=0; }
+        acHud(); save();
+      };
+      acHud(); save();
+      try{ $('#acNextRow').scrollIntoView({behavior:REDUCED?'auto':'smooth',block:'nearest'}); }catch(e){}
+    });
+  });
+  acHud();
+}
+/* ---- เรดาร์ย่อยท้ายด่าน: เห็นทันทีว่ารอบนี้แข็ง/อ่อนด้านไหน ---- */
+function acMiniRadar(){
+  const host=$('#acMini'); if(!host) return;
+  const ks=['district1','district2','district3'];
+  const tot={district1:0,district2:0,district3:0};
+  AC.qs.forEach(q=>{ if(q.district) tot[q.district]++; });
+  const used=ks.filter(k=>tot[k]>0);
+  if(used.length<3){                       /* ด่านฝึกหัดสายเดียว → แสดงเป็นแถบ */
+    const k=used[0]||'district1';
+    const pct=tot[k]?Math.round(AC.byD[k]/tot[k]*100):0;
+    host.innerHTML='<div class="legend" style="width:100%">ความแม่นรอบนี้ — <b>'+SKILL_LABELS[k]+'</b><br>'+
+      '<span style="display:block;height:12px;border-radius:7px;background:rgba(255,255,255,.10);margin-top:8px;overflow:hidden">'+
+      '<span style="display:block;height:100%;width:'+pct+'%;background:linear-gradient(90deg,var(--corner),var(--gold))"></span></span>'+
+      '<b style="font-size:1.1rem">'+pct+'%</b> ('+AC.byD[k]+'/'+tot[k]+' ข้อ)</div>';
+    return;
+  }
+  const cx=95,cy=88,R=62;
+  const vals=ks.map(k=>tot[k]?AC.byD[k]/tot[k]:0);
+  const pt=(i,r)=>{const an=-Math.PI/2+i*2*Math.PI/3;return [cx+Math.cos(an)*r,cy+Math.sin(an)*r];};
+  let s='<svg viewBox="0 0 190 172" xmlns="http://www.w3.org/2000/svg">';
+  [1,.66,.33].forEach(f=>{
+    s+='<polygon points="'+ks.map((_,i)=>pt(i,R*f).map(v=>v.toFixed(1)).join(',')).join(' ')+
+       '" fill="none" stroke="rgba(255,255,255,.14)" stroke-width="1"/>';});
+  ks.forEach((_,i)=>{const p=pt(i,R);s+='<line x1="'+cx+'" y1="'+cy+'" x2="'+p[0].toFixed(1)+'" y2="'+p[1].toFixed(1)+'" stroke="rgba(255,255,255,.14)"/>';});
+  s+='<polygon points="'+vals.map((v,i)=>pt(i,Math.max(4,R*v)).map(x=>x.toFixed(1)).join(',')).join(' ')+
+     '" fill="var(--corner)" fill-opacity=".30" stroke="var(--corner)" stroke-width="2.5"/>';
+  vals.forEach((v,i)=>{const p=pt(i,Math.max(4,R*v));
+    s+='<circle cx="'+p[0].toFixed(1)+'" cy="'+p[1].toFixed(1)+'" r="4" fill="var(--gold)"/>';});
+  ks.forEach((_,i)=>{const p=pt(i,R+16);
+    s+='<text x="'+p[0].toFixed(1)+'" y="'+p[1].toFixed(1)+'" font-size="12" fill="var(--muted)" text-anchor="middle" font-family="Kanit,sans-serif">'+(i+1)+'</text>';});
+  s+='</svg>';
+  s+='<div class="legend">'+ks.map((k,i)=>'<div><i style="background:var(--gold)"></i>'+(i+1)+'. '+SKILL_LABELS[k]+
+     ' — <b>'+AC.byD[k]+'/'+tot[k]+'</b></div>').join('')+'</div>';
+  host.innerHTML=s;
+}
+function acFinishRound(){
+  if(AC.dead) return; AC.dead=true;
+  const total=AC.qs.length, timeSec=Math.round(AC.elapsed/1000);
+  if(AC.correct===total){ AC.score+=300; confetti(2600); SFX.play('fanfare'); }
+  else SFX.play('bell');
+  $('#acEndTitle').textContent=AC.correct===total?('ถึง'+ACT.topWord+' — CLEAR!'):'จบด่าน';
+  $('#acEndBody').innerHTML='ตอบถูก <b>'+AC.correct+'/'+total+'</b> ข้อ · ไต่ถึง'+ACT.floorWord+' <b>'+AC.floor+'</b> จาก '+total+
+    ' · คะแนนอาร์เคด <b>'+AC.score+'</b> · เวลา <b>'+Math.floor(timeSec/60)+':'+String(timeSec%60).padStart(2,'0')+'</b>';
+  acMiniRadar();
+  $('#acEnd').classList.add('show');
+  $('#acEndGo').onclick=()=>{
+    $('#acEnd').classList.remove('show'); acClose();
+    if(AC.onDone) AC.onDone({correct:AC.correct,byD:AC.byD,time:timeSec,score:AC.score});
+  };
+}
+/* ---- wiring: คีย์บอร์ดเป็นทางเลือกเสริม ไม่จำเป็นต่อการเล่น ---- */
+$('#acExit').addEventListener('click',acAbort);
+document.addEventListener('keydown',e=>{
+  if(!AC.on||e.target.tagName==='INPUT') return;
+  const k=e.key.toLowerCase();
+  if(k==='escape'){acAbort();return;}
+  const host=$('#acQCard');
+  const idx=KEYCAPS.indexOf(e.key);
+  if(idx>=0){
+    const btn=host.querySelectorAll('.choice')[idx];
+    if(btn&&!btn.disabled){e.preventDefault();btn.click();return;}
+  }
+  if(k==='enter'){const n=$('#acNextQ'); if(n) n.click();}
+});
+window.addEventListener('resize',()=>{ if(AC.on) acResize(); });
+
+/* ---- launchers ---- */
+function startTest(kind){
+  const qs=stratifiedSix(kind==='post' ? (state.preIds||[]) : []);
+  if(kind==='pre'){ state.preIds=qs.map(q=>q.qid); } else { state.postIds=qs.map(q=>q.qid); }
+  save();
+  acStart(kind, qs, (kind==='pre'?'PRETEST · ด่านทดสอบก่อนเรียน':'POSTTEST · ด่านทดสอบหลังเรียน'), res=>{
+    if(kind==='pre'){state.pre=res.correct;state.preByD=res.byD;state.preTime=res.time;}
+    else{state.post=res.correct;state.postByD=res.byD;state.postTime=res.time;}
+    save();
+    setTimeout(()=>finishTest(kind,res.correct),350);
+  });
+}
+function finishTest(kind,score){
+  const info=starInfo(score);
+  $('#rvL1').textContent=kind==='pre'?'PRETEST COMPLETE':'POSTTEST COMPLETE';
+  $('#rvL2').textContent='RAW SCORE';
+  $('#rvScore').textContent=score+'/6';
+  $('#rvRank').textContent=info.rank;
+  $('#rvSub').textContent=kind==='pre'?'นี่คือเส้นฐานของคุณ — เดี๋ยวเรามาวัดกันใหม่หลังตรวจครบทั้ง 3 เขต':info.msg;
+  const rv=$('#reveal'); rv.classList.add('show');
+  ['#rvL1','#rvRank','#rvScore','#rvL2','#rvSub'].forEach(sel=>{const e=$(sel);e.classList.remove('rv-in');e.style.opacity=0;});
+  const go=$('#rvGo'); go.style.display='none';
+  [['#rvL1',0],['#rvRank',1500],['#rvScore',1900],['#rvL2',2000],['#rvSub',2250]].forEach(([sel,delay])=>{
+    setTimeout(()=>{const e=$(sel);e.style.opacity=1;e.classList.add('rv-in');},REDUCED?0:delay);
+  });
+  renderStars($('#rvStars'),info.stars,MAX_STARS,true);
+  if(kind==='post'&&info.stars>=5){setTimeout(()=>{confetti(4200);SFX.play('fanfare');},1500);}
+  go.textContent=kind==='pre'?'เข้าเขตแรก':'ดูรายงานผลภารกิจ';
+  setTimeout(()=>{go.style.display='inline-block';},REDUCED?0:2500);
+  go.onclick=()=>{
+    SFX.play('click'); rv.classList.remove('show');
+    if(kind==='pre'){state.visited['pretest']='done';unlock('d1');goto_('scr-preview1');}
+    else {state.visited['posttest']='done';unlock('summary');showSummary();}
+  };
+}
+function startQuiz(key){
+  const map={check1:'district1',check2:'district2',check3:'district3'};
+  const d=map[key];
+  const qs=pickN(BANK[d],3).map(q=>Object.assign({},randomizeChoices(q),{district:d}));
+  acStart('practice', qs, 'TRAINING · ด่านฝึกหัด ' + SKILL_LABELS[d], res=>{
+    const rs=$('#'+key+'Result');
+    rs.className='status-line '+(res.correct===3?'ok':'');
+    rs.innerHTML='รอบล่าสุด: ตอบถูก <b>'+res.correct+'/3</b> ข้อ · คะแนนอาร์เคด '+res.score+
+      ' · เวลา '+res.time+' วินาที'+(res.correct===3?' — แม่นเต็มสิบ ไปด่านถัดไปได้เลย':' — ลองสุ่มข้อใหม่อีกรอบเพื่อความมั่นใจ');
+    $('#'+key+'Next').style.display='flex';
+    const stop=stopOfScreen('scr-'+key); if(stop) state.visited[stop.key]='done';
+    renderNav(state.screen); save();
+  });
+}
+
+/* ============ 10) LAB HELPERS ============ */
+function markLab(group,key,xp){
+  if(state.labs[group].indexOf(key)<0){ state.labs[group].push(key); addXp(xp||8); save(); return true; }
+  return false;
+}
+function labCount(g){ return state.labs[g].length; }
+
+/* ============ 11) GAME-SPECIFIC LABS ============ */
+
+/* ---- LAB 1: Courier Race — วิ่งไปหยิบข้อมูลจากแต่ละระดับหน่วยความจำ ---- */
+let courierBusy = false;
+function runCourier(label, ms, realTime){
+  if(courierBusy) return;
+  courierBusy = true;
+  const runner=$('#courierRunner'), trail=$('#courierTrail'), readout=$('#courierReadout');
+  const track=runner.parentElement;
+  const dur=REDUCED?200:ms;
+  $$('#courierChips div').forEach(d=>d.classList.remove('hit'));
+  runner.style.transition='none'; runner.style.left='8px';
+  trail.style.transition='none';  trail.style.width='0px';
+  void runner.offsetWidth;
+  const dist=Math.max(20,track.clientWidth-68);
+  runner.classList.add('go');
+  runner.style.transition='left '+(dur/1000)+'s linear';
+  trail.style.transition ='width '+(dur/1000)+'s linear';
+  requestAnimationFrame(()=>{runner.style.left=dist+'px'; trail.style.width=dist+'px';});
+  SFX.play('tick');
+  readout.textContent='>> กำลังวิ่งไปหยิบข้อมูลจาก '+label+' ... (เวลาจริงต่อครั้ง '+realTime+')';
+  setTimeout(()=>{
+    runner.classList.remove('go');
+    readout.innerHTML='>> ถึงที่หมาย <b style="color:var(--corner)">'+label+'</b> ใช้เวลาจริงต่อครั้ง '+realTime;
+    const chip=document.querySelector('#courierChips div[data-c="'+label+'"]');
+    if(chip) chip.classList.add('hit');
+    SFX.play('select');
+    courierBusy=false;
+    if(markLab('lab1',label) && labCount('lab1')===4) toast('ทดลองครบทั้ง 4 ระดับหน่วยความจำแล้ว');
+  }, dur);
+}
+
+/* ---- LAB 2: Compile vs Interpret — เห็นด้วยตาว่าสองวิธีหยุดคนละจังหวะ ---- */
+function resetCodeLines(){ $$('#codeDemo .ln').forEach(l=>l.classList.remove('run','err','scan')); }
+function demoCompile(){
+  resetCodeLines();
+  const status=$('#demoStatus');
+  status.className='status-line';
+  status.textContent='>> กำลังแปลทั้งไฟล์ (Compile) ตรวจไวยากรณ์ทีละบรรทัดโดยยังไม่รันสักบรรทัด...';
+  let i=0; const lines=[1,2,3,4,5];
+  const step=()=>{
+    if(i<lines.length){
+      const el=document.querySelector('#codeDemo .ln[data-n="'+lines[i]+'"]');
+      if(el) el.classList.add('scan');
+      SFX.play('tick'); i++; setTimeout(step,REDUCED?40:230);
+    } else {
+      resetCodeLines();
+      document.querySelector('#codeDemo .ln[data-n="4"]').classList.add('err');
+      status.className='status-line no';
+      status.innerHTML='<b style="color:var(--red)">หยุดที่บรรทัด 4 ตั้งแต่ตอนแปล</b> — โปรแกรมยังไม่ได้เริ่มรันแม้แต่บรรทัดเดียว จึงไม่มีข้อความใดถูกพิมพ์ออกมาเลย ไม่ได้ไฟล์ที่รันได้';
+      SFX.play('wrong');
+      if(markLab('lab2','compile') && labCount('lab2')===2) toast('ลองครบทั้งสองวิธีแปลแล้ว');
+    }
+  };
+  step();
+}
+function demoInterpret(){
+  resetCodeLines();
+  const status=$('#demoStatus');
+  status.className='status-line';
+  status.textContent='>> กำลังแปลและรันทีละบรรทัด (Interpret)...';
+  let i=0; const lines=[1,2,3];
+  const step=()=>{
+    if(i<lines.length){
+      document.querySelector('#codeDemo .ln[data-n="'+lines[i]+'"]').classList.add('run');
+      SFX.play('select'); i++; setTimeout(step,REDUCED?60:480);
+    } else {
+      document.querySelector('#codeDemo .ln[data-n="4"]').classList.add('err');
+      status.className='status-line no';
+      status.innerHTML='<b style="color:var(--red)">หยุดที่บรรทัด 4 เช่นกัน</b> — แต่สังเกตแถบสีเขียวว่าบรรทัด 1 ถึง 3 ทำงานสำเร็จและพิมพ์ผลออกมาแล้วก่อนหน้านี้ นี่คือความต่างสำคัญที่สุดของ Interpreter กับ Compiler';
+      SFX.play('wrong');
+      if(markLab('lab2','interpret') && labCount('lab2')===2) toast('ลองครบทั้งสองวิธีแปลแล้ว');
+    }
+  };
+  step();
+}
+
+/* ---- LAB 3: Network Classifier — ขยายวงครอบคลุมตามระยะทางจริง ---- */
+const NET_RADII={1:34,2:58,3:88,4:124,5:158};
+function classifyNet(desc,type,level){
+  const r=NET_RADII[level];
+  const r1=$('#netRing1'), r2=$('#netRing2'), r3=$('#netRing3'), nodes=$('#netNodes');
+  r1.setAttribute('r',Math.min(r,58));  r1.setAttribute('opacity',1);
+  r2.setAttribute('r',level>=3?Math.min(r,100):0); r2.setAttribute('opacity',level>=3?1:0);
+  r3.setAttribute('r',level>=4?r:0);    r3.setAttribute('opacity',level>=4?1:0);
+  nodes.setAttribute('opacity',level>=2?1:.25);
+  $('#netLabel').textContent=desc+'  →  '+type;
+  const result=$('#netResult');
+  result.className='status-line ok';
+  result.innerHTML='ขอบเขต: <b>'+desc+'</b> &nbsp;→&nbsp; จัดเป็น <span class="badge-net '+type+'">'+type+'</span>';
+  SFX.play('select');
+  if(markLab('lab3',desc) && labCount('lab3')===5) toast('ทดลองครบทุกระยะทางแล้ว เห็นภาพ LAN → MAN → WAN ชัดขึ้นแน่นอน');
+}
+
+/* ============ 12) SUMMARY + RADAR ============ */
+const BADGE_DEFS = [
+  {id:'perfect',  name:'MASTER OF THE GRID',desc:'Posttest ถูกครบ 6 ข้อ',                 test:s => s.post === 6},
+  {id:'zero2hero',name:'CITY LIGHTS UP',    desc:'ดาวเพิ่มขึ้น 3 ดวงขึ้นไป',              test:s => (starInfo(s.post).stars - starInfo(s.pre).stars) >= 3},
+  {id:'fast',     name:'CACHE HIT',         desc:'ตอบถูกภายใน 8 วินาที',                 test:s => s.fastCorrect},
+  {id:'labrat',   name:'FIELD INSPECTOR',   desc:'เล่นห้องทดลองครบทั้งสามเขต',            test:s => s.labs.lab1.length === 4 && s.labs.lab2.length === 2 && s.labs.lab3.length === 5},
+  {id:'combo',    name:'ZERO LATENCY',      desc:'ตอบถูกติดกัน 5 ข้อขึ้นไป',              test:s => s.maxCombo >= 5},
+  {id:'sweep',    name:'TRIPLE DISTRICT',   desc:'ได้ 2/2 ครบทั้งสามเขต',                test:s => s.postByD.district1 === 2 && s.postByD.district2 === 2 && s.postByD.district3 === 2}
+];
+function weakestDistrict(){const ds=['district1','district2','district3'];return ds.reduce((min,d)=>state.postByD[d]<state.postByD[min]?d:min,ds[0]);}
+function extraTips(postInfo){
+  const tips=[];
+  if(labCount('lab1')<4) tips.push('ยังทดลอง Courier Race ไม่ครบทั้ง 4 ระดับ การได้ "รู้สึก" ถึงความต่างของเวลาช่วยให้จำลำดับ Register &gt; Cache &gt; RAM &gt; SSD/HDD ได้แม่นขึ้นมาก');
+  if(labCount('lab2')<2) tips.push('ยังไม่ได้กดเปรียบเทียบทั้ง Compile และ Interpret ในห้องทดลองเขต 2 — การเห็นว่า Interpreter พิมพ์บรรทัดก่อนหน้าออกมาแล้วค่อยหยุด คือภาพที่ตอบข้อสอบเรื่องนี้ได้ทุกข้อ');
+  if(labCount('lab3')<5) tips.push('ยังทดลองตัวจำแนกเครือข่ายไม่ครบทั้ง 5 ระยะ ลองกดให้ครบเพื่อเห็นวงครอบคลุมของ LAN &lt; MAN &lt; WAN เรียงกันด้วยตาตัวเอง');
+  if(postInfo.stars===MAX_STARS) tips.push('ได้ครบ 6 ดาวเต็มแล้ว ขั้นต่อไปคือลองเขียนโปรแกรม C สั้น ๆ ที่จงใจใส่ error คนละชนิด แล้วดูว่า gcc ฟ้องต่างกันอย่างไรระหว่าง syntax error กับ link error');
+  return tips;
+}
+function showSummary(){
+  goto_('scr-summary'); state.visited['summary']='done';
+  const preInfo=starInfo(state.pre||0), postInfo=starInfo(state.post||0);
+  const fmtT=s=>Math.floor((s||0)/60)+':'+String((s||0)%60).padStart(2,'0');
+  $('#sumWho').textContent='วิศวกรประจำเมือง: '+(state.name||'ไม่ระบุชื่อ')+' · เวลาในด่านทดสอบ ก่อนเรียน '+fmtT(state.preTime)+
+    ' / หลังเรียน '+fmtT(state.postTime)+' · ภารกิจสำเร็จเมื่อ '+new Date().toLocaleString('th-TH',{dateStyle:'medium',timeStyle:'short'});
+  $('#sumPre').textContent=state.pre+'/6'; $('#sumPost').textContent=state.post+'/6';
+  $('#sumPreRank').textContent=preInfo.rank; $('#sumPostRank').textContent=postInfo.rank;
+  renderStars($('#sumPreStars'),preInfo.stars,MAX_STARS,false);
+  renderStars($('#sumPostStars'),postInfo.stars,MAX_STARS,true);
+  const dStar=postInfo.stars-preInfo.stars, msg=$('#sumMsg');
+  if(dStar>0){msg.className='delta';msg.textContent='ดาวเพิ่มขึ้น +'+dStar+' ดวง (จาก '+preInfo.stars+' เป็น '+postInfo.stars+' ดาว) — พัฒนาการชัดเจนมาก';}
+  else if(dStar===0){msg.className='delta flat';msg.textContent=postInfo.stars>=5?'คงระดับ '+postInfo.stars+' ดาวไว้ได้ทั้งก่อนและหลังเรียน — ความเข้าใจมั่นคงดีมาก':'ดาวยังคงที่ที่ '+postInfo.stars+' ดวง — ยังมีจุดที่ยังไม่คลิก ลองทบทวนหัวข้อที่ระบบแนะนำด้านล่างแล้วสอบใหม่';}
+  else {msg.className='delta down';msg.textContent='รอบนี้ดาวยังไม่ขึ้น ถือเป็นข้อมูลที่มีค่า — ระบบเลือกหัวข้อที่ควรทบทวนก่อนไว้ให้ที่ปุ่มด้านล่างแล้ว';}
+  const dsHost=$('#sumDistrictStars'); dsHost.innerHTML='';
+  ['district1','district2','district3'].forEach(d=>{
+    const got=state.postByD[d], was=state.preByD[d];
+    const row=document.createElement('div'); row.className='dstar-row';
+    const diff=got-was;
+    const diffTxt=diff>0?'<span style="color:var(--corner)">+'+diff+'</span>':diff<0?'<span style="color:var(--red)">'+diff+'</span>':'<span style="color:var(--muted)">คงที่</span>';
+    row.innerHTML='<div class="lbl">'+SKILL_LABELS[d]+'</div><div class="star-row xs" data-d="'+d+'"></div><div class="mono" style="font-size:.78rem">'+got+'/2 '+diffTxt+'</div>';
+    dsHost.appendChild(row);
+    renderStars(row.querySelector('.star-row'),got,2,false);
+  });
+  drawRadar();
+  const bHost=$('#sumBadges'); bHost.innerHTML='';
+  BADGE_DEFS.forEach((b,i)=>{
+    let ok=false; try{ok=!!b.test(state);}catch(e){ok=false;}
+    const el=document.createElement('div');
+    el.className='badge'+(ok?'':' locked'); el.style.animationDelay=(i*0.07)+'s';
+    el.innerHTML='<b>'+(ok?'★':'☆')+'</b><span><b>'+b.name+'</b> — '+b.desc+'</span>';
+    bHost.appendChild(el);
+  });
+  const adv=$('#sumAdvice'); adv.innerHTML='';
+  const tips=[]; const weak=weakestDistrict();
+  if(state.postByD[weak]<2) tips.push('จุดที่ควรทบทวนก่อนคือ <b>'+SKILL_LABELS[weak]+'</b> — กลับไปอ่านสรุปและเล่นห้องทดลองของหัวข้อนั้นซ้ำอีกครั้ง');
+  extraTips(postInfo).forEach(t=>tips.push(t));
+  if(state.maxCombo<3) tips.push('ลองทำแบบฝึกหัดประจำด่านซ้ำจนตอบถูกติดกัน 3 ข้อขึ้นไป จะช่วยยืนยันว่าเข้าใจจริงไม่ใช่เดา');
+  if(!tips.length) tips.push('ผลงานอยู่ในเกณฑ์ดี แนะนำให้เล่นซ้ำอีกรอบเพื่อเจอชุดคำถามใหม่ที่ระบบสุ่มให้');
+  tips.forEach(t=>{const li=document.createElement('li');li.innerHTML=t;adv.appendChild(li);});
+  $('#sumXp').textContent=state.xp; $('#sumCombo').textContent=state.maxCombo;
+  $('#sumStarTotal').textContent=postInfo.stars+'/'+MAX_STARS;
+  $('#btnReview').textContent='ทบทวน: '+SKILL_LABELS[weak];
+  $('#btnReview').onclick=()=>{SFX.play('click');goto_(DISTRICT_SCREEN[weak]);};
+  save();
+}
+/* ---- CSV export (สำหรับอาจารย์เก็บคะแนน) ---- */
+function exportCSV(){
+  const rows=[['name','avatar','pretest','posttest','d1_pre','d2_pre','d3_pre','d1_post','d2_post','d3_post','stars_pre','stars_post','pre_time_s','post_time_s','xp','max_combo','labs','timestamp'],
+    [state.name,state.avatar,state.pre,state.post,state.preByD.district1,state.preByD.district2,state.preByD.district3,
+     state.postByD.district1,state.postByD.district2,state.postByD.district3,
+     starInfo(state.pre||0).stars,starInfo(state.post||0).stars,state.preTime||0,state.postTime||0,state.xp,state.maxCombo,
+     labCount('lab1')+'/'+labCount('lab2')+'/'+labCount('lab3'),new Date().toISOString()]];
+  const csv='﻿'+rows.map(r=>r.map(v=>'"'+String(v).replace(/"/g,'""')+'"').join(',')).join('\n');
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8'}));
+  a.download='GNR1007_D1_cpucity_'+(state.name||'player').replace(/[^\w฀-๿-]/g,'_')+'.csv';
+  document.body.appendChild(a); a.click(); a.remove();
+  toast('บันทึกไฟล์คะแนน CSV แล้ว ส่งให้อาจารย์ได้เลย');
+}
+let radarChart=null;
+function radarData(){
+  const labels=[SKILL_LABELS.district1,SKILL_LABELS.district2,SKILL_LABELS.district3,'ภาพรวมความแม่นยำ'];
+  const preData=[state.preByD.district1/2*100,state.preByD.district2/2*100,state.preByD.district3/2*100,state.pre/6*100].map(Math.round);
+  const postData=[state.postByD.district1/2*100,state.postByD.district2/2*100,state.postByD.district3/2*100,state.post/6*100].map(Math.round);
+  return {labels,preData,postData};
+}
+function drawRadar(){
+  const {labels,preData,postData}=radarData();
+  const canvas=$('#skillRadarChart'), fb=$('#radarFallback');
+  if(typeof Chart==='undefined'){canvas.style.display='none';fb.style.display='block';drawRadarSVG(labels,preData,postData);return;}
+  canvas.style.display='block'; fb.style.display='none';
+  if(radarChart) radarChart.destroy();
+  radarChart=new Chart(canvas,{type:'radar',
+    data:{labels,datasets:[
+      {label:'Pretest',data:preData,borderColor:'#8ca0b8',backgroundColor:'rgba(140,160,184,0.12)',pointBackgroundColor:'#8ca0b8'},
+      {label:'Posttest',data:postData,borderColor:'#22d3ee',backgroundColor:'rgba(34,211,238,0.20)',pointBackgroundColor:'#22d3ee'}]},
+    options:{responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{labels:{color:'#e6edf6',font:{family:'Kanit'}}}},
+      scales:{r:{min:0,max:100,ticks:{display:false,stepSize:25},grid:{color:'rgba(34,211,238,.18)'},angleLines:{color:'rgba(34,211,238,.18)'},pointLabels:{color:'#8ca0b8',font:{size:10,family:'Kanit'}}}}}});
+}
+function drawRadarSVG(labels,preData,postData){
+  const cx=170,cy=140,R=96,n=labels.length;
+  const pt=(i,v)=>{const ang=-Math.PI/2+i*2*Math.PI/n;const r=R*(v/100);return [cx+r*Math.cos(ang),cy+r*Math.sin(ang)];};
+  let s='';
+  [25,50,75,100].forEach(g=>{s+='<polygon points="'+labels.map((_,i)=>pt(i,g).join(',')).join(' ')+'" fill="none" stroke="rgba(34,211,238,.16)"/>';});
+  labels.forEach((_,i)=>{const [x,y]=pt(i,100);s+='<line x1="'+cx+'" y1="'+cy+'" x2="'+x+'" y2="'+y+'" stroke="rgba(34,211,238,.16)"/>';});
+  s+='<polygon points="'+preData.map((v,i)=>pt(i,v).join(',')).join(' ')+'" fill="rgba(140,160,184,.14)" stroke="#8ca0b8" stroke-width="2"/>';
+  s+='<polygon points="'+postData.map((v,i)=>pt(i,v).join(',')).join(' ')+'" fill="rgba(34,211,238,.20)" stroke="#22d3ee" stroke-width="2"/>';
+  labels.forEach((lb,i)=>{const [x,y]=pt(i,124);const anchor=x<cx-6?'end':(x>cx+6?'start':'middle');s+='<text x="'+x+'" y="'+(y+4)+'" text-anchor="'+anchor+'" font-size="9" fill="#8ca0b8" font-family="Kanit,sans-serif">'+lb+'</text>';});
+  s+='<g font-size="10"><rect x="18" y="266" width="12" height="4" fill="#8ca0b8"/><text x="36" y="271" fill="#8ca0b8">Pretest</text><rect x="110" y="266" width="12" height="4" fill="#22d3ee"/><text x="128" y="271" fill="#22d3ee">Posttest</text></g>';
+  $('#radarFallback').innerHTML=s;
+}
+
+/* ============ 13) AVATARS ============ */
+const AVATARS = [
+  '<circle cx="26" cy="26" r="24" fill="#0d1a30" stroke="#22d3ee" stroke-width="2"/><path d="M26 10l14 9v14l-14 9-14-9V19z" fill="#22d3ee"/><circle cx="26" cy="26" r="5" fill="#04070f"/>',
+  '<circle cx="26" cy="26" r="24" fill="#0d1a30" stroke="#34d399" stroke-width="2"/><path d="M14 34c0-10 24-10 24 0" fill="none" stroke="#34d399" stroke-width="3"/><circle cx="26" cy="19" r="6" fill="#34d399"/>',
+  '<circle cx="26" cy="26" r="24" fill="#0d1a30" stroke="#fbbf24" stroke-width="2"/><path d="M20 12h12l-3 12h6l-11 16 3-12h-6z" fill="#fbbf24"/>',
+  '<circle cx="26" cy="26" r="24" fill="#0d1a30" stroke="#fb7185" stroke-width="2"/><rect x="14" y="18" width="24" height="18" rx="6" fill="#fb7185"/><circle cx="21" cy="27" r="3" fill="#04070f"/><circle cx="31" cy="27" r="3" fill="#04070f"/>',
+  '<circle cx="26" cy="26" r="24" fill="#0d1a30" stroke="#7dd3fc" stroke-width="2"/><path d="M12 38 L26 12 L40 38 Z" fill="none" stroke="#7dd3fc" stroke-width="3"/><circle cx="26" cy="30" r="4" fill="#7dd3fc"/>',
+  '<circle cx="26" cy="26" r="24" fill="#0d1a30" stroke="#ffd76a" stroke-width="2"/><rect x="16" y="14" width="20" height="24" rx="10" fill="#ffd76a"/><path d="M26 38v6" stroke="#ffd76a" stroke-width="3" stroke-linecap="round"/>'
+];
+function renderAvatars(){
+  const host=$('#avatarGrid'); host.innerHTML='';
+  AVATARS.forEach((a,i)=>{
+    const b=document.createElement('button'); b.type='button';
+    b.className='avatar-opt'+(i===state.avatar?' sel':'');
+    b.setAttribute('aria-label','อวตารแบบที่ '+(i+1));
+    b.innerHTML='<svg viewBox="0 0 52 52" xmlns="http://www.w3.org/2000/svg">'+a+'</svg>';
+    b.addEventListener('click',()=>{state.avatar=i;SFX.init();SFX.play('select');renderAvatars();});
+    host.appendChild(b);
+  });
+}
+function updChip(){
+  $('#chipAva').innerHTML='<svg viewBox="0 0 52 52" xmlns="http://www.w3.org/2000/svg">'+AVATARS[state.avatar]+'</svg>';
+  $('#chipTxt').textContent=state.name||'—';
+}
+
+/* ============ 14) EVENT WIRING ============ */
+document.addEventListener('click',e=>{
+  const go=e.target.closest('[data-goto]'); if(go){SFX.play('click');goto_(go.dataset.goto);return;}
+  const qz=e.target.closest('[data-quiz]'); if(qz){SFX.play('click');const k=qz.dataset.quiz;goto_('scr-'+k);return;}
+  const rq=e.target.closest('[data-requiz]'); if(rq){SFX.play('click');startQuiz(rq.dataset.requiz);return;}
+  
+  const cr=e.target.closest('[data-courier]');
+  if(cr){SFX.play('click');const p=cr.dataset.courier.split('|');runCourier(p[0],+p[1],p[2]);return;}
+  const dm=e.target.closest('[data-demo]');
+  if(dm){SFX.play('click');(dm.dataset.demo==='compile'?demoCompile:demoInterpret)();return;}
+  const nt=e.target.closest('[data-net]');
+  if(nt){SFX.play('click');const p=nt.dataset.net.split('|');classifyNet(p[0],p[1],+p[2]);return;}
+});
+$('#preLaunch').addEventListener('click',()=>{SFX.play('click');startTest('pre');});
+$('#postLaunch').addEventListener('click',()=>{SFX.play('click');startTest('post');});
+$('#goPost').addEventListener('click',()=>{SFX.play('click');state.visited['d3']='done';unlock('posttest');goto_('scr-posttest');});
+$('#btnStart').addEventListener('click',()=>{
+  const nm=$('#playerName').value.trim();
+  if(!nm){$('#nameErr').classList.add('show');$('#playerName').focus();return;}
+  $('#nameErr').classList.remove('show'); state.name=nm;
+  SFX.init(); SFX.play('unlock'); updChip(); updXp();
+  goto_('scr-pretest');
+});
+$('#playerName').addEventListener('input',()=>$('#nameErr').classList.remove('show'));
+$('#playerName').addEventListener('keydown',e=>{if(e.key==='Enter')$('#btnStart').click();});
+$('#wSound').addEventListener('click',()=>{SFX.on=!SFX.on;SFX.init();updSoundBtns();if(SFX.on)SFX.play('select');});
+$('#btnSound').addEventListener('click',()=>{SFX.on=!SFX.on;updSoundBtns();if(SFX.on)SFX.play('select');});
+$('#btnCsv').addEventListener('click',()=>{SFX.play('click');exportCSV();});
+function hardReset(){clearSaved();location.reload();}
+$('#btnReset').addEventListener('click',()=>{if(confirm('ต้องการเริ่มภารกิจใหม่ทั้งหมดหรือไม่ ความคืบหน้าปัจจุบันจะถูกล้าง'))hardReset();});
+$('#btnAgain').addEventListener('click',hardReset);
+const saved=loadSaved();
+if(saved){
+  $('#wResume').style.display='block';
+  $('#wResume').textContent='เล่นต่อ: '+saved.name;
+  $('#wResume').addEventListener('click',()=>{
+    Object.assign(state,saved); SFX.init(); updChip(); updXp();
+    const target=state.screen&&state.screen!=='scr-welcome'?state.screen:'scr-pretest';
+    goto_(target);
+    if(target==='scr-summary') showSummary();
+    toast('กลับมาต่อจากจุดเดิมแล้ว');
+  });
+}
+renderAvatars(); updSoundBtns(); updXp(); renderNav('scr-welcome');
+window.addEventListener('resize',()=>{
+  const cv=$('#confetti');if(cv.style.display==='block'){cv.width=innerWidth;cv.height=innerHeight;}
+  if(AC.on) acResize();
+});
+
+
+</script>
+
+<script>(function(){
+  var KEY='gnr1007_theme';
+  var btn=document.getElementById('btnTheme');
+  if(!btn) return;
+  function apply(t){document.documentElement.setAttribute('data-theme',t);}
+  btn.addEventListener('click', function(){
+    var cur = document.documentElement.getAttribute('data-theme')==='light' ? 'dark':'light';
+    apply(cur);
+    try{localStorage.setItem(KEY,cur);}catch(e){}
+  });
+})();</script>
+<!-- GNR-CORE:BEGIN -->
+<style id="gnr-core-css">
+:root:not([data-theme="light"]){--ember:#22d3ee;--corner:#34d399;--gold:#fbbf24;--gold2:#ffd76a;--red:#fb7185;--cyan:#22d3ee;--green:#34d399;--amber:#fbbf24;--purple:#a78bfa;--pink:#f472b6}
+:root[data-theme="light"]{--ember:#0a7080;--corner:#187151;--gold:#825e02;--gold2:#856100;--red:#d00524;--cyan:#0a7281;--green:#197453;--amber:#846002;--purple:#6c3df7;--pink:#c30f6d;--line:rgba(11,120,137,.26);--ember-dim:rgba(11,120,137,.16)}
+/* ================================================================
+   GNR-CORE v7.0 — ชั้นปรับปรุงร่วมของทุกเกม (ใส่ท้ายสไตล์เดิม จึงมีสิทธิ์เหนือกว่า)
+   1) อ่านง่ายทั้งโหมดมืดและสว่าง  2) แถบสถานะด่านย้ายไปด้านซ้าย
+   3) ช่องรหัสนักศึกษา + ชื่อเล่น   4) หน้าสรุปผลแบบแดชบอร์ดจอเดียว
+   ================================================================ */
+
+/* ---------- 1) ความอ่านง่าย ---------- */
+:root{--muted:#a9b7ca}
+:root[data-theme="light"]{--text:#101826;--muted:#46536a}
+body{font-size:16px}
+.muted{font-size:.92rem}
+input[type=text]::placeholder{color:var(--muted);opacity:.75}
+.navpill{opacity:.62}
+.navpill.unlocked{opacity:1}
+footer .fmono{color:var(--muted)}
+.floaty{text-shadow:0 0 3px var(--bg),0 0 14px var(--bg),0 0 22px currentColor}
+
+:root[data-theme="light"] body::after{opacity:.18}
+:root[data-theme="light"] .btn.primary,
+:root[data-theme="light"] .btn.pink{color:#fff;text-shadow:0 1px 1px rgba(0,0,0,.25)}
+:root[data-theme="light"] .btn:not(.primary):not(.pink){background:rgba(16,24,38,.04)}
+:root[data-theme="light"] .icon-btn{background:rgba(16,24,38,.05)}
+:root[data-theme="light"] .title{background:linear-gradient(100deg,var(--ember),var(--gold) 50%,var(--corner));
+  -webkit-background-clip:text;background-clip:text;color:transparent}
+:root[data-theme="light"] .rv-score{background:linear-gradient(100deg,var(--ember),var(--gold),var(--corner));
+  -webkit-background-clip:text;background-clip:text;color:transparent;filter:none}
+:root[data-theme="light"] .rv-rank{background:linear-gradient(100deg,var(--gold),var(--ember));
+  -webkit-background-clip:text;background-clip:text;color:transparent}
+:root[data-theme="light"] .bar{background:rgba(16,24,38,.10)}
+:root[data-theme="light"] th,:root[data-theme="light"] td,
+:root[data-theme="light"] .qtbl th,:root[data-theme="light"] .qtbl td{border-bottom-color:rgba(16,24,38,.10)}
+:root[data-theme="light"] .choice{background:#fff}
+:root[data-theme="light"] .codebox,:root[data-theme="light"] .qcode{background:#f3f6fb;color:#0f1726;border-color:rgba(16,24,38,.16)}
+:root[data-theme="light"] .explain{background:rgba(255,196,0,.10)}
+:root[data-theme="light"] #acEnd{background:rgba(16,24,38,.55)}
+:root[data-theme="light"] .ac-bar{background:rgba(16,24,38,.12)}
+:root[data-theme="light"] .panel{box-shadow:0 1px 2px rgba(16,24,38,.06),0 14px 38px rgba(16,24,38,.10)}
+:root[data-theme="light"] .avatar-opt{background:#eef2f8}
+.q-text code.ic,.explain code.ic,.choice code.ic,.qmeta code.ic{color:var(--gold)}
+:root[data-theme="light"] .q-text code.ic,:root[data-theme="light"] .explain code.ic,
+:root[data-theme="light"] .choice code.ic{background:rgba(16,24,38,.06)}
+
+/* ---------- 2) ARCADE: แถบสถานะอยู่ด้านซ้าย ใช้พื้นที่น้อยที่สุด ---------- */
+:root{--rail-w:clamp(66px,15vw,212px)}
+#arcade.show{flex-direction:row}
+#arcade .ac-top{flex:0 0 var(--rail-w);width:var(--rail-w);height:auto;min-height:0;max-height:none;
+  border-bottom:0;border-right:1px solid var(--line);display:flex;flex-direction:column;overflow:hidden;position:relative}
+#arcade .ac-hud{order:-1;position:static;inset:auto;display:flex;flex-direction:column;align-items:stretch;gap:4px;
+  padding:7px 6px 6px;flex-wrap:nowrap;pointer-events:auto;background:var(--panel2);border-bottom:1px solid var(--line);z-index:2}
+#arcade .ac-exit{order:-2;margin:0;align-self:stretch;min-width:0;height:30px;min-height:30px;font-size:.66rem}
+#arcade #acTag{order:-1;display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:3;overflow:hidden;
+  white-space:normal;text-align:center;font-size:.6rem;line-height:1.3;padding:3px 4px;border-radius:8px;color:var(--ember);font-weight:600}
+#arcade .ac-chip{justify-content:space-between;border-radius:8px;padding:3px 7px;font-size:.68rem;min-width:0;white-space:nowrap;color:var(--muted)}
+#arcade .ac-chip b{font-size:.82rem;color:var(--text)}
+#arcade .ac-chip.hot b{color:var(--gold)}
+.gnr-cvwrap{position:relative;flex:1 1 auto;min-height:0}
+.gnr-cvwrap #acv{position:absolute;inset:0;width:100%;height:100%;display:block}
+#arcade .ac-play{flex:1 1 auto;min-width:0;padding:14px 16px}
+#arcade .ac-card{width:min(760px,100%)}
+@media (max-width:700px){
+  #arcade .ac-hud{padding:5px 4px;gap:3px}
+  #arcade .ac-chip{flex-direction:column;gap:0;padding:2px 1px;text-align:center;align-items:center;font-size:.56rem;line-height:1.25}
+  #arcade .ac-chip b{font-size:.74rem}
+  #arcade .ac-play{padding:8px 8px 10px}
+  #arcade .ac-card{padding:13px 12px}
+}
+@media (max-height:520px) and (orientation:landscape){
+  #arcade #acTag{display:none}
+  #arcade .ac-hud{gap:2px;padding:4px}
+}
+
+/* ---------- 3) ลงทะเบียน: รหัสนักศึกษา + ชื่อเล่น ---------- */
+.gnr-hint{margin-top:7px;font-size:.78rem;line-height:1.55;color:var(--muted);
+  border-left:3px solid var(--ember);padding:6px 10px;border-radius:0 9px 9px 0;background:rgba(var(--ink-panel-rgb),.45)}
+.gnr-hint b{color:var(--text)}
+.gnr-count{font-family:var(--mono);font-size:.72rem;float:right;color:var(--muted)}
+.gnr-count.ok{color:var(--corner)}
+.gnr-idnote{margin-top:6px;font-size:.8rem;color:var(--corner);min-height:1.2em}
+#gnrSid{font-family:var(--mono);letter-spacing:.14em}
+
+/* ---------- 4) หน้าสรุปผล: แดชบอร์ดจอเดียว ---------- */
+body.gnr-sum footer{display:none}
+body.gnr-sum .wrap{padding-top:10px;padding-bottom:10px}
+#scr-summary.gnr-done>.panel{padding:14px 16px 12px}
+#scr-summary.gnr-done>.panel>*:not(.gnr-head):not(.gnr-dash){display:none !important}
+.gnr-head{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:10px}
+.gnr-head .tag{margin:0}
+.gnr-head h2{margin:0;font-size:1.12rem}
+.gnr-head .gnr-when{margin-left:auto;font-size:.76rem;color:var(--muted);font-family:var(--mono)}
+.gnr-dash{display:grid;grid-template-columns:minmax(250px,1fr) minmax(300px,1.3fr) minmax(270px,1.15fr);gap:12px;
+  height:var(--gnr-dash-h,auto);min-height:0}
+.gnr-col{display:flex;flex-direction:column;gap:10px;min-height:0;min-width:0}
+.gnr-box{background:rgba(var(--ink-panel-rgb),.55);border:1px solid var(--line);border-radius:14px;padding:11px 12px;min-width:0}
+.gnr-box h4{margin:0 0 6px;font-size:.78rem;letter-spacing:.06em;color:var(--ember);font-weight:600;text-transform:uppercase;font-family:var(--mono)}
+.gnr-id{display:grid;grid-template-columns:52px 1fr;gap:10px;align-items:center}
+.gnr-id .ava{width:52px;height:52px;border-radius:14px;background:var(--panel2);border:1px solid var(--line);display:grid;place-items:center}
+.gnr-id .ava svg{width:44px;height:44px}
+.gnr-id .nick{font-size:1.12rem;font-weight:600;line-height:1.25;color:var(--text);word-break:break-word}
+.gnr-id .sid,.gnr-id .nick{text-transform:none !important}
+.gnr-id .sid{font-family:var(--mono);font-size:.95rem;letter-spacing:.12em;color:var(--ember)}
+.gnr-id .sid small{font-family:var(--font);letter-spacing:0;color:var(--muted);font-size:.72rem;margin-right:6px}
+.gnr-id .gm{font-size:.74rem;color:var(--muted);grid-column:1/-1;border-top:1px dashed var(--line);padding-top:6px;margin-top:2px}
+.gnr-dash .cmp-grid{margin:0;gap:6px}
+.gnr-dash .cmp-col{padding:8px 6px}
+.gnr-dash .cmp-col b{font-size:1.3rem;line-height:1.25}
+.gnr-dash .star-row.sm{margin:4px 0 2px;gap:3px}
+.gnr-dash .star-row.sm .star{width:clamp(11px,1.05vw,15px);height:clamp(11px,1.05vw,15px)}
+.gnr-dash .star-row.sm{gap:2px}
+.gnr-dash .cmp-col{min-width:0;overflow:hidden}
+.gnr-dash .star-row.sm{flex-wrap:nowrap}
+.gnr-dash .delta{margin:8px 0 0;font-size:.88rem;line-height:1.45}
+.gnr-dash .hud{margin:0 !important;gap:6px}
+.gnr-dash .hud .stat{padding:5px 6px;min-width:0}
+.gnr-dash .hud .stat b{font-size:.98rem}
+.gnr-dash .hud .stat small{font-size:.58rem}
+.gnr-radar{flex:1 1 auto;display:flex;flex-direction:column;min-height:0}
+.gnr-dash .chartbox{flex:1 1 auto;height:auto;min-height:220px;margin:0}
+.gnr-sw{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.gnr-sw .sw{border-radius:12px;padding:8px 10px;border:1px solid var(--line);min-width:0}
+.gnr-sw .sw h5{margin:0 0 4px;font-size:.8rem;font-weight:600}
+.gnr-sw .sw.good{background:color-mix(in srgb,var(--corner) 11%,transparent);border-color:color-mix(in srgb,var(--corner) 45%,transparent)}
+.gnr-sw .sw.good h5{color:var(--corner)}
+.gnr-sw .sw.weak{background:color-mix(in srgb,var(--red) 9%,transparent);border-color:color-mix(in srgb,var(--red) 40%,transparent)}
+.gnr-sw .sw.weak h5{color:var(--red)}
+.gnr-sw ul{list-style:none;margin:0;padding:0;display:grid;gap:3px}
+.gnr-sw li{font-size:.8rem;line-height:1.4;display:flex;justify-content:space-between;gap:6px}
+.gnr-sw li span:last-child{font-family:var(--mono);font-size:.74rem;color:var(--muted);white-space:nowrap}
+.gnr-sw .none{font-size:.78rem;color:var(--muted)}
+.gnr-cheer{border-radius:14px;padding:12px 14px;border:1px solid color-mix(in srgb,var(--gold) 50%,transparent);
+  background:linear-gradient(135deg,color-mix(in srgb,var(--gold) 16%,transparent),color-mix(in srgb,var(--ember) 8%,transparent))}
+.gnr-cheer .big{font-size:1.02rem;font-weight:600;line-height:1.45;color:var(--text);margin:0 0 4px}
+.gnr-cheer p{margin:0;font-size:.84rem;line-height:1.55;color:var(--text)}
+.gnr-cheer .lvl{display:inline-block;font-family:var(--mono);font-size:.68rem;letter-spacing:.08em;color:var(--gold);margin-bottom:3px}
+.gnr-tabs{display:flex;gap:4px;flex-wrap:wrap}
+.gnr-tabs button{flex:1 1 auto;font-family:var(--font);font-size:.76rem;padding:6px 8px;border-radius:9px;cursor:pointer;
+  border:1px solid var(--line);background:transparent;color:var(--muted);min-height:32px}
+.gnr-tabs button.on{background:var(--ember);color:var(--bg);border-color:var(--ember);font-weight:600}
+.gnr-tabbody{flex:1 1 auto;min-height:90px;overflow:auto;padding-right:2px}
+.gnr-tabbody>*{display:none !important;margin-top:0 !important}
+.gnr-tabbody>.on{display:grid !important}
+.gnr-tabbody .advice li{display:block;font-size:.82rem;padding:7px 10px;line-height:1.55}
+.gnr-tabbody .advice li::before{margin-right:6px}
+.gnr-tabbody .badges{justify-content:flex-start;margin:0}
+.gnr-tabbody .badge{font-size:.72rem;padding:4px 10px}
+.gnr-tabbody .dstar-row,.gnr-tabbody .axisrow{padding:6px 10px;font-size:.8rem}
+.gnr-dash .btn-row{margin-top:0;gap:8px}
+.gnr-dash .btn-row .btn{flex:1 1 auto;padding:9px 12px;min-height:40px;font-size:.84rem}
+.gnr-note{font-size:.7rem;color:var(--muted);line-height:1.4}
+@media (max-width:980px){
+  .gnr-dash{grid-template-columns:1fr 1fr;height:auto}
+  .gnr-col.c{grid-column:1/-1}
+  .gnr-dash .chartbox{height:260px;flex:none}
+  .gnr-tabbody{max-height:260px}
+}
+@media (max-width:640px){
+  .gnr-dash{grid-template-columns:1fr;gap:10px}
+  .gnr-col{display:contents}
+  .gnr-id{order:1} .gnr-score{order:2} .gnr-cheer{order:3} .gnr-radar{order:4} .gnr-sw{order:5}
+  .gnr-dash .hud{order:6} .gnr-tabs{order:7} .gnr-tabbody{order:8} .gnr-dash .btn-row{order:9} .gnr-note{order:10}
+  .gnr-head .gnr-when{margin-left:0;width:100%}
+  .gnr-dash .chartbox{height:250px;min-height:250px}
+  .gnr-tabbody{max-height:none}
+}
+.gnr-dash .cmp-grid{grid-template-columns:minmax(0,1fr) auto minmax(0,1fr) !important}
+.gnr-dash .cmp-arrow{transform:none !important;padding:0 !important}
+@media print{
+  #topbar,.gnr-tabs,.gnr-dash .btn-row{display:none !important}
+  .gnr-dash{height:auto}
+}
+
+/* ---------- ผังงาน SVG (เกม 7, 10) ในโหมดสว่าง ---------- */
+:root[data-theme="light"] .fs.t{fill:rgba(15,122,85,.08);stroke:#0f7a55}
+:root[data-theme="light"] .fs.p{fill:rgba(3,105,161,.07);stroke:#0369a1}
+:root[data-theme="light"] .fs.d{fill:rgba(180,120,0,.09);stroke:#a16207}
+:root[data-theme="light"] .fs.io{fill:rgba(154,52,18,.06);stroke:#b45309}
+:root[data-theme="light"] .fs.c{fill:rgba(71,85,105,.07);stroke:#475569}
+:root[data-theme="light"] .ft{fill:#0f1726}
+:root[data-theme="light"] .fl{fill:#334155}
+:root[data-theme="light"] .fe{stroke:#64748b}
+:root[data-theme="light"] .fa{fill:#64748b}
+:root[data-theme="light"] .fn.hi .fs{stroke:#b45309;fill:rgba(251,191,36,.22)}
+:root[data-theme="light"] .fn.hi .ft{fill:#7c2d12}
+:root[data-theme="light"] .fclegend{background:rgba(16,24,38,.04)}
+.navpill{opacity:.85}
+.navpill:not(.unlocked){border-style:dashed}
+:root[data-theme="light"] .choice.correct .k,:root[data-theme="light"] .choice.wrong .k{color:#fff}
+:root[data-theme="light"] body::before{background:
+  radial-gradient(900px 600px at 12% -10%,var(--ember-dim),transparent 60%),
+  radial-gradient(800px 600px at 92% 8%,rgba(251,191,36,.08),transparent 60%),
+  linear-gradient(180deg,var(--bg),var(--bg-grad-mid,#e9edf3) 60%,var(--bg))}
+
+/* ---------- 5) จอคอมพิวเตอร์: ทุกหน้าอยู่ในจอเดียว ไม่ต้องเลื่อน (UI v7.1, 2 ต.ค. 2569) ----------
+   - หน้าแรก: ภาพ/ชื่อเกมซ้าย บัตรลงทะเบียนขวา
+   - หน้าบทเรียน/ห้องทดลอง: ขยายความกว้างและจัดเนื้อหาเป็น 2 คอลัมน์ (gnr_core.js จัดกลุ่มหัวข้อให้ไม่ขาดกลางตาราง)
+   - footer ย่อเหลือแถบบาง มือถือและแท็บเล็ตแนวตั้งยังเป็นแบบเดิมทุกอย่าง */
+.gnr-flow,.gnr-blk{display:contents}
+@media (min-width:1100px){
+  footer{margin-top:8px;padding:7px 16px 9px}
+  footer p{display:inline;font-size:.72rem;line-height:1.5}
+  footer p+p::before{content:" · "}
+  footer .fmono{font-size:.62rem}
+  #scr-welcome .hero{min-height:calc(100dvh - 96px);display:grid;grid-template-columns:minmax(0,1fr) minmax(420px,500px);
+    grid-template-rows:auto auto auto auto;align-content:center;align-items:center;column-gap:clamp(28px,4vw,64px);
+    max-width:1240px;margin:0 auto;padding:16px 24px;text-align:center}
+  #scr-welcome .hero>*{grid-column:1}
+  #scr-welcome .hero>.login-card{grid-column:2;grid-row:1/span 4;width:100%;margin:0;align-self:center}
+  #scr-welcome .cityart{width:auto;max-width:100%;height:min(300px,34dvh);justify-self:center}
+  #scr-welcome .title{font-size:clamp(1.6rem,2.6vw,2.5rem)}
+  #scr-welcome .subtitle{margin:4px auto 0}
+  #scr-welcome .feature-row{margin-top:14px}
+}
+@media (min-width:1200px){
+  body.gnr-wide .wrap,body.gnr-wide .topbar-in{max-width:min(1760px,96vw)}
+  body.gnr-wide .wrap{padding-top:10px;padding-bottom:8px}
+  .screen.gnr-cols>.panel{padding:16px 22px}
+  .screen.gnr-cols>.panel>h2{margin-bottom:6px}
+  .gnr-flow{display:block;column-count:2;column-gap:30px;column-fill:balance}
+  .gnr-blk{display:block;break-inside:avoid;page-break-inside:avoid;padding-bottom:2px}
+  .gnr-blk>:first-child{margin-top:0}
+  .gnr-flow .tbl-wrap,.gnr-flow .codebox{max-width:100%}
+}
+@media (min-width:1200px) and (min-height:900px){ .gnr-flow{column-gap:40px} }
+@media (min-width:1100px) and (max-height:760px){
+  .wrap{padding-top:8px;padding-bottom:6px}
+  .panel{padding:16px 20px}
+  .howto{margin-top:8px}
+}
+@media (min-width:1100px) and (max-height:820px){
+  .gnr-flow .stage svg{max-height:30dvh;width:auto;max-width:100%;margin:0 auto}
+  .gnr-flow .codebox,.gnr-flow pre{line-height:1.45}
+  .gnr-flow .tbl-wrap td,.gnr-flow .tbl-wrap th{padding-top:6px;padding-bottom:6px}
+}
+@media (min-width:1200px){ body.gnr-wide #pitGrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px} body.gnr-wide #pitGrid>*{margin:0} }
+</style>
+<script>window.GNR_CFG={game:'game1',title:'CPU CITY',padExtra:16};</script>
+<script id="gnr-core-js">
+/* ================================================================
+   GNR-CORE v7.0 — สคริปต์ร่วมของทุกเกม (โหลดหลังสคริปต์หลักของเกม)
+   ใช้ตัวแปรระดับโกลบอลของเกม: state, AC, ACT, acColors, acResize, acStepGeom,
+   showSummary, radarData, radarChart, goto_, exportCSV, MAX_STARS
+   ================================================================ */
+(function(){
+  'use strict';
+  var CFG = window.GNR_CFG || {game:'game', title:'GNR1007', padExtra:16};
+  var ID_KEY = 'gnr1007_student', RES_KEY = 'gnr1007_results', SECRET = 'ru2569', MASK = 'xxxxxxxxxx';
+  function $(s){ return document.querySelector(s); }
+  function el(tag, cls, html){ var e=document.createElement(tag); if(cls) e.className=cls; if(html!=null) e.innerHTML=html; return e; }
+  function escH(s){ return String(s==null?'':s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];}); }
+  function css(n){ return (getComputedStyle(document.documentElement).getPropertyValue(n)||'').trim(); }
+  function isLight(){ return document.documentElement.getAttribute('data-theme')==='light'; }
+  function rgba(hex,a){
+    var h=(hex||'').replace('#','');
+    if(h.length===3) h=h.split('').map(function(c){return c+c;}).join('');
+    if(!/^[0-9a-f]{6}$/i.test(h)) return hex;
+    var n=parseInt(h,16); return 'rgba('+(n>>16&255)+','+(n>>8&255)+','+(n&255)+','+a+')';
+  }
+
+  /* ---------------- ตัวตนผู้เรียน ---------------- */
+  function checkId(raw){
+    var v=(raw||'').trim();
+    if(v.toLowerCase()===SECRET) return {ok:true, sid:MASK, via:'code'};
+    var d=v.replace(/[\s-]/g,'');
+    if(!d) return {ok:false, msg:'กรุณากรอกรหัสนักศึกษา 10 หลัก'};
+    if(/^\d+$/.test(d)){
+      if(d.length!==10) return {ok:false, msg:'รหัสนักศึกษาต้องมี 10 หลัก (ตอนนี้ '+d.length+' หลัก)'};
+      if(!/^[5-7]\d{9}$/.test(d)) return {ok:false, msg:'รหัสนักศึกษาต้องขึ้นต้นด้วยปีที่เข้าศึกษา เช่น 69xxxxxxxx'};
+      return {ok:true, sid:d, via:'id'};
+    }
+    return {ok:false, msg:'กรอกได้เฉพาะตัวเลข 10 หลัก หรือรหัสลับที่ได้รับจากผู้สอน'};
+  }
+  function getId(){ try{ var o=JSON.parse(sessionStorage.getItem(ID_KEY)||'null'); return (o&&o.sid)?o:null; }catch(e){ return null; } }
+  function setId(o){ try{ sessionStorage.setItem(ID_KEY, JSON.stringify(o)); }catch(e){} }
+  window.GNRID = {check:checkId, get:getId, set:function(raw,nick){ var r=checkId(raw); if(r.ok) setId({sid:r.sid,via:r.via,raw:raw,nick:nick||''}); return r; }};
+
+  function setupLogin(){
+    var nameIn=$('#playerName'); if(!nameIn) return;
+    var nameLbl=document.querySelector('label[for="playerName"]');
+    var host=nameLbl||nameIn;
+    var box=el('div','gnr-idbox',
+      '<label for="gnrSid">รหัสนักศึกษา <span class="gnr-count" id="gnrCount">0/10</span></label>'+
+      '<input type="text" id="gnrSid" maxlength="12" autocomplete="off" spellcheck="false" placeholder="เช่น 69xxxxxxxx">'+
+      '<div class="gnr-hint">กรอก <b>รหัสนักศึกษา 10 หลัก</b> เป็นตัวเลขล้วน ขึ้นต้นด้วยปีที่เข้าศึกษา ตัวอย่าง <b>69</b>xxxxxxxx (รหัสปี 2569)</div>'+
+      '<div class="err" id="gnrSidErr"></div><div class="gnr-idnote" id="gnrIdNote"></div>');
+    box.style.marginBottom='14px';
+    host.parentNode.insertBefore(box, host);
+    if(nameLbl) nameLbl.textContent='ชื่อเล่น (แสดงบนใบรายงานผล)';
+    nameIn.placeholder='เช่น ต้นกล้า';
+    var sid=$('#gnrSid'), cnt=$('#gnrCount'), err=$('#gnrSidErr'), note=$('#gnrIdNote');
+    function live(){
+      var v=sid.value.trim(), d=v.replace(/[\s-]/g,'');
+      err.classList.remove('show');
+      if(v.toLowerCase()===SECRET){ cnt.textContent='รหัสลับ'; cnt.className='gnr-count ok'; note.textContent='ใช้รหัสลับ · ใบรายงานผลจะแสดงรหัสเป็น '+MASK; return; }
+      cnt.textContent=(/^\d*$/.test(d)?d.length:'-')+'/10';
+      var r=checkId(v); cnt.className='gnr-count'+(r.ok?' ok':'');
+      note.textContent=r.ok?'รูปแบบรหัสนักศึกษาถูกต้อง':'';
+    }
+    sid.addEventListener('input', live);
+    sid.addEventListener('keydown', function(e){ if(e.key==='Enter'){ e.preventDefault(); nameIn.focus(); } });
+    var cur=getId();
+    if(cur){ sid.value=cur.raw||(cur.via==='id'?cur.sid:''); if(cur.nick && !nameIn.value) nameIn.value=cur.nick; live(); }
+    /* ตรวจก่อนเริ่มเกม (จับใน capture phase เพื่อให้ทำงานก่อนตัวจัดการเดิมของเกม) */
+    document.addEventListener('click', function(e){
+      var b=e.target.closest && e.target.closest('#btnStart,#wResume'); if(!b) return;
+      var r=checkId(sid.value);
+      if(!r.ok){
+        e.stopPropagation(); e.preventDefault();
+        err.textContent=r.msg; err.classList.remove('show'); void err.offsetWidth; err.classList.add('show');
+        sid.focus(); return;
+      }
+      var nick=nameIn.value.trim();
+      if(!nick){ var prev=getId(); nick=(prev&&prev.nick)||''; }
+      setId({sid:r.sid, via:r.via, raw:sid.value.trim(), nick:nick});
+    }, true);
+  }
+
+  /* ---------------- ปุ่มกลับหน้ารวม + สลับธีมบนหน้าแรกของเกม ---------------- */
+  var ICON_THEME='<svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.9" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><path d="M12 3.5a8.5 8.5 0 0 1 0 17z" fill="currentColor"/></svg>';
+  var ICON_HOME='<svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3.5 11 12 4l8.5 7"/><path d="M6 9.5V20h12V9.5"/></svg>';
+  function toggleTheme(){
+    var t=isLight()?'dark':'light';
+    document.documentElement.setAttribute('data-theme',t);
+    try{ localStorage.setItem('gnr1007_theme',t); }catch(e){}
+    setTimeout(onTheme,30);
+  }
+  function setupChrome(){
+    var bt=$('#btnTheme'); if(bt){ bt.innerHTML=ICON_THEME; }
+    var right=document.querySelector('.tb-right');
+    if(right && !$('#btnHome')){
+      var h=el('a','icon-btn',ICON_HOME); h.id='btnHome'; h.href='index.html'; h.title='กลับหน้ารวมเกม'; h.setAttribute('aria-label','กลับหน้ารวมเกม');
+      h.style.textDecoration='none'; right.insertBefore(h,right.firstChild);
+    }
+    var wel=$('#scr-welcome');
+    if(wel && !$('#gnrWelBar')){
+      var bar=el('div','', '<a class="icon-btn" href="index.html" title="กลับหน้ารวมเกม" aria-label="กลับหน้ารวมเกม" style="text-decoration:none">'+ICON_HOME+'</a>'+
+        '<button class="icon-btn" type="button" id="gnrWelTheme" title="สลับโหมดสว่าง/มืด" aria-label="สลับโหมดสว่างหรือมืด">'+ICON_THEME+'</button>');
+      bar.id='gnrWelBar'; bar.style.cssText='position:absolute;top:14px;right:14px;display:flex;gap:8px;z-index:5';
+      wel.style.position='relative'; wel.appendChild(bar);
+      $('#gnrWelTheme').addEventListener('click',toggleTheme);
+    }
+  }
+
+  /* ---------------- ARCADE: แถบสถานะด้านซ้าย ---------------- */
+  function setupArcade(){
+    var cv=$('#acv'); if(!cv || cv.parentNode.classList.contains('gnr-cvwrap')) return;
+    var w=el('div','gnr-cvwrap'); cv.parentNode.insertBefore(w,cv); w.appendChild(cv);
+    var exit=$('#acExit'); if(exit){ exit.textContent='ออก (ESC)'; }
+    if(typeof acResize==='function'){
+      acResize=function(){
+        var c=$('#acv'); if(!c) return;
+        var dpr=Math.min(2,window.devicePixelRatio||1);
+        AC.W=c.clientWidth||120; AC.H=c.clientHeight||300;
+        AC.padT=(CFG.padExtra||16)+14;
+        c.width=Math.max(1,AC.W*dpr); c.height=Math.max(1,AC.H*dpr);
+        var ctx=c.getContext('2d'); if(ctx&&ctx.setTransform) ctx.setTransform(dpr,0,0,dpr,0,0);
+        shortWords(ctx);
+      };
+    }
+    if(typeof acStepGeom==='function'){
+      acStepGeom=function(i){
+        var n=AC.qs.length||1, padB=30, padT=AC.padT||36, W=AC.W;
+        var h=Math.max(60,AC.H-padB-padT), y=AC.H-padB-(i*(h/n));
+        if(W<200){ /* รางแคบ: ขั้นบันไดสลับซ้าย-ขวา ไต่ขึ้นแนวตั้ง */
+          var ww=Math.max(30,Math.min(96,W*0.5)), room=Math.max(0,W-ww-12);
+          return {x:6+((i%2)?room:0), y:y, w:ww, h:9};
+        }
+        var w2=Math.max(56,Math.min(118,W*0.30)), usable=Math.max(20,W-w2-24);
+        return {x:12+(n<=1?0:(i/n)*usable), y:y, w:w2, h:9};
+      };
+    }
+  }
+  function shortWords(ctx){
+    if(typeof ACT==='undefined') return;
+    if(!ACT._o) ACT._o={top:ACT.topWord, ground:ACT.groundWord};
+    var room=AC.W-12;
+    try{ ctx.font='11px Kanit,sans-serif'; }catch(e){}
+    function fit(s,alt){ try{ return ctx.measureText(s).width<=room?s:alt; }catch(e){ return s; } }
+    ACT.topWord=fit(ACT._o.top,'ยอด');
+    ACT.groundWord=fit(ACT._o.ground,'เริ่ม');
+  }
+
+  /* ---------------- ข้อความใน SVG (ภาพประกอบบทเรียน) ให้อ่านได้ในโหมดสว่าง ----------------
+     ภาพประกอบเดิมออกแบบบนพื้นมืด จึงใช้สีข้อความสว่างแบบฝังตาย เมื่ออยู่บนพื้นขาวจะจางมาก
+     วิธีแก้: หาสีพื้นใต้ข้อความจริง (รูปทรงที่วาดก่อนและครอบข้อความอยู่) แล้วเข้มสีเฉพาะที่ความต่างสีต่ำ */
+  var _cvs=document.createElement('canvas').getContext('2d');
+  function toRGB(c){
+    if(!c||c==='none'||c==='transparent') return null;
+    try{ _cvs.fillStyle='#000'; _cvs.fillStyle=c; c=_cvs.fillStyle; }catch(e){ return null; }
+    var m=/^#([0-9a-f]{6})$/i.exec(c);
+    if(m){ var n=parseInt(m[1],16); return [n>>16&255,n>>8&255,n&255,1]; }
+    m=/rgba?\(([^)]+)\)/.exec(c); if(!m) return null;
+    var p=m[1].split(',').map(parseFloat); return [p[0],p[1],p[2],p.length>3?p[3]:1];
+  }
+  function L(c){ function f(v){ v/=255; return v<=0.03928?v/12.92:Math.pow((v+0.055)/1.055,2.4);} return 0.2126*f(c[0])+0.7152*f(c[1])+0.0722*f(c[2]); }
+  function CR(a,b){ var x=L(a),y=L(b); return (Math.max(x,y)+0.05)/(Math.min(x,y)+0.05); }
+  function mix(top,bot,a){ return [top[0]*a+bot[0]*(1-a),top[1]*a+bot[1]*(1-a),top[2]*a+bot[2]*(1-a),1]; }
+  function darkenTo(c,bg,target){
+    var r=c.slice(); for(var i=0;i<40 && CR(r,bg)<target;i++){ r=[r[0]*0.88,r[1]*0.88,r[2]*0.88,1]; } return 'rgb('+r.slice(0,3).map(Math.round).join(',')+')';
+  }
+  function fixSvgText(root){
+    var light=isLight(), page=[250,251,253,1];
+    Array.prototype.forEach.call((root||document).querySelectorAll('svg text'),function(t){
+      if(t.closest('#arcade')||t.closest('.chartbox')) return;
+      if(t.hasAttribute('data-ofill')){ t.style.fill=''; }
+      if(!light) return;
+      var cs=getComputedStyle(t), fg=toRGB(cs.fill); if(!fg) return;
+      var svg=t.ownerSVGElement; if(!svg) return;
+      var bb; try{ bb=t.getBBox(); }catch(e){ return; } if(!bb.width) return;
+      var cx=bb.x+bb.width/2, cy=bb.y+bb.height/2, bg=page;
+      var shapes=svg.querySelectorAll('rect,circle,ellipse,path,polygon');
+      for(var i=0;i<shapes.length;i++){
+        var s=shapes[i];
+        if(!(s.compareDocumentPosition(t)&Node.DOCUMENT_POSITION_FOLLOWING)) continue;
+        var sb; try{ sb=s.getBBox(); }catch(e){ continue; }
+        if(cx<sb.x||cx>sb.x+sb.width||cy<sb.y||cy>sb.y+sb.height) continue;
+        var sc=getComputedStyle(s), f=toRGB(sc.fill); if(!f||f[3]===0) continue;
+        var a=f[3]*(parseFloat(sc.fillOpacity)||1)*(parseFloat(sc.opacity)||1);
+        if(sb.width*sb.height<60) continue;
+        bg=mix(f,bg,Math.min(1,a));
+      }
+      if(CR(fg,bg)>=3.2) return;
+      if(L(bg)>0.4){ t.setAttribute('data-ofill','1'); t.style.fill=darkenTo(fg,bg,4.5); }
+    });
+  }
+  var svgT=null; function queueSvgFix(){ clearTimeout(svgT); svgT=setTimeout(function(){ try{ fixSvgText(); }catch(e){} },60); }
+
+  /* ---------------- สีกราฟตามธีม ---------------- */
+  function wrapLabel(s){
+    s=String(s); if(s.length<=12) return s;
+    var words=[];
+    try{ var seg=new Intl.Segmenter('th',{granularity:'word'}); for(var it of seg.segment(s)) words.push(it.segment); }
+    catch(e){ words=s.split(/(\s+)/); }
+    var lines=[''], lim=Math.max(10,Math.ceil(s.length/2)+1);
+    words.forEach(function(w){ var cur=lines[lines.length-1]; if(cur && (cur+w).trim().length>lim){ lines.push(w.trim()); } else { lines[lines.length-1]=cur+w; } });
+    return lines.map(function(x){return x.trim();}).filter(Boolean);
+  }
+  function styleChart(){
+    var tx=css('--text')||'#e6edf6', mu=css('--muted')||'#8ca0b8', em=css('--ember')||'#22d3ee', gd=css('--gold')||'#fbbf24';
+    var grid=isLight()?'rgba(16,24,38,.16)':'rgba(255,255,255,.16)';
+    try{
+      if(typeof radarChart!=='undefined' && radarChart && typeof Chart!=='undefined'){
+        /* สร้างกราฟใหม่ทั้งตัวด้วยสีตามธีม (ไม่แก้ options เดิมผ่าน proxy ของ Chart.js) */
+        var cv=radarChart.canvas, d=radarData(), old=radarChart.data.datasets;
+        var labels=d.labels.map(wrapLabel);
+        var l0=(old[0]&&old[0].label)||'Pretest', l1=(old[1]&&old[1].label)||'Posttest';
+        var pc=(CFG.game==='game10')?gd:em;
+        radarChart.destroy();
+        radarChart=new Chart(cv,{type:'radar',
+          data:{labels:labels,datasets:[
+            {label:l0,data:d.preData,borderColor:mu,backgroundColor:rgba(mu,.12),pointBackgroundColor:mu,borderDash:[5,4],borderWidth:2},
+            {label:l1,data:d.postData,borderColor:pc,backgroundColor:rgba(pc,.22),pointBackgroundColor:pc,borderWidth:2.5}]},
+          options:{responsive:true,maintainAspectRatio:false,animation:{duration:500},
+            layout:{padding:{left:16,right:16,top:2,bottom:0}},
+            plugins:{legend:{position:'bottom',labels:{color:tx,font:{family:'Kanit',size:12},boxWidth:14}}},
+            scales:{r:{min:0,max:100,ticks:{display:true,stepSize:50,backdropColor:'rgba(0,0,0,0)',color:mu,font:{size:9}},
+              grid:{color:grid},angleLines:{color:grid},pointLabels:{color:tx,font:{family:'Kanit',size:11}}}}}});
+      }
+    }catch(e){ console.warn('gnr chart',e); }
+    var fb=$('#radarFallback'); if(fb) Array.prototype.forEach.call(fb.querySelectorAll('text'),function(t){ if(!/Posttest|หลัง/.test(t.textContent)) t.setAttribute('fill',tx); });
+  }
+  function onTheme(){
+    try{ if(typeof AC!=='undefined' && AC.on && typeof acColors==='function') AC.col=acColors(); }catch(e){}
+    styleChart(); queueSvgFix();
+  }
+
+  /* ---------------- หน้าสรุปผลแบบแดชบอร์ด ---------------- */
+  function maxQ(){ try{ return (typeof MAX_STARS!=='undefined')?MAX_STARS:6; }catch(e){ return 6; } }
+  function pct(a,b){ return b?Math.round(a/b*100):0; }
+  function axes(){
+    try{
+      var d=radarData(), out=[];
+      d.labels.forEach(function(l,i){ if(/ภาพรวม/.test(l)) return; out.push({label:l, pre:d.preData[i]||0, post:d.postData[i]||0}); });
+      return out;
+    }catch(e){ return []; }
+  }
+  function cheer(nick, pre, post, max, weakName){
+    var p=pct(post,max), d=post-pre, lvl, big, body;
+    if(p>=100){ lvl='ความพร้อมสอบ: พร้อมมาก'; big='ยอดเยี่ยม '+nick+' — ถูกครบทุกข้อ';
+      body='คุณเข้าใจหัวข้อนี้ครบถ้วนแล้ว ความแม่นยำระดับนี้คือสิ่งที่ข้อสอบ กว ด้านการเขียนโปรแกรมต้องการ ลองเล่นซ้ำเพื่อเจอชุดคำถามใหม่ หรืออธิบายให้เพื่อนฟัง เพราะการสอนผู้อื่นคือการทบทวนที่ดีที่สุด'; }
+    else if(p>=67){ lvl='ความพร้อมสอบ: พร้อม'; big='ดีมาก '+nick+' — อีกนิดเดียวก็เต็ม';
+      body='พื้นฐานของคุณแน่นแล้ว เหลือเพียง <b>'+escH(weakName)+'</b> ที่ต้องเก็บให้ครบ ทบทวนอีกเพียงรอบเดียวก็พร้อมเข้าห้องสอบอย่างมั่นใจ'; }
+    else if(p>=34){ lvl='ความพร้อมสอบ: กำลังพัฒนา'; big='กำลังมาถูกทาง '+nick;
+      body='คุณจับแก่นของหัวข้อนี้ได้แล้วบางส่วน เริ่มจาก <b>'+escH(weakName)+'</b> ก่อน อ่านเฉลยทีละข้อแล้วลองใหม่ ทุกรอบที่เล่นซ้ำคือคะแนนที่เพิ่มขึ้นในห้องสอบจริง'; }
+    else { lvl='ความพร้อมสอบ: เริ่มต้น'; big='ทุกคนเริ่มจากจุดนี้ '+nick;
+      body='คะแนนรอบนี้คือแผนที่บอกว่าควรเริ่มตรงไหน ไม่ใช่ตัวตัดสินความสามารถ กลับไปที่ <b>'+escH(weakName)+'</b> ทำห้องทดลองให้ครบ แล้วกลับมาทดสอบอีกครั้ง ความเข้าใจเกิดจากการลงมือซ้ำ'; }
+    var add = d>0 ? ' · พัฒนาขึ้น <b>+'+d+' ข้อ</b> จากก่อนเรียน แสดงว่าการเรียนรอบนี้ได้ผลจริง'
+            : d===0 ? (p>=67?' · รักษามาตรฐานได้คงที่ทั้งก่อนและหลังเรียน':' · คะแนนยังคงที่ ลองเปลี่ยนวิธีทบทวนด้วยการทำห้องทดลองซ้ำ')
+            : ' · คะแนนลดลงเล็กน้อยเป็นเรื่องปกติเมื่อเจอคำถามชุดใหม่ อย่าเพิ่งท้อ';
+    return '<span class="lvl">'+lvl+'</span><p class="big">'+escH(big)+'</p><p>'+body+add+'</p>';
+  }
+  function saveResult(id, pre, post, max){
+    try{
+      var all=JSON.parse(localStorage.getItem(RES_KEY)||'{}'); var k=id.sid||MASK;
+      all[k]=all[k]||{}; var old=all[k][CFG.game]||{};
+      all[k][CFG.game]={pre:pre, post:post, max:max, best:Math.max(post, old.best||0), nick:id.nick||'', at:new Date().toISOString(), plays:(old.plays||0)+1};
+      localStorage.setItem(RES_KEY, JSON.stringify(all));
+    }catch(e){}
+  }
+  var built=false;
+  function buildDash(){
+    var sec=$('#scr-summary'); if(!sec) return null;
+    var panel=sec.querySelector('.panel'); if(!panel) return null;
+    if(built) return panel;
+    built=true;
+    var tag=panel.querySelector('.tag'), h2=panel.querySelector('h2');
+    var head=el('div','gnr-head'); if(tag) head.appendChild(tag); if(h2) head.appendChild(h2);
+    head.appendChild(el('span','gnr-when','')); panel.insertBefore(head, panel.firstChild);
+    var dash=el('div','gnr-dash');
+    var a=el('div','gnr-col a'), b=el('div','gnr-col b'), c=el('div','gnr-col c');
+    /* คอลัมน์ A: ตัวตน + ก่อน/หลังเรียน */
+    var idb=el('div','gnr-box gnr-id','<div class="ava" id="gnrAva"></div><div><div class="nick" id="gnrNick">—</div><div class="sid"><small>รหัสนักศึกษา</small><span id="gnrSidShow">—</span></div></div><div class="gm" id="gnrGame"></div>');
+    a.appendChild(idb);
+    var sc=el('div','gnr-box gnr-score','<h4>คะแนน Pretest → Posttest</h4>');
+    ['.cmp-grid','#sumMsg'].forEach(function(s){ var x=panel.querySelector(s); if(x) sc.appendChild(x); });
+    a.appendChild(sc);
+    var hud=panel.querySelector('.hud'); if(hud) a.appendChild(hud);
+    /* คอลัมน์ B: เรดาร์ + จุดเด่น/จุดด้อย */
+    var rb=el('div','gnr-box gnr-radar','<h4>เรดาร์ทักษะรายด้าน</h4>');
+    var cb=panel.querySelector('.chartbox'); if(cb) rb.appendChild(cb);
+    b.appendChild(rb);
+    b.appendChild(el('div','gnr-sw','<div class="sw good"><h5>จุดเด่น</h5><div id="gnrGood"></div></div><div class="sw weak"><h5>ควรเสริม</h5><div id="gnrWeak"></div></div>'));
+    /* คอลัมน์ C: กำลังใจ + แท็บรายละเอียด + ปุ่ม */
+    c.appendChild(el('div','gnr-cheer',''));
+    var tabs=el('div','gnr-tabs'), body=el('div','gnr-tabbody');
+    var panes=[['คำแนะนำ','#sumAdvice'],['รายหัวข้อ','#sumDistrictStars'],['รายบท','#sumAxisRows'],['เหรียญตรา','#sumBadges']];
+    if(panel.querySelector('#sumPlan')){
+      var pw=el('div','gnr-plan'); pw.style.cssText='gap:10px';
+      ['#sumPlan','#sumPitLinks'].forEach(function(s){ var x=panel.querySelector(s); if(x){ x.style.display='grid'; pw.appendChild(x);} });
+      panes.push(['แผนซ้อม',pw]);
+    }
+    panes.forEach(function(p,i){
+      var node=(typeof p[1]==='string')?panel.querySelector(p[1]):p[1]; if(!node) return;
+      body.appendChild(node);
+      var bt=el('button','',p[0]); bt.type='button';
+      bt.addEventListener('click',function(){ Array.prototype.forEach.call(tabs.children,function(x){x.classList.remove('on');}); Array.prototype.forEach.call(body.children,function(x){x.classList.remove('on');}); bt.classList.add('on'); node.classList.add('on'); });
+      tabs.appendChild(bt);
+    });
+    if(tabs.firstChild){ tabs.firstChild.classList.add('on'); body.firstChild.classList.add('on'); }
+    c.appendChild(tabs); c.appendChild(body);
+    var br=panel.querySelector('.btn-row');
+    if(br){ var hm=el('a','btn','หน้ารวมเกม'); hm.href='index.html'; hm.style.textAlign='center'; hm.style.textDecoration='none'; br.appendChild(hm); c.appendChild(br); }
+    c.appendChild(el('div','gnr-note','ภาพหน้าจอนี้ใช้เป็นหลักฐานผลการฝึกได้ · ปุ่ม CSV ด้านบนบันทึกคะแนนพร้อมรหัสนักศึกษาส่งอาจารย์'));
+    dash.appendChild(a); dash.appendChild(b); dash.appendChild(c);
+    panel.appendChild(dash);
+    sec.classList.add('gnr-done');
+    var st=document.createElement('style'); st.textContent='.gnr-tabbody>.badges.on{display:flex !important;flex-wrap:wrap;gap:6px}';
+    document.head.appendChild(st);
+    return panel;
+  }
+  function fitDash(){
+    var d=document.querySelector('.gnr-dash'); if(!d) return;
+    if(window.innerWidth<=980){ d.style.removeProperty('--gnr-dash-h'); return; }
+    var top=d.getBoundingClientRect().top+window.scrollY;
+    var h=Math.max(430, window.innerHeight-top-22);
+    d.style.setProperty('--gnr-dash-h', h+'px');
+  }
+  function enhanceSummary(){
+    var panel=buildDash(); if(!panel) return;
+    var id=getId()||{sid:MASK, nick:''};
+    var nick=(typeof state!=='undefined' && state.name)||id.nick||'ผู้เล่น';
+    var max=maxQ(), pre=+(state.pre||0), post=+(state.post||0);
+    $('#gnrNick').textContent=nick;
+    $('#gnrSidShow').textContent=id.sid||MASK;
+    var ava=$('#chipAva'); $('#gnrAva').innerHTML=ava?ava.innerHTML:'';
+    var who=$('#sumWho');
+    $('#gnrGame').textContent=CFG.title+' · GNR1007'+(who&&who.textContent?' · '+who.textContent.split('·').slice(1).join('·').trim():'');
+    document.querySelector('.gnr-when').textContent=new Date().toLocaleString('th-TH',{dateStyle:'medium',timeStyle:'short'});
+    var ax=axes(), good=ax.filter(function(x){return x.post>=100;}), weak=ax.filter(function(x){return x.post<=50;});
+    good.sort(function(p,q){return q.post-p.post;}); weak.sort(function(p,q){return p.post-q.post;});
+    function li(x){ var dd=x.post-x.pre; return '<li><span>'+escH(x.label)+'</span><span>'+x.post+'%'+(dd?(' ('+(dd>0?'+':'')+dd+')'):'')+'</span></li>'; }
+    var best=ax.slice().sort(function(p,q){return q.post-p.post;})[0];
+    $('#gnrGood').innerHTML=good.length?'<ul>'+good.slice(0,4).map(li).join('')+'</ul>':'<div class="none">ยังไม่มีหัวข้อที่ได้เต็ม'+(best?' · ใกล้ที่สุดคือ '+escH(best.label)+' ('+best.post+'%)':'')+'</div>';
+    $('#gnrWeak').innerHTML=weak.length?'<ul>'+weak.slice(0,4).map(li).join('')+'</ul>':'<div class="none">ไม่มีหัวข้อที่ต่ำกว่า 50% ยอดเยี่ยมมาก</div>';
+    var weakName=weak.length?weak[0].label:(ax.slice().sort(function(p,q){return p.post-q.post;})[0]||{label:'หัวข้อที่ได้คะแนนน้อยที่สุด'}).label;
+    document.querySelector('.gnr-cheer').innerHTML=cheer(nick, pre, post, max, weakName);
+    saveResult({sid:id.sid, nick:nick}, pre, post, max);
+    styleChart();
+    requestAnimationFrame(function(){ fitDash(); setTimeout(function(){ fitDash(); try{ if(radarChart) radarChart.resize(); }catch(e){} },120); });
+  }
+
+  /* ---------------- ห่อฟังก์ชันเดิมของเกม ---------------- */
+  function wrap(){
+    if(typeof showSummary==='function'){
+      var _s=showSummary;
+      showSummary=function(){ var r=_s.apply(this,arguments); try{ enhanceSummary(); }catch(e){ console.warn('gnr summary',e); } return r; };
+    }
+    if(typeof drawRadar==='function'){
+      var _d=drawRadar;
+      drawRadar=function(){ var r=_d.apply(this,arguments); styleChart(); return r; };
+    }
+    if(typeof goto_==='function'){
+      var _g=goto_;
+      goto_=function(id){ var r=_g.apply(this,arguments); document.body.classList.toggle('gnr-sum', id==='scr-summary'); queueSvgFix(); return r; };
+    }
+    if(typeof exportCSV==='function'){
+      var _x=exportCSV;
+      exportCSV=function(){
+        var id=getId(), old=state.name;
+        state.name=(old||'')+' | '+((id&&id.sid)||MASK);
+        try{ return _x.apply(this,arguments); } finally { state.name=old; }
+      };
+    }
+  }
+
+  document.addEventListener('click',function(e){ if(e.target.closest && e.target.closest('#btnTheme')) setTimeout(onTheme,30); });
+  window.addEventListener('resize',function(){ if(document.body.classList.contains('gnr-sum')) fitDash(); });
+
+  setupChrome(); setupLogin(); setupArcade(); wrap();
+  if(window.MutationObserver){ new MutationObserver(function(ms){ for(var i=0;i<ms.length;i++){ var n=ms[i].target; if(n.closest && !n.closest('#arcade') && !n.closest('.chartbox')){ queueSvgFix(); return; } } }).observe(document.body,{childList:true,subtree:true}); }
+  queueSvgFix();
+  var foot=document.querySelector('footer .fmono'); if(foot) foot.textContent+=' · UI v7.1';
+})();
+
+/* ---------- 5) จอคอมพิวเตอร์: จัดหน้าบทเรียนเป็น 2 คอลัมน์ (UI v7.1) ----------
+   ห่อเนื้อหาเป็นกลุ่ม (หัวข้อ h3 ติดกับเนื้อหาถัดไป · ห้องทดลองทั้งชุดเป็นกลุ่มเดียว) แล้วให้ CSS แบ่งคอลัมน์
+   ย้ายโหนดเดิม ไม่คัดลอก จึงไม่กระทบ id/ตัวจัดการเหตุการณ์ของเกม · จอเล็กกว่า 1200px กลุ่มเป็น display:contents (เหมือนเดิม) */
+(function(){
+  'use strict';
+  var IDS=/^scr-(lesson\d|pitwalk)$/;
+  function blk(){ var d=document.createElement('div'); d.className='gnr-blk'; return d; }
+  function isText(n){ return n.tagName==='P' || n.classList.contains('status-line') || n.classList.contains('readout-line'); }
+  function build(sec){
+    var panel=sec.querySelector(':scope>.panel'); if(!panel||panel.querySelector('.gnr-flow')) return;
+    var kids=[].slice.call(panel.children), i=0;
+    while(i<kids.length && (kids[i].classList.contains('tag')||/^H[12]$/.test(kids[i].tagName))) i++;   /* หัวเรื่องอยู่นอกคอลัมน์ */
+    var end=kids.length; if(end>i && kids[end-1].classList.contains('btn-row')) end--;                     /* ปุ่มไปต่อท้ายสุดอยู่นอกคอลัมน์ */
+    var body=kids.slice(i,end); if(body.length<3) return;
+    var flow=document.createElement('div'); flow.className='gnr-flow';
+    panel.insertBefore(flow, kids[end]||null);
+    var cur=null, keep=0, lab=false;
+    body.forEach(function(n){
+      if(n.tagName==='H3'){ lab=/ห้องทดลอง|LAB|ทดลอง/i.test(n.textContent); cur=blk(); if(lab) cur.classList.add('gnr-lab'); flow.appendChild(cur); cur.appendChild(n); keep=1; return; }
+      if(lab){ cur.appendChild(n); return; }
+      if(cur && keep){ cur.appendChild(n); if(!isText(n)) keep=0; return; }
+      if(isText(n) && cur && cur.lastElementChild && isText(cur.lastElementChild)){ cur.appendChild(n); return; }
+      cur=blk(); flow.appendChild(cur); cur.appendChild(n);
+      if(isText(n)) keep=1; else keep=0;   /* ย่อหน้าบรรยายติดกับภาพ/ตารางที่ตามมา */
+    });
+    sec.classList.add('gnr-cols');
+  }
+  /* ย่อทั้งหน้าลงเล็กน้อย (ไม่ต่ำกว่า 80% · จอกว้าง >= 1700px ไม่ต่ำกว่า 75%) เมื่อเนื้อหายาวเกินจอไม่มาก เพื่อให้ไม่ต้องเลื่อน · เฉพาะจอคอม (กว้าง >= 1100px และใช้เมาส์) */
+  var MINZ=0.8, fitT=0, fitting=false;
+  function desk(){ return innerWidth>=1100 && !(window.matchMedia && matchMedia('(pointer:coarse)').matches); }
+  function fit(){
+    if(fitting) return; fitting=true;
+    var a=document.querySelector('.screen.active'), z=1;
+    [].slice.call(document.querySelectorAll('.screen')).forEach(function(s){ if(s!==a) s.style.zoom=''; });
+    if(a && desk() && !document.body.classList.contains('gnr-sum')){
+      a.style.zoom='';
+      var doc=document.documentElement.scrollHeight, h=a.getBoundingClientRect().height, over=doc-innerHeight;
+      if(over>2 && h>0){ z=Math.max(innerWidth>=1700?0.75:MINZ, Math.floor((h-over-6)/h*100)/100); }
+      a.style.zoom = z<1 ? String(z) : '';
+    } else if(a){ a.style.zoom=''; }
+    fitting=false;
+  }
+  function queueFit(){ clearTimeout(fitT); fitT=setTimeout(fit,60); }
+  window.GNR_fit=fit;
+  function sync(){
+    var a=document.querySelector('.screen.active');
+    document.body.classList.toggle('gnr-wide', !!(a && IDS.test(a.id)));
+    queueFit();
+  }
+  window.addEventListener('resize',queueFit);
+  if(window.ResizeObserver){ var ro=new ResizeObserver(function(){ if(!fitting) queueFit(); }); [].slice.call(document.querySelectorAll('.screen')).forEach(function(s){ var p=s.querySelector(':scope>.panel'); if(p) ro.observe(p); }); }
+  [].slice.call(document.querySelectorAll('.screen')).forEach(function(s){ if(/^scr-lesson\d$/.test(s.id)) build(s); });   /* pitwalk: ขยายกว้าง + การ์ด 2 คอลัมน์ด้วย CSS */
+  sync();
+  if(window.MutationObserver){ var mo=new MutationObserver(sync); [].slice.call(document.querySelectorAll('.screen')).forEach(function(s){ mo.observe(s,{attributes:true,attributeFilter:['class']}); }); }
+})();
+</script>
+<!-- GNR-CORE:END -->
+</body>
+</html>

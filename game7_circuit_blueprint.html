@@ -1,0 +1,2940 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<script>(function(){try{var t=localStorage.getItem('gnr1007_theme');if(!t){t=(window.matchMedia&&window.matchMedia('(prefers-color-scheme: light)').matches)?'light':'dark';}document.documentElement.setAttribute('data-theme',t);}catch(e){}})();</script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>CIRCUIT BLUEPRINT : พิมพ์เขียวสนามแข่ง | GNR1007</title>
+<meta name="description" content="เกมเรียนรู้ผังงาน (Flowchart) สัญลักษณ์มาตรฐาน โครงสร้างการไหล 3 แบบ และการไล่ผังให้ได้ผลลัพธ์ — GNR1007 วันที่ 3 ช่วงที่ 10 · ผศ.ดร.กุลวลัญช์ วรุณสิน มหาวิทยาลัยรามคำแหง">
+<meta name="theme-color" content="#04121f">
+<meta property="og:title" content="CIRCUIT BLUEPRINT : พิมพ์เขียวสนามแข่ง">
+<meta property="og:description" content="ออกแบบสนามแข่งด้วยผังงาน ผ่าน 3 โซนก่อนลงแข่งจริง วัดผลก่อน-หลังเรียนด้วยระบบดาว 6 ดวง (1 ดาว = ตอบถูก 1 ข้อ)">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='18' fill='%2304121f'/><g stroke='%235cc8ff' stroke-width='7' fill='none' stroke-linecap='round'><rect x='20' y='16' width='60' height='18' rx='9'/><path d='M50 34v14'/><path d='M50 48 L72 66 L50 84 L28 66 Z'/></g></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+/* ================================================================
+   CIRCUIT BLUEPRINT : พิมพ์เขียวสนามแข่ง  v1.0 "GNR GRAND PRIX · CLIMB MODE"
+   Single-file Web App — HTML + CSS + JavaScript (no backend)
+   วิชา GNR1007 การโปรแกรมคอมพิวเตอร์สำหรับวิศวกร — เนื้อหาวันที่ 3 (บทที่ 10 Flowchart)
+   ผู้พัฒนา: ผศ.ดร.กุลวลัญช์ วรุณสิน
+   สาขาวิศวกรรมคอมพิวเตอร์ คณะวิศวกรรมศาสตร์ มหาวิทยาลัยรามคำแหง
+   Engine ported from LOGIC LABYRINTH v6.21 (ARCADE : CLIMB MODE — TAP ONLY)
+   ================================================================ */
+:root{
+  --bg:#04121f; --panel:rgba(var(--panel-rgb),.86); --panel2:rgba(var(--panel2-rgb),.94);
+  --ember:#5cc8ff; --ember-dim:rgba(92,200,255,.28);
+  --corner:#6ee7b7; --gold:#fbbf24; --gold2:#fde68a; --red:#fb7185;
+  --text:#e4f2ff; --muted:#8fb0cc; --line:rgba(92,200,255,.22);
+  --radius:16px; --shadow:0 10px 40px rgba(0,0,0,.6);
+  --font:'Kanit','Sarabun','Noto Sans Thai','Segoe UI',Tahoma,sans-serif;
+  --mono:'IBM Plex Mono','Consolas',monospace; --bg-grad-mid:#072338; --ink-panel-rgb:4,18,31; --panel-rgb:10,32,54; --panel2-rgb:14,45,73;}
+:root[data-theme="light"]{ --bg:#f4f6fa; --panel:rgba(255,255,255,.90); --panel2:rgba(255,255,255,.97); --ember:#0087cc; --ember-dim:rgba(0,135,204,.16); --corner:#1daf75; --gold:#be8a03; --gold2:#e7b904; --red:#e40627; --text:#141b26; --muted:#5c6b80; --line:rgba(0,135,204,.28); --bg-grad-mid:#e9edf3; --ink-panel-rgb:255,255,255; --panel-rgb:255,255,255; --panel2-rgb:244,247,251;
+  color-scheme:light;
+}
+:root{color-scheme:dark;}
+
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html{scroll-behavior:smooth}
+body{margin:0;font-family:var(--font);color:var(--text);background:var(--bg);min-height:100vh;overflow-x:hidden;line-height:1.65}
+body::before{content:'';position:fixed;inset:0;z-index:-2;
+  background:radial-gradient(900px 600px at 12% -10%, rgba(92,200,255,.16), transparent 60%),
+             radial-gradient(800px 600px at 92% 8%, rgba(110,231,183,.10), transparent 60%),
+             radial-gradient(700px 500px at 50% 110%, rgba(251,191,36,.08), transparent 60%),
+             linear-gradient(180deg,var(--bg),var(--bg-grad-mid) 60%,var(--bg))}
+body::after{content:'';position:fixed;inset:0;z-index:-1;pointer-events:none;opacity:.5;
+  background-image:linear-gradient(rgba(92,200,255,.055) 1px,transparent 1px),
+                   linear-gradient(90deg,rgba(92,200,255,.055) 1px,transparent 1px),
+                   linear-gradient(rgba(92,200,255,.10) 1px,transparent 1px),
+                   linear-gradient(90deg,rgba(92,200,255,.10) 1px,transparent 1px);
+  background-size:22px 22px,22px 22px,110px 110px,110px 110px;
+  -webkit-mask-image:radial-gradient(circle at 50% 35%,#000 30%,transparent 88%);
+  mask-image:radial-gradient(circle at 50% 35%,#000 30%,transparent 88%)}
+.wrap{max-width:1100px;margin:0 auto;padding:16px 16px 20px}
+
+#topbar{position:sticky;top:0;z-index:50;backdrop-filter:blur(14px);display:none;
+  background:linear-gradient(180deg,rgba(var(--ink-panel-rgb),.95),rgba(var(--ink-panel-rgb),.65));border-bottom:1px solid var(--line)}
+#topbar.show{display:block}
+.topbar-in{max-width:1100px;margin:0 auto;padding:8px 14px}
+.tb-top{display:flex;align-items:center;gap:8px;flex-wrap:nowrap}
+.brand{display:flex;align-items:center;gap:9px;font-weight:600;letter-spacing:.4px;font-size:.88rem;white-space:nowrap;flex:0 0 auto}
+.brand .dot{width:10px;height:10px;border-radius:50%;background:var(--ember);box-shadow:0 0 12px var(--ember);animation:pulse 1.8s infinite}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.45;transform:scale(.7)}}
+.tb-right{display:flex;gap:7px;align-items:center;flex:0 0 auto}
+.icon-btn{min-width:36px;height:36px;padding:0 9px;border-radius:11px;display:grid;place-items:center;cursor:pointer;
+  background:rgba(92,200,255,.08);border:1px solid var(--line);color:var(--ember);transition:.22s;font-family:var(--mono);font-size:.72rem;font-weight:700}
+.icon-btn:hover{border-color:var(--ember);box-shadow:0 0 14px var(--ember-dim);transform:translateY(-1px)}
+.icon-btn.off{color:var(--muted);opacity:.6}
+.player-chip{display:flex;align-items:center;gap:7px;font-size:.75rem;color:var(--ember);
+  border:1px dashed var(--ember-dim);padding:3px 11px 3px 4px;border-radius:999px;font-family:var(--mono);max-width:150px}
+.player-chip svg{width:24px;height:24px;flex:0 0 24px}
+.player-chip .pn{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.tb-xp-mini{display:flex;align-items:center;gap:6px;flex:0 0 auto}
+.tb-xp-mini .lvl{font-family:var(--mono);font-size:.62rem;color:var(--corner);white-space:nowrap;letter-spacing:.5px}
+.tb-xp-mini .bar{width:76px;height:6px;margin:0;flex:0 0 auto}
+
+#navrail{display:flex;gap:5px;overflow-x:auto;padding:2px 0;scrollbar-width:thin;flex:1 1 auto;min-width:70px}
+#navrail::-webkit-scrollbar{height:4px}
+#navrail::-webkit-scrollbar-thumb{background:var(--ember-dim);border-radius:9px}
+.navpill{flex:0 0 auto;display:flex;flex-direction:column;align-items:center;gap:2px;padding:5px 8px;border-radius:12px;
+  border:1px solid var(--line);background:rgba(var(--panel2-rgb),.7);cursor:default;opacity:.38;min-width:56px;transition:.25s}
+.navpill svg{width:17px;height:17px;color:var(--muted)}
+.navpill span{font-size:.56rem;color:var(--muted);white-space:nowrap;font-family:var(--mono);letter-spacing:.4px}
+.navpill .ps{font-size:.58rem;letter-spacing:1px;color:var(--gold2);min-height:.9em}
+.navpill.unlocked{opacity:1;cursor:pointer}
+.navpill.unlocked:hover{border-color:var(--ember);transform:translateY(-2px);box-shadow:0 6px 18px rgba(92,200,255,.16)}
+.navpill.current{border-color:var(--ember);background:rgba(92,200,255,.13);box-shadow:0 0 0 2px rgba(92,200,255,.10)}
+.navpill.current svg,.navpill.current span{color:var(--ember)}
+.navpill.done svg,.navpill.done span{color:var(--corner)}
+.navpill.locked-shake{animation:shake .35s}
+@media (max-width:780px){
+  .tb-top{flex-wrap:wrap}
+  .brand{order:1}
+  .tb-xp-mini{order:2}
+  .tb-right{order:3;margin-left:auto}
+  #navrail{order:4;flex:1 1 100%;margin-top:2px}
+}
+
+.screen{display:none}
+.screen.active{display:block;animation:fadeUp .5s cubic-bezier(.2,.8,.2,1)}
+@keyframes fadeUp{from{opacity:0;transform:translateY(22px)}to{opacity:1;transform:none}}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-7px)}75%{transform:translateX(7px)}}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:22px;
+  box-shadow:var(--shadow);backdrop-filter:blur(10px);position:relative;overflow:hidden}
+.panel::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;
+  background:linear-gradient(90deg,transparent,var(--ember),transparent);opacity:.7}
+.panel+.panel{margin-top:16px}
+h1,h2,h3{margin:0 0 10px;font-weight:600;letter-spacing:.3px}
+h1{font-size:clamp(1.4rem,5vw,2rem)}
+h2{font-size:1.22rem;color:var(--ember)}
+h3{font-size:1rem;color:var(--corner)}
+p{margin:0 0 12px}
+.muted{color:var(--muted);font-size:.9rem}
+.mono{font-family:var(--mono)}
+.tag{display:inline-block;font-size:.68rem;letter-spacing:2px;text-transform:uppercase;color:var(--ember);
+  border:1px solid var(--ember-dim);padding:3px 12px;border-radius:999px;margin-bottom:12px;font-family:var(--mono)}
+.card{background:var(--panel2);border:1px solid var(--line);border-radius:14px;padding:16px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+
+.btn{font-family:var(--font);font-size:.93rem;font-weight:500;cursor:pointer;padding:11px 24px;border-radius:12px;
+  border:1px solid var(--line);background:rgba(92,200,255,.08);color:var(--text);transition:.25s;min-height:44px}
+.btn:hover:not(:disabled){transform:translateY(-2px);border-color:var(--ember);box-shadow:0 8px 26px rgba(92,200,255,.20)}
+.btn.primary{background:linear-gradient(135deg,var(--ember),var(--corner));color:#04121f;border:none;font-weight:600;
+  box-shadow:0 8px 28px rgba(92,200,255,.28)}
+.btn.pink{background:linear-gradient(135deg,var(--corner),var(--gold));color:#04121f;border:none;font-weight:600}
+.btn.ghost{background:transparent}
+.btn.sm{padding:8px 15px;font-size:.82rem;min-height:40px}
+.btn:disabled{opacity:.4;cursor:not-allowed;transform:none;box-shadow:none}
+.btn-row{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px}
+
+#scr-welcome .hero{min-height:calc(100vh - 40px);display:flex;flex-direction:column;align-items:center;
+  justify-content:center;text-align:center;padding:22px 8px;gap:2px}
+.cityart{width:min(520px,94vw);filter:drop-shadow(0 0 26px rgba(92,200,255,.32));animation:float 6s ease-in-out infinite}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-9px)}}
+.title{font-size:clamp(1.5rem,5.6vw,2.7rem);font-weight:700;line-height:1.2;margin:8px 0 2px;
+  background:linear-gradient(100deg,#5cc8ff,#fde68a 48%,#6ee7b7);-webkit-background-clip:text;background-clip:text;color:transparent}
+.subtitle{color:var(--muted);max-width:620px;margin:0 auto 18px;font-size:.95rem}
+.login-card{width:min(560px,94vw);text-align:left}
+label{display:block;font-size:.84rem;color:var(--ember);margin-bottom:7px;font-weight:500}
+input[type=text]{width:100%;padding:13px 16px;border-radius:12px;font-family:var(--font);font-size:1rem;
+  background:rgba(var(--ink-panel-rgb),.75);border:1px solid var(--line);color:var(--text);outline:none;transition:.25s}
+input[type=text]:focus{border-color:var(--ember);box-shadow:0 0 0 4px rgba(92,200,255,.14)}
+input[type=text]::placeholder{color:#5d7d99}
+.err{color:var(--red);font-size:.82rem;margin-top:8px;display:none}
+.err.show{display:block;animation:shake .35s}
+.feature-row{display:flex;gap:7px;flex-wrap:wrap;justify-content:center;margin-top:18px}
+.feature-row span{font-size:.7rem;color:var(--muted);border:1px solid var(--line);padding:4px 11px;border-radius:999px;font-family:var(--mono)}
+.avatar-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(62px,1fr));gap:9px;margin-top:4px}
+.avatar-opt{border:2px solid transparent;background:rgba(var(--ink-panel-rgb),.6);border-radius:14px;padding:5px;cursor:pointer;
+  transition:.2s;display:grid;place-items:center;position:relative;outline:1px solid var(--line)}
+.avatar-opt svg{width:100%;height:auto;display:block}
+.avatar-opt:hover{transform:translateY(-4px) scale(1.05)}
+.avatar-opt.sel{border-color:var(--ember);box-shadow:0 0 0 3px rgba(92,200,255,.22),0 8px 22px rgba(92,200,255,.22);outline-color:transparent}
+.avatar-opt.sel::after{content:'\2713';position:absolute;right:-4px;top:-6px;width:19px;height:19px;border-radius:50%;
+  background:var(--corner);color:#04121f;font-size:.7rem;display:grid;place-items:center;font-weight:700}
+
+.hud{display:flex;gap:9px;flex-wrap:wrap;margin-bottom:12px}
+.stat{flex:1 1 84px;background:var(--panel2);border:1px solid var(--line);border-radius:12px;padding:8px 10px;text-align:center;min-width:80px}
+.stat b{display:block;font-family:var(--mono);font-size:1.12rem;color:var(--ember);line-height:1.3}
+.stat small{color:var(--muted);font-size:.63rem;letter-spacing:1px;text-transform:uppercase}
+.stat.combo b{color:var(--gold)}.stat.score b{color:var(--corner)}.stat.star b{color:var(--gold2)}
+.bar{height:8px;border-radius:999px;background:rgba(255,255,255,.06);overflow:hidden;margin:6px 0 12px}
+.bar>i{display:block;height:100%;width:0;border-radius:999px;background:linear-gradient(90deg,var(--ember),var(--corner));transition:width .6s cubic-bezier(.2,.8,.2,1)}
+.bar.xp>i{background:linear-gradient(90deg,var(--gold),var(--ember))}
+
+.stage{display:flex;justify-content:center;padding:8px 0 4px;border-radius:14px;
+  background:radial-gradient(ellipse at center,rgba(92,200,255,.08),transparent 68%)}
+.stage svg{width:100%;max-width:520px;height:auto;display:block}
+.dcard{display:flex;gap:14px;align-items:center;background:var(--panel2);border:1px solid var(--line);
+  border-radius:16px;padding:14px 16px;margin-top:4px}
+.dcard .ico{flex:0 0 74px}
+.dcard .ico svg{width:74px;height:74px}
+.skillcard{border:1px solid rgba(110,231,183,.4);background:linear-gradient(135deg,rgba(110,231,183,.12),rgba(var(--ink-panel-rgb),.5));
+  border-radius:16px;padding:16px 18px;margin-top:12px}
+.skillcard .sk-name{color:var(--corner);font-weight:600;font-size:1.05rem}
+
+.q-box{background:rgba(var(--ink-panel-rgb),.5);border:1px solid var(--line);border-radius:16px;padding:15px 16px;margin-top:12px;transition:.3s}
+.qmeta{display:flex;justify-content:space-between;align-items:center;gap:8px;font-family:var(--mono);
+  font-size:.68rem;letter-spacing:1.2px;color:var(--muted);margin-bottom:6px}
+.q-type{color:var(--corner);border:1px solid rgba(110,231,183,.35);padding:2px 9px;border-radius:999px;font-size:.63rem}
+.q-text{font-size:1.02rem;font-weight:500;margin:8px 0 4px}
+.choices{display:grid;gap:9px;margin-top:10px}
+.choice{font-family:var(--font);font-size:.94rem;padding:12px 14px;border-radius:12px;cursor:pointer;
+  background:rgba(var(--panel-rgb),.9);border:1px solid var(--line);color:var(--text);transition:.2s;text-align:left;
+  display:flex;gap:11px;align-items:flex-start;min-height:44px;width:100%}
+.choice .k{flex:0 0 22px;height:22px;border-radius:7px;display:grid;place-items:center;font-family:var(--mono);
+  font-size:.72rem;background:rgba(92,200,255,.12);color:var(--ember);border:1px solid var(--line);margin-top:1px}
+.choice:hover:not(:disabled){border-color:var(--ember);transform:translateY(-2px);box-shadow:0 6px 20px rgba(92,200,255,.16)}
+.choice.correct{background:linear-gradient(135deg,rgba(110,231,183,.28),rgba(110,231,183,.08));border-color:var(--corner);color:var(--corner);font-weight:600}
+.choice.correct .k{background:var(--corner);color:#04121f;border-color:transparent}
+.choice.wrong{background:linear-gradient(135deg,rgba(251,113,133,.26),rgba(251,113,133,.06));border-color:var(--red);color:var(--red)}
+.choice.wrong .k{background:var(--red);color:#04121f;border-color:transparent}
+.choice:disabled{cursor:default}
+.explain{margin-top:11px;border-radius:0 12px 12px 0;padding:10px 13px;border-left:3px solid var(--gold);
+  background:rgba(251,191,36,.09);display:none;font-size:.88rem}
+.explain.show{display:block;animation:fadeUp .3s}
+.floaty{position:fixed;left:50%;top:24%;transform:translateX(-50%);font-family:var(--mono);font-weight:700;
+  font-size:1.4rem;pointer-events:none;z-index:120;text-shadow:0 0 20px currentColor;animation:floatUp 1.1s ease-out forwards}
+@keyframes floatUp{0%{opacity:0;transform:translate(-50%,10px) scale(.8)}25%{opacity:1;transform:translate(-50%,-6px) scale(1.1)}100%{opacity:0;transform:translate(-50%,-70px) scale(1)}}
+
+.tbl-wrap{overflow-x:auto;border-radius:12px;border:1px solid var(--line);margin-top:10px}
+table{width:100%;border-collapse:collapse;font-size:.86rem;min-width:460px}
+th,td{padding:9px 11px;text-align:left;border-bottom:1px solid rgba(255,255,255,.06)}
+th{background:rgba(92,200,255,.10);color:var(--ember);font-weight:600}
+tbody tr:hover{background:rgba(92,200,255,.05)}
+
+.codebox{font-family:var(--mono);font-size:1rem;background:rgba(var(--ink-panel-rgb),.8);border:1px solid var(--line);
+  border-radius:14px;padding:16px 14px;overflow-x:auto;text-align:center;min-height:2.4em}
+.codebox b{color:var(--gold2)}
+.status-line{margin-top:10px;font-size:.9rem;min-height:2.4em;border-radius:0 12px 12px 0;padding:9px 13px;
+  border-left:3px solid var(--line);background:rgba(var(--ink-panel-rgb),.5)}
+.status-line.ok{border-color:var(--corner)}
+.status-line.no{border-color:var(--red)}
+
+/* ---------- Stars ---------- */
+.star-row{display:flex;gap:clamp(4px,1.8vw,10px);justify-content:center;align-items:center;margin:14px 0 6px;flex-wrap:wrap}
+.star{width:clamp(30px,12.4vw,54px);height:clamp(30px,12.4vw,54px);position:relative;opacity:0;transform:scale(2.2) rotate(-22deg)}
+.star.in{animation:starIn .5s cubic-bezier(.3,1.6,.4,1) forwards}
+@keyframes starIn{to{opacity:1;transform:scale(1) rotate(0)}}
+.star svg{width:100%;height:100%;display:block}
+.star.full svg{filter:drop-shadow(0 0 14px rgba(253,230,138,.75))}
+.star.empty{opacity:.32}
+.star-row.sm .star{width:26px;height:26px}
+.star-row.xs .star{width:17px;height:17px;gap:3px}
+.star-row.xs{gap:3px;margin:2px 0 0}
+
+#reveal{position:fixed;inset:0;z-index:200;display:none;place-items:center;text-align:center;padding:20px;
+  background:radial-gradient(circle at 50% 45%,rgba(7,35,56,.97),rgba(var(--ink-panel-rgb),.99));overflow-y:auto}
+#reveal.show{display:grid}
+.rv-stage{max-width:600px;width:100%}
+.rv-line{font-family:var(--mono);letter-spacing:6px;font-size:clamp(.85rem,3.2vw,1.2rem);color:var(--ember);opacity:0}
+.rv-score{font-family:var(--mono);font-size:clamp(2.6rem,13vw,5rem);font-weight:700;line-height:1.05;opacity:0;
+  background:linear-gradient(100deg,#5cc8ff,#fbbf24,#6ee7b7);-webkit-background-clip:text;background-clip:text;color:transparent;
+  filter:drop-shadow(0 0 30px rgba(92,200,255,.45))}
+.rv-rank{font-size:clamp(1.4rem,6.4vw,2.6rem);font-weight:700;opacity:0;letter-spacing:2px;
+  background:linear-gradient(100deg,var(--gold2),#fff6d0,var(--gold));-webkit-background-clip:text;background-clip:text;color:transparent}
+.rv-sub{color:var(--muted);opacity:0;font-size:.92rem;margin-top:6px}
+.rv-in{animation:rvIn .7s cubic-bezier(.2,.9,.2,1) forwards}
+@keyframes rvIn{from{opacity:0;transform:translateY(24px) scale(.92)}to{opacity:1;transform:none}}
+#confetti{position:fixed;inset:0;pointer-events:none;z-index:210;display:none}
+
+.cmp-grid{display:grid;grid-template-columns:1fr auto 1fr;gap:10px;align-items:stretch;margin:6px 0 2px}
+.cmp-col{background:rgba(var(--ink-panel-rgb),.6);border:1px solid var(--line);border-radius:14px;padding:14px 10px;text-align:center}
+.cmp-col small{color:var(--muted);font-size:.64rem;letter-spacing:1.2px;text-transform:uppercase;font-family:var(--mono)}
+.cmp-col b{display:block;font-size:1.5rem;font-family:var(--mono);color:var(--ember);line-height:1.4}
+.cmp-col.post b{color:var(--corner)}
+.cmp-arrow{display:flex;align-items:center;justify-content:center;color:var(--gold2);font-size:1.4rem;font-family:var(--mono)}
+.delta{text-align:center;margin-top:12px;font-size:1.05rem;font-weight:600;color:var(--corner)}
+.delta.flat{color:var(--gold)}.delta.down{color:var(--red)}
+.dstars{display:grid;gap:9px;margin-top:10px}
+.dstar-row{display:grid;grid-template-columns:1fr auto auto;gap:10px;align-items:center;background:rgba(var(--ink-panel-rgb),.5);
+  border:1px solid var(--line);border-radius:12px;padding:9px 12px;font-size:.86rem}
+.dstar-row .lbl{min-width:0}
+.badges{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin:13px 0 4px}
+.badge{border:1px solid var(--ember-dim);background:rgba(92,200,255,.08);border-radius:999px;padding:6px 15px;
+  font-size:.78rem;display:flex;gap:7px;align-items:center;animation:fadeUp .5s backwards}
+.badge b{color:var(--ember);font-weight:600}
+.badge.locked{opacity:.35;border-style:dashed}
+.advice{list-style:none;padding:0;margin:8px 0 0;display:grid;gap:8px}
+.advice li{display:flex;gap:9px;align-items:flex-start;font-size:.88rem;background:rgba(var(--ink-panel-rgb),.5);
+  border:1px solid var(--line);border-radius:11px;padding:9px 12px}
+.advice li::before{content:'\25B8';color:var(--gold);font-weight:700}
+.chartbox{position:relative;width:100%;height:330px;margin-top:10px}
+#radarFallback{width:100%;height:100%;display:none}
+
+#toast{position:fixed;left:50%;bottom:22px;transform:translate(-50%,26px);z-index:180;opacity:0;pointer-events:none;
+  background:rgba(var(--panel-rgb),.97);border:1px solid var(--ember-dim);border-radius:999px;padding:9px 20px;
+  font-size:.84rem;transition:.4s cubic-bezier(.2,.8,.2,1);box-shadow:var(--shadow);max-width:90vw;text-align:center}
+#toast.show{opacity:1;transform:translate(-50%,0)}
+
+footer{border-top:1px solid var(--line);margin-top:26px;padding:18px 16px 30px;text-align:center;
+  background:linear-gradient(180deg,transparent,rgba(var(--ink-panel-rgb),.7))}
+footer p{margin:0;font-size:.8rem;color:var(--muted);line-height:1.8}
+footer b{color:var(--ember);font-weight:600}
+footer .fmono{font-family:var(--mono);font-size:.68rem;color:#6d8ba6;letter-spacing:1px}
+
+@media (max-width:860px){
+  .grid2{grid-template-columns:1fr}
+  .wrap{padding:12px 12px 16px}
+  .panel{padding:15px}
+  .panel+.panel{margin-top:12px}
+  h2{font-size:1.08rem}
+  .star{width:44px;height:44px}
+  .brand span{display:none}
+  .dcard{flex-direction:column;text-align:center;gap:8px}
+  .dcard .ico{flex:none}
+}
+@media (max-width:430px){
+  .cmp-grid{grid-template-columns:1fr}
+  .cmp-arrow{transform:rotate(90deg);padding:2px 0}
+  .q-text{font-size:.96rem}
+  .choice{font-size:.9rem;padding:11px 12px}
+  .btn{padding:10px 18px;font-size:.88rem}
+  .player-chip{max-width:104px}
+}
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.01ms !important;animation-iteration-count:1 !important;transition-duration:.05s !important}
+  .star{opacity:1;transform:none}
+}
+
+.howto{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:8px;margin:14px 0}
+.howto .hk{display:flex;gap:10px;align-items:baseline;padding:9px 12px;border-radius:11px;
+  border:1px solid var(--line);background:var(--panel)}
+.howto .hk b{font-family:var(--mono);color:var(--ember);font-size:.8rem;white-space:nowrap}
+.howto .hk span{color:var(--muted);font-size:.82rem}
+#arcade{position:fixed;inset:0;z-index:90;display:none;background:var(--bg);flex-direction:column}
+#arcade.show{display:flex}
+.ac-top{position:relative;flex:0 0 auto;height:32vh;min-height:168px;max-height:300px;border-bottom:1px solid var(--line);overflow:hidden}
+#acv{display:block;width:100%;height:100%}
+.ac-hud{position:absolute;top:8px;left:8px;right:8px;display:flex;gap:6px;align-items:center;flex-wrap:wrap;pointer-events:none}
+.ac-chip{display:inline-flex;align-items:center;gap:5px;padding:4px 10px;border-radius:999px;font-size:.72rem;
+  color:var(--muted);background:var(--panel);border:1px solid var(--line)}
+.ac-chip b{color:var(--text);font-family:var(--mono)}
+.ac-chip.hot{border-color:var(--gold);color:var(--gold);box-shadow:0 0 14px var(--ember-dim)}
+.ac-exit{pointer-events:auto;margin-left:auto}
+.ac-bar{position:absolute;left:0;right:0;bottom:0;height:5px;background:rgba(0,0,0,.45)}
+.ac-bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--corner),var(--gold));transition:width .55s cubic-bezier(.2,.9,.3,1.25)}
+.ac-play{flex:1 1 auto;overflow-y:auto;padding:14px;display:flex;justify-content:center;-webkit-overflow-scrolling:touch}
+.ac-card{width:min(680px,100%);height:max-content;background:var(--panel2);border:1px solid var(--line);
+  border-radius:18px;padding:18px;box-shadow:var(--shadow)}
+.ac-card h2{margin:0 0 8px}
+.ac-card .choice{padding:15px 14px;font-size:.98rem}
+#acEnd{position:fixed;inset:0;display:none;place-items:center;padding:14px;background:rgba(0,0,0,.82);z-index:10;overflow:auto}
+#acEnd.show{display:grid}
+#acEnd .ac-card{max-height:92vh;overflow:auto}
+.ac-mini{display:flex;gap:16px;align-items:center;justify-content:center;flex-wrap:wrap;margin:14px 0 6px;
+  padding:12px;border-radius:14px;border:1px solid var(--line);background:var(--panel)}
+.ac-mini svg{width:190px;height:172px;flex:0 0 auto}
+.ac-mini .legend{font-size:.76rem;color:var(--muted);line-height:2;text-align:left}
+.ac-mini .legend i{display:inline-block;width:11px;height:11px;border-radius:3px;margin-right:7px;vertical-align:middle}
+.ac-mini .legend b{color:var(--text);font-family:var(--mono)}
+@media(max-width:560px){
+  .ac-top{height:27vh;min-height:140px}
+  .ac-chip{font-size:.66rem;padding:3px 8px}
+  .ac-play{padding:10px}
+  .ac-card{padding:14px;border-radius:14px}
+  .ac-card .choice{padding:16px 12px}
+  .ac-mini{gap:10px;padding:10px}
+  .ac-mini svg{width:158px;height:144px}
+  .ac-mini .legend{font-size:.7rem;line-height:1.85}
+}
+
+/* โค้ดหลายบรรทัดต้องรักษาการขึ้นบรรทัดและชิดซ้ายเสมอ */
+.codebox{white-space:pre-wrap;text-align:left;font-size:.92rem;line-height:1.62}
+.qcode{margin:10px 0;font-size:.86rem;padding:12px 12px}
+.q-text{line-height:1.6}
+@media(max-width:560px){ .codebox{font-size:.82rem} .qcode{font-size:.78rem;padding:10px} }
+
+/* ---------- ผังงาน: สัญลักษณ์มาตรฐานจริง (SVG) ---------- */
+.fcwrap{background:rgba(var(--ink-panel-rgb),.72);border:1px solid rgba(92,200,255,.26);border-radius:14px;
+  padding:10px 6px 6px;margin:10px 0}
+.fcv{display:block;width:100%;max-width:360px;height:auto;margin:0 auto}
+.fs{stroke-width:2;vector-effect:non-scaling-stroke}
+.fs.t{fill:rgba(110,231,183,.14);stroke:#6ee7b7}
+.fs.p{fill:rgba(92,200,255,.14);stroke:#5cc8ff}
+.fs.d{fill:rgba(251,191,36,.15);stroke:#fbbf24}
+.fs.io{fill:rgba(253,230,138,.13);stroke:#fde68a}
+.fs.c{fill:rgba(143,176,204,.14);stroke:#8fb0cc}
+.ft{font-family:'IBM Plex Mono','Consolas',monospace;font-size:11px;fill:#e2f1ff}
+.fl{font-family:'IBM Plex Mono','Consolas',monospace;font-size:10px;fill:#9fc0da}
+.fe{fill:none;stroke:#8fb0cc;stroke-width:1.7}
+.fa{fill:#8fb0cc}
+.fn.hi .fs{stroke-dasharray:6 4;stroke-width:3;stroke:#fbbf24;fill:rgba(251,191,36,.20)}
+.fn.hi .ft{fill:#fde68a;font-weight:600}
+.fccap{font-family:var(--mono);font-size:.72rem;color:var(--gold2);letter-spacing:.5px;
+  text-align:center;margin:6px 0 2px}
+.fcnote{font-size:.72rem;color:var(--muted);text-align:center;margin:2px 6px 4px;line-height:1.6}
+.fclegend{font-size:.7rem;color:var(--muted);margin:10px 0 -2px;padding:7px 10px;
+  border-left:2px solid var(--ember-dim);background:rgba(92,200,255,.05);
+  border-radius:0 8px 8px 0;line-height:2.1}
+.fclegend i{font-style:normal;white-space:nowrap;display:inline-block;margin-right:12px}
+.fcmini{width:34px;height:21px;vertical-align:-6px;margin-right:5px}
+.grid3fc{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin-top:8px}
+.grid3fc>div{background:rgba(var(--ink-panel-rgb),.4);border:1px solid var(--line);border-radius:14px;padding:12px}
+.grid3fc .fcwrap{margin:8px 0}
+@media(max-width:860px){ .grid3fc{grid-template-columns:1fr} }
+
+/* v6.01 — ตัวดำเนินการในข้อความบรรยาย ต้องอ่านออกว่าเป็นสองขีดหรือขีดเดียว */
+.q-text code.ic,.explain code.ic,.choice code.ic,.qmeta code.ic,.muted code.ic,p code.ic,td code.ic,li code.ic,.status-line code.ic{
+  font-family:var(--mono);font-size:.94em;letter-spacing:.09em;
+  background:rgba(255,255,255,.07);border:1px solid var(--line);
+  border-radius:4px;padding:1px 5px;white-space:nowrap;color:var(--gold)}
+/* ตัวเลือกที่เป็นโค้ดทั้งบรรทัด ใช้ฟอนต์ mono พร้อมเว้นระยะตัวอักษร เพื่อให้ ++ กับ -- อ่านออกว่าเป็นสองขีด */
+code.csnip{font-family:var(--mono);font-size:.9em;letter-spacing:.09em;
+  background:rgba(255,255,255,.07);border:1px solid var(--line);border-radius:5px;
+  padding:3px 7px;color:var(--gold2);white-space:normal;display:inline-block;line-height:1.6}
+
+/* ---------- LAB: Track Runner (ตัวชูโรง) ---------- */
+.runner{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.05fr) minmax(0,.8fr);gap:10px;margin-top:10px}
+@media(max-width:820px){ .runner{grid-template-columns:1fr} }
+.rpane{background:rgba(var(--ink-panel-rgb),.6);border:1px solid var(--line);border-radius:14px;padding:10px;min-width:0}
+.rpane .rhd{font-family:var(--mono);font-size:.64rem;letter-spacing:1.4px;color:var(--ember);
+  text-transform:uppercase;margin-bottom:6px;border-bottom:1px dashed var(--ember-dim);padding-bottom:5px}
+.rpane svg{width:100%;height:auto;display:block;max-height:60vh}
+.fcnode{transition:.2s}
+.fcnode .sh{stroke-width:2}
+.fcnode .sh.t{fill:rgba(110,231,183,.14);stroke:#6ee7b7}
+.fcnode .sh.p{fill:rgba(92,200,255,.14);stroke:#5cc8ff}
+.fcnode .sh.d{fill:rgba(251,191,36,.15);stroke:#fbbf24}
+.fcnode .sh.io{fill:rgba(253,230,138,.13);stroke:#fde68a}
+.fcnode .tx{font-family:'IBM Plex Mono',monospace;font-size:11px;fill:#e2f1ff}
+.fcnode.on .sh{fill:rgba(255,255,255,.26);stroke:#ffffff;stroke-width:3.4}
+.fcnode.on .tx{fill:#ffffff;font-weight:600}
+.codelines{font-family:var(--mono);font-size:.78rem;line-height:1.75;white-space:pre;overflow-x:auto}
+.codelines .cl{display:block;padding:1px 7px;border-radius:6px;border-left:3px solid transparent}
+.codelines .cl.on{background:rgba(251,191,36,.16);border-left-color:var(--gold);color:var(--gold2)}
+.codelines .cl .ln{color:#5d7d99;user-select:none}
+.outbox{font-family:var(--mono);font-size:1rem;letter-spacing:1px;min-height:60px;padding:10px 12px;
+  border-radius:11px;background:rgba(var(--ink-panel-rgb),.85);border:1px solid var(--line);color:var(--corner);word-break:break-all}
+.varbox{font-family:var(--mono);font-size:.8rem;margin-top:8px;color:var(--muted)}
+.varbox b{color:var(--gold2)}
+
+/* ---------- LAB: Symbol Sorter ---------- */
+.sorter{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px}
+@media(max-width:700px){ .sorter{grid-template-columns:1fr} }
+.symcol,.fncol{display:grid;gap:8px;align-content:start}
+.symchip,.slot{display:flex;align-items:center;gap:10px;padding:9px 11px;border-radius:12px;
+  border:1px solid var(--line);background:rgba(var(--panel-rgb),.85);cursor:pointer;transition:.18s;
+  min-height:52px;text-align:left;font-family:var(--font);color:var(--text);font-size:.85rem;width:100%}
+.symchip svg{width:38px;height:26px;flex:0 0 38px}
+.symchip:hover,.slot:hover{border-color:var(--ember);transform:translateY(-2px)}
+.symchip.sel{border-color:var(--gold);box-shadow:0 0 0 3px rgba(251,191,36,.20);background:rgba(251,191,36,.10)}
+.symchip.done{opacity:.32;pointer-events:none;border-style:dashed}
+.slot.filled{border-color:var(--corner);background:rgba(110,231,183,.10)}
+.slot.bad{border-color:var(--red);animation:shake .35s}
+.slot .sname{font-family:var(--mono);font-size:.72rem;color:var(--corner);margin-left:auto;white-space:nowrap}
+.sortbar{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:10px}
+.timer{font-family:var(--mono);font-size:1.2rem;font-weight:700;color:var(--gold);
+  border:1px solid var(--line);border-radius:11px;padding:5px 14px;background:rgba(var(--ink-panel-rgb),.7);min-width:76px;text-align:center}
+.timer.low{color:var(--red);border-color:var(--red);animation:pulse 1s infinite}
+
+/* ---------- LAB: Pace Car ---------- */
+.pacewrap{margin-top:10px}
+.paletterow{display:grid;gap:8px;margin:8px 0}
+.ptile{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:12px;border:1px solid var(--line);
+  background:rgba(var(--panel-rgb),.85);cursor:pointer;min-height:50px;font-family:var(--font);color:var(--text);
+  font-size:.86rem;text-align:left;width:100%;transition:.18s}
+.ptile:hover{border-color:var(--ember);transform:translateY(-2px)}
+.ptile.sel{border-color:var(--gold);box-shadow:0 0 0 3px rgba(251,191,36,.20)}
+.ptile.used{opacity:.3;pointer-events:none;border-style:dashed}
+.ptile .shp{font-family:var(--mono);font-size:.7rem;color:var(--ember);border:1px solid var(--line);
+  border-radius:7px;padding:2px 7px;white-space:nowrap}
+.trackrow{position:relative;display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:26px 0 8px}
+.tslot{min-height:64px;border:2px dashed var(--line);border-radius:12px;background:rgba(var(--ink-panel-rgb),.6);
+  display:grid;place-items:center;padding:8px 6px;font-size:.78rem;text-align:center;color:var(--muted);cursor:pointer;transition:.18s}
+.tslot:hover{border-color:var(--ember)}
+.tslot.filled{border-style:solid;border-color:var(--ember);color:var(--text);background:rgba(92,200,255,.10)}
+.tslot.ok{border-color:var(--corner);background:rgba(110,231,183,.12)}
+.tslot.bad{border-color:var(--red);background:rgba(251,113,133,.12);animation:shake .35s}
+.tslot .shp{display:block;font-family:var(--mono);font-size:.64rem;color:var(--ember);letter-spacing:.6px}
+#paceCar{position:absolute;top:-26px;left:0;width:44px;transition:left .55s cubic-bezier(.3,.9,.4,1),transform .4s;pointer-events:none}
+#paceCar svg{width:100%;height:auto;display:block;filter:drop-shadow(0 3px 8px rgba(0,0,0,.6))}
+#paceCar.crash{transform:rotate(38deg) translateY(26px);opacity:.55}
+.tracklane{height:10px;border-radius:6px;background:repeating-linear-gradient(90deg,rgba(92,200,255,.20) 0 16px,transparent 16px 32px);
+  border:1px solid var(--line);margin-bottom:2px}
+</style>
+</head>
+<body>
+
+<canvas id="confetti"></canvas>
+
+<div id="arcade" aria-hidden="true" role="dialog" aria-label="ด่านไต่โค้งสนามแข่ง">
+  <div class="ac-top">
+    <canvas id="acv"></canvas>
+    <div class="ac-hud">
+      <span class="ac-chip" id="acTag">ARCADE</span>
+      <span class="ac-chip">ข้อ <b id="acProg">0/6</b></span>
+      <span class="ac-chip">โค้ง <b id="acFloor">0</b></span>
+      <span class="ac-chip" id="acComboChip">Combo <b id="acCombo">0</b></span>
+      <span class="ac-chip">เวลา <b id="acTime">0:00</b></span>
+      <button class="icon-btn ac-exit" id="acExit" title="ออกจากด่าน (Esc)">ESC</button>
+    </div>
+    <div class="ac-bar"><i id="acBar"></i></div>
+  </div>
+  <div class="ac-play"><div class="ac-card" id="acQCard"></div></div>
+  <div id="acEnd"><div class="ac-card">
+    <h2 id="acEndTitle">จบด่าน</h2>
+    <p id="acEndBody" class="muted"></p>
+    <div class="ac-mini" id="acMini"></div>
+    <div class="btn-row"><button class="btn primary" id="acEndGo" style="flex:1">ดูผล</button></div>
+  </div></div>
+</div>
+
+<div id="reveal" role="dialog" aria-modal="true" aria-labelledby="rvL1">
+  <div class="rv-stage">
+    <div class="rv-line" id="rvL1">PRETEST COMPLETE</div>
+    <div class="star-row" id="rvStars"></div>
+    <div class="rv-rank" id="rvRank">—</div>
+    <div class="rv-score" id="rvScore">0/6</div>
+    <div class="rv-line" id="rvL2" style="letter-spacing:3px">RAW SCORE</div>
+    <div class="rv-sub" id="rvSub"></div>
+    <button class="btn primary" id="rvGo" style="margin-top:20px;display:none">ไปต่อ</button>
+  </div>
+</div>
+
+<header id="topbar">
+  <div class="topbar-in">
+    <div class="tb-top">
+      <div class="brand"><i class="dot"></i><span>CIRCUIT BLUEPRINT</span></div>
+      <div class="tb-xp-mini">
+        <span class="lvl" id="lvlTxt">LV.1</span>
+        <div class="bar xp"><i id="xpBar"></i></div>
+        <span class="lvl" id="xpTxt">0 XP</span>
+      </div>
+      <div id="navrail"></div>
+      <div class="tb-right">
+        <button class="icon-btn" id="btnSound" title="เปิด/ปิดเสียง" aria-label="เปิดหรือปิดเสียง">SND</button>
+        <button class="icon-btn" id="btnCsv" title="บันทึกคะแนนเป็นไฟล์ CSV" aria-label="บันทึกคะแนนเป็นไฟล์ CSV">CSV</button>
+        <button class="icon-btn" id="btnReset" title="เริ่มภารกิจใหม่" aria-label="เริ่มภารกิจใหม่">RST</button>
+        <button class="icon-btn" id="btnTheme" title="สลับโหมดสว่าง/มืด" aria-label="สลับโหมดสว่างหรือมืด">🌓</button>
+        <div class="player-chip" id="chipName"><span id="chipAva"></span><span class="pn" id="chipTxt">—</span></div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<div class="wrap">
+
+<!-- ===== 0) WELCOME ===== -->
+<section id="scr-welcome" class="screen active">
+  <div class="hero">
+    <svg class="cityart" viewBox="0 0 480 300" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="ภาพพิมพ์เขียวสนามแข่งที่วาดด้วยสัญลักษณ์ผังงาน">
+  <defs>
+    <linearGradient id="gSky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#072338"/><stop offset="100%" stop-color="#04121f"/>
+    </linearGradient>
+    <filter id="fGlow"><feGaussianBlur stdDeviation="3" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+    <pattern id="pGrid" width="20" height="20" patternUnits="userSpaceOnUse">
+      <path d="M20 0H0V20" fill="none" stroke="rgba(92,200,255,.15)" stroke-width="1"/>
+    </pattern>
+  </defs>
+  <rect x="0" y="0" width="480" height="300" rx="18" fill="url(#gSky)"/>
+  <rect x="0" y="0" width="480" height="300" rx="18" fill="url(#pGrid)"/>
+  <path d="M92 232 C40 232 40 150 96 150 L168 150 C210 150 210 76 258 76 L360 76 C420 76 424 150 372 150 L300 150 C252 150 252 232 200 232 Z"
+        fill="none" stroke="#5cc8ff" stroke-width="16" stroke-linejoin="round" opacity=".22"/>
+  <path d="M92 232 C40 232 40 150 96 150 L168 150 C210 150 210 76 258 76 L360 76 C420 76 424 150 372 150 L300 150 C252 150 252 232 200 232 Z"
+        fill="none" stroke="#5cc8ff" stroke-width="2.4" stroke-dasharray="9 7" stroke-linejoin="round"/>
+  <rect x="126" y="220" width="9" height="24" fill="#e4f2ff"/>
+  <rect x="135" y="220" width="9" height="12" fill="#04121f"/>
+  <rect x="126" y="232" width="9" height="12" fill="#04121f"/>
+  <rect x="135" y="232" width="9" height="12" fill="#e4f2ff"/>
+  <g filter="url(#fGlow)">
+    <rect x="196" y="242" width="72" height="22" rx="11" fill="none" stroke="#6ee7b7" stroke-width="2.4"/>
+    <text x="232" y="257" text-anchor="middle" font-size="10" font-family="monospace" fill="#6ee7b7">START</text>
+    <rect x="296" y="188" width="74" height="24" rx="4" fill="none" stroke="#5cc8ff" stroke-width="2.4"/>
+    <text x="333" y="204" text-anchor="middle" font-size="10" font-family="monospace" fill="#5cc8ff">PROCESS</text>
+    <path d="M400 44 L442 68 L400 92 L358 68 Z" fill="none" stroke="#fbbf24" stroke-width="2.4"/>
+    <text x="400" y="72" text-anchor="middle" font-size="9" font-family="monospace" fill="#fbbf24">n&gt;0?</text>
+    <path d="M46 62 H118 L104 88 H32 Z" fill="none" stroke="#fde68a" stroke-width="2.4"/>
+    <text x="75" y="80" text-anchor="middle" font-size="9" font-family="monospace" fill="#fde68a">INPUT</text>
+  </g>
+  <text x="240" y="288" text-anchor="middle" font-size="10" letter-spacing="3" fill="#8fb0cc">TERMINATOR · PROCESS · DECISION · INPUT/OUTPUT · LOOP</text>
+</svg>
+    <h1 class="title">CIRCUIT BLUEPRINT : พิมพ์เขียวสนามแข่ง</h1>
+    <p class="subtitle">สวมบทบาท <b>วิศวกรออกแบบสนาม</b> ของฤดูกาล GNR GRAND PRIX ผังงานคือแผนที่สนามแข่ง ผ่าน 3 โซนให้ครบ ตั้งแต่ป้ายสัญลักษณ์ประจำสนาม สามท่าไหลของสนาม ไปจนถึงการไล่ผังให้ได้ผลลัพธ์เหมือนไล่โค้ด สะสม XP และดาว วัดพัฒนาการก่อน–หลังเรียน</p>
+    <div class="panel login-card">
+      <span class="tag">Driver Registration</span>
+      <label for="playerName">ชื่อผู้เล่น (ใช้แสดงบนใบรายงานผล)</label>
+      <input type="text" id="playerName" maxlength="24" autocomplete="off" placeholder="เช่น สมาร์ท / รหัส 67xxxxx">
+      <div class="err" id="nameErr">กรุณากรอกชื่อก่อนเริ่มภารกิจ</div>
+      <label style="margin-top:16px">เลือกหมายเลขรถประจำตัว</label>
+      <div class="avatar-grid" id="avatarGrid"></div>
+      <div class="btn-row">
+        <button class="btn primary" id="btnStart" style="flex:1">เข้าสู่พิทเลน</button>
+      </div>
+      <div style="display:flex;gap:8px;margin-top:10px">
+        <button class="btn sm ghost" id="wSound" style="flex:1">เสียง: เปิด</button>
+        <button class="btn sm ghost" id="wResume" style="flex:1;display:none">เล่นต่อจากเดิม</button>
+      </div>
+    </div>
+    <div class="feature-row"><span>โหมดไต่โค้ง · เล่นด้วยการแตะอย่างเดียว</span><span>GNR1007 วันที่ 3</span><span>บทที่ 10 · Flowchart</span><span>PRETEST / POSTTEST</span><span>ระบบดาว 6 ดวง · 1 ดาว = 1 ข้อ</span><span>XP &amp; COMBO</span><span>ส่งออกคะแนน CSV</span></div>
+  </div>
+</section>
+
+<!-- ===== PRETEST ===== -->
+<section id="scr-pretest" class="screen">
+  <div class="panel">
+    <span class="tag">Checkpoint 00 · Pretest</span>
+    <h2>รอบคัดเลือก (Qualifying) — ทดสอบก่อนเรียน</h2>
+    <p class="muted">6 ข้อ (สุ่มจากแต่ละโซน โซนละ 2 ข้อ) เล่นในโหมดอาร์เคด — ตอบตามความเข้าใจปัจจุบัน
+      ไม่ต้องกังวลถ้ายังไม่รู้คำตอบ คะแนนชุดนี้คือ <b>เวลาต่อรอบเส้นฐาน</b> ที่จะใช้เทียบกับหลังเรียน</p>
+    <div class="howto">
+      <div class="hk"><b>แตะ</b><span>เล่นด้วยการแตะคำตอบอย่างเดียว ไม่มีปุ่มเดิน ไม่มีปุ่มกระโดด</span></div>
+      <div class="hk"><b>ตอบถูก</b><span>รถผ่านโค้งเพิ่มอีก 1 โค้งทันที · ต่อเนื่องหลายข้อได้โบนัส Combo</span></div>
+      <div class="hk"><b>ตอบผิด</b><span>ไม่ตกรอบ ไม่มีแพ้ — อ่านเฉลยแล้วไปข้อถัดไปได้เลย</span></div>
+      <div class="hk"><b>1 2 3 4</b><span>ทางลัดสำหรับคอมพิวเตอร์ (บนมือถือใช้แตะปุ่มใหญ่)</span></div>
+      <div class="hk"><b>จบด่าน</b><span>ตอบครบทุกข้อ = ดูผล พร้อมกราฟเรดาร์บอกจุดแข็ง-จุดอ่อนทันที</span></div>
+      <div class="hk"><b>ดาว</b><span>ตอบถูก 1 ข้อ = 1 ดาว เต็ม 6 ข้อ = 6 ดาว ตัวเลขดาวกับคะแนนจึงตรงกันเสมอ</span></div>
+    </div>
+    <div class="btn-row"><button class="btn primary" id="preLaunch" style="flex:1">ออกสตาร์ทรอบคัดเลือก</button></div>
+  </div>
+</section>
+
+<!-- ===== PREVIEW 1 ===== -->
+<section id="scr-preview1" class="screen">
+  <div class="panel">
+    <span class="tag">Before Zone 01</span>
+    <h2>กำลังจะเข้าสู่: ป้ายสัญลักษณ์ประจำสนาม (Signage Bay)</h2>
+    <div class="dcard">
+      <div class="ico"><svg viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg">
+        <rect x="14" y="10" width="52" height="16" rx="8" fill="none" stroke="#6ee7b7" stroke-width="3"/>
+        <rect x="18" y="34" width="44" height="14" rx="2" fill="none" stroke="#5cc8ff" stroke-width="3"/>
+        <path d="M40 54 L60 66 L40 78 L20 66 Z" fill="none" stroke="#fbbf24" stroke-width="3"/>
+      </svg></div>
+      <div><div class="skillcard" style="margin:0">
+        <div class="sk-name">ทักษะที่จะได้: สัญลักษณ์มาตรฐานของผังงาน</div>
+        <p class="muted" style="margin:6px 0 0">อ่านโค้ด C แล้วบอกได้ทันทีว่าแต่ละคำสั่งต้องวาดเป็นรูปอะไร — วงรี ผืนผ้า เปียกปูน หรือด้านขนาน และนับกล่องแต่ละชนิดได้ถูกต้อง</p>
+      </div></div>
+    </div>
+    <div class="btn-row"><button class="btn primary" data-goto="scr-lesson1">เข้าโซนนี้</button></div>
+  </div>
+</section>
+
+<!-- ===== ZONE 1 ===== -->
+<section id="scr-lesson1" class="screen">
+  <div class="panel">
+    <span class="tag">Zone 01 · Signage Bay</span>
+    <h2>ป้ายสัญลักษณ์ประจำสนาม: สัญลักษณ์มาตรฐาน 6 ชนิด</h2>
+    <p>ผังงานคือ <b>แผนที่สนามแข่ง</b> และสัญลักษณ์แต่ละตัวคือองค์ประกอบของสนาม เมื่ออ่านโค้ด C หนึ่งบรรทัด
+      ให้ถามตัวเองว่าบรรทัดนี้ <b>คำนวณ</b> (ทางตรง) <b>ตัดสินใจ</b> (โค้ง) หรือ <b>รับ-ส่งข้อมูล</b> (ป้ายบอกเวลา)</p>
+    <div class="tbl-wrap"><table>
+      <tr><th>รูปร่าง</th><th>ชื่อสากล</th><th>หน้าที่</th><th>ในสนามแข่ง</th></tr>
+      <tr><td>วงรี / แคปซูล</td><td>Terminator</td><td>จุดเริ่มต้นและจุดสิ้นสุดของผัง</td><td>ธงเขียวออกตัว และธงตาหมากรุกเข้าเส้นชัย</td></tr>
+      <tr><td>สี่เหลี่ยมผืนผ้า</td><td>Process</td><td>คำนวณหรือกำหนดค่า เช่น <code>sum = a + b;</code></td><td>ช่วงทางตรง ทำงานไปเรื่อย ๆ</td></tr>
+      <tr><td>สี่เหลี่ยมขนมเปียกปูน</td><td>Decision</td><td>ตรวจเงื่อนไข ตอบใช่/ไม่ใช่ <b>ออก 2 ทางเสมอ</b></td><td>โค้งที่ต้องเลือกไลน์</td></tr>
+      <tr><td>สี่เหลี่ยมด้านขนาน</td><td>Input / Output</td><td>รับหรือแสดงข้อมูล เช่น <code>scanf</code>, <code>printf</code></td><td>ป้ายบอกเวลาข้างสนาม</td></tr>
+      <tr><td>ลูกศร</td><td>Flow line</td><td>บอกทิศทางการไหล ลูกศรที่วนกลับคือลูป</td><td>ทิศทางวิ่งรอบสนาม</td></tr>
+      <tr><td>วงกลมเล็ก</td><td>Connector</td><td>จุดเชื่อมผังข้ามจุดหรือข้ามหน้า</td><td>อุโมงค์ลอดใต้สนาม</td></tr>
+    </table></div>
+
+    <h3 style="margin-top:18px">จุดหลอกข้อสอบ กว. ของโซนนี้</h3>
+    <div class="tbl-wrap"><table>
+      <tr><th>จุดหลอก</th><th>สิ่งที่มักตอบผิด</th><th>ข้อเท็จจริง</th></tr>
+      <tr><td>Process กับ Decision สลับกัน</td><td>เห็นคำว่า "ตรวจสอบ" แล้วเลือกสี่เหลี่ยมผืนผ้า</td><td>มีการเปรียบเทียบเมื่อไร คือ <b>ขนมเปียกปูน</b> เสมอ — เปียกปูนมีมุมแหลม แปลว่าต้องเลือกทาง</td></tr>
+      <tr><td>ใช้ผืนผ้าแทน Input/Output</td><td>วาด <code>printf</code> เป็นสี่เหลี่ยมผืนผ้า</td><td>รับหรือแสดงข้อมูลต้องเป็น <b>ด้านขนาน</b> ที่เอียง</td></tr>
+      <tr><td>Decision มีทางออกทางเดียว</td><td>วาดลูกศรออกจากเปียกปูนเส้นเดียว</td><td>ต้องมีครบ <b>2 ทาง</b> คือ Yes และ No มิฉะนั้นถือว่าผังผิด</td></tr>
+      <tr><td>Terminator กับ Connector</td><td>วาด Start เป็นวงกลม</td><td>วงรี = จุดจอด (เริ่ม/จบ) ส่วน <b>วงกลมเล็ก = จุดต่อ</b> คนละหน้าที่กัน</td></tr>
+    </table></div>
+
+    <h3 style="margin-top:18px">ห้องทดลอง: Symbol Sorter — จับคู่ป้ายสัญลักษณ์</h3>
+    <p class="muted">แตะเลือกสัญลักษณ์ทางซ้าย แล้วแตะช่องหน้าที่ทางขวาให้ตรงกัน มีเวลา <b>45 วินาที</b> ต่อรอบ
+      คู่ที่ข้อสอบชอบสลับที่สุดคือ Process กับ Decision — จับคู่ให้ครบทั้ง 6 คู่เพื่อรับ XP เต็ม</p>
+    <div class="sortbar">
+      <button class="btn sm" id="sortStart">เริ่มจับเวลา 45 วินาที</button>
+      <div class="timer" id="sortTimer">45</div>
+      <span class="muted mono" id="sortScore" style="font-size:.78rem">0/6</span>
+    </div>
+    <div class="sorter">
+      <div class="symcol" id="symCol"></div>
+      <div class="fncol" id="fnCol"></div>
+    </div>
+    <div class="status-line" id="sortStatus">ยังไม่ได้เริ่มจับคู่</div>
+    <div class="btn-row"><button class="btn primary" data-quiz="check1">ไปทำแบบฝึกหัดโซนนี้</button></div>
+  </div>
+</section>
+
+<!-- ===== PREVIEW 2 ===== -->
+<section id="scr-preview2" class="screen">
+  <div class="panel">
+    <span class="tag">Before Zone 02</span>
+    <h2>กำลังจะเข้าสู่: สามท่าไหลของสนาม (Layout Room)</h2>
+    <div class="dcard">
+      <div class="ico"><svg viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg">
+        <path d="M14 14 V66" stroke="#5cc8ff" stroke-width="4" stroke-linecap="round"/>
+        <path d="M40 20 L54 34 L40 48 L26 34 Z" fill="none" stroke="#fbbf24" stroke-width="3"/>
+        <path d="M66 30 a12 12 0 1 1 -0.1 0" fill="none" stroke="#6ee7b7" stroke-width="3"/>
+      </svg></div>
+      <div><div class="skillcard" style="margin:0">
+        <div class="sk-name">ทักษะที่จะได้: Sequence · Selection · Iteration</div>
+        <p class="muted" style="margin:6px 0 0">รู้ว่าทุกโปรแกรมในโลกสร้างจากสามท่านี้ อ่านโค้ดแล้วบอกได้ว่าใช้ท่าไหน มีขนมเปียกปูนกี่ลูก และลูกศรวนกลับไปที่ใด</p>
+      </div></div>
+    </div>
+    <div class="btn-row"><button class="btn primary" data-goto="scr-lesson2">เข้าโซนนี้</button></div>
+  </div>
+</section>
+
+<!-- ===== ZONE 2 ===== -->
+<section id="scr-lesson2" class="screen">
+  <div class="panel">
+    <span class="tag">Zone 02 · Layout Room</span>
+    <h2>สามท่าไหลของสนาม: Sequence · Selection · Iteration</h2>
+    <p>ไม่ว่าสนามจะซับซ้อนแค่ไหน ทุกช่วงของสนามประกอบขึ้นจากสามท่านี้เท่านั้น
+      และข้อสอบมักถามว่า <b>ผังนี้ใช้ท่าไหน</b> หรือ <b>ลูกศรวนกลับไปที่กล่องใด</b></p>
+    <div id="fcLegendHost"></div>
+    <div class="grid3fc">
+      <div>
+        <h3 style="margin:6px 0 0">1) SEQUENCE — ทางตรง</h3>
+        <p class="muted" style="margin:2px 0 0;font-size:.84rem">ทำทีละกล่องจากบนลงล่าง ไม่มีทางแยก ไม่มีลูกศรวนกลับ</p>
+        <div id="fcDemo1"></div>
+        <div class="codebox" style="font-size:.8rem">int a = 5;
+int b = a + 2;
+printf("%d", b);</div>
+      </div>
+      <div>
+        <h3 style="margin:6px 0 0">2) SELECTION — โค้งที่ต้องเลือกไลน์</h3>
+        <p class="muted" style="margin:2px 0 0;font-size:.84rem">ขนมเปียกปูน 1 ลูก = if-else 1 ชุด ออกได้ 2 ทางเสมอ</p>
+        <div id="fcDemo2"></div>
+        <div class="codebox" style="font-size:.8rem">if (t &gt;= 25) printf("HOT");
+else         printf("COLD");</div>
+      </div>
+      <div>
+        <h3 style="margin:6px 0 0">3) ITERATION — วนอีกหนึ่งรอบสนาม</h3>
+        <p class="muted" style="margin:2px 0 0;font-size:.84rem">ลูกศรวนกลับขึ้นไปหาขนมเปียกปูน คือ while หรือ for ในรูปผัง</p>
+        <div id="fcDemo3"></div>
+        <div class="codebox" style="font-size:.8rem">for (i = 1; i &lt;= 3; i++)
+    printf("%d ", i);</div>
+      </div>
+    </div>
+    <div class="tbl-wrap"><table>
+      <tr><th>สิ่งที่ต้องตรวจในผัง</th><th>ผังที่ถูกต้อง</th><th>ผังที่ผิด</th></tr>
+      <tr><td>ทางออกของ Decision</td><td>ออกครบ 2 ทาง Yes และ No</td><td>ออกทางเดียว หรือมี 3 ทาง</td></tr>
+      <tr><td>ทางออกของลูป</td><td>มีเส้นที่พาออกจากวงเมื่อเงื่อนไขเป็นเท็จ</td><td>ไม่มีทางออก = Infinite Loop</td></tr>
+      <tr><td>กล่องเปลี่ยนค่าตัวนับ</td><td>ในวงมีกล่องที่ทำให้ค่าเข้าใกล้จุดหยุด</td><td>ลืมกล่อง <code class="ic">i++</code> ลูปจึงไม่มีวันจบ</td></tr>
+    </table></div>
+
+    <h3 style="margin-top:18px">ห้องทดลอง: Pace Car — วางกล่องบนรางแล้วปล่อยรถ</h3>
+    <p class="muted">สนามนี้มีหลุมทราย แตะเลือกกล่องจากคลังด้านล่างแล้วแตะช่องบนรางให้ครบทั้ง 3 ช่อง จากนั้นกดปล่อยรถ
+      ถ้าลำดับผิด รถจะออกนอกโค้งที่ช่องแรกที่ผิด พร้อมบอกเหตุผล — ผ่านให้ครบทั้ง 2 รอบเพื่อรับ XP เต็ม</p>
+    <div class="pacewrap">
+      <div class="status-line" id="paceGoal">โหลดโจทย์รอบที่ 1...</div>
+      <div class="tracklane"></div>
+      <div class="trackrow" id="paceTrack">
+        <div id="paceCar"><svg viewBox="0 0 60 30" xmlns="http://www.w3.org/2000/svg"><rect x="6" y="12" width="48" height="10" rx="4" fill="#5cc8ff"/><path d="M18 12 L26 5 H38 L44 12 Z" fill="#6ee7b7"/><circle cx="17" cy="24" r="5" fill="#e4f2ff"/><circle cx="45" cy="24" r="5" fill="#e4f2ff"/><rect x="2" y="14" width="6" height="6" rx="2" fill="#fbbf24"/></svg></div>
+      </div>
+      <div class="paletterow" id="pacePalette"></div>
+      <div class="btn-row">
+        <button class="btn sm" id="paceRun">ปล่อยรถ</button>
+        <button class="btn sm ghost" id="paceClear">ล้างราง</button>
+      </div>
+      <div class="status-line" id="paceStatus">ยังไม่ได้วางกล่องบนราง</div>
+    </div>
+    <div class="btn-row"><button class="btn primary" data-quiz="check2">ไปทำแบบฝึกหัดโซนนี้</button></div>
+  </div>
+</section>
+
+<!-- ===== PREVIEW 3 ===== -->
+<section id="scr-preview3" class="screen">
+  <div class="panel">
+    <span class="tag">Before Zone 03</span>
+    <h2>กำลังจะเข้าสู่: หอควบคุมการแข่ง (Race Control)</h2>
+    <div class="dcard">
+      <div class="ico"><svg viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg">
+        <rect x="10" y="12" width="60" height="44" rx="6" fill="none" stroke="#5cc8ff" stroke-width="3"/>
+        <path d="M20 32 H36 M20 42 H44" stroke="#6ee7b7" stroke-width="3" stroke-linecap="round"/>
+        <path d="M50 26 L62 34 L50 42 Z" fill="#fbbf24"/>
+        <path d="M26 62 H54" stroke="#fde68a" stroke-width="3" stroke-linecap="round"/>
+      </svg></div>
+      <div><div class="skillcard" style="margin:0">
+        <div class="sk-name">ทักษะที่จะได้: ไล่ผังให้ได้ผลลัพธ์เหมือนไล่โค้ด</div>
+        <p class="muted" style="margin:6px 0 0">เดินตามลูกศรทีละกล่อง จดค่าตัวแปรลงตารางทด แล้วบอกได้ว่าผังนี้พิมพ์อะไรออกมา วนกี่รอบ และค่าสุดท้ายของตัวแปรคือเท่าใด</p>
+      </div></div>
+    </div>
+    <div class="btn-row"><button class="btn primary" data-goto="scr-lesson3">เข้าโซนนี้</button></div>
+  </div>
+</section>
+
+<!-- ===== ZONE 3 ===== -->
+<section id="scr-lesson3" class="screen">
+  <div class="panel">
+    <span class="tag">Zone 03 · Race Control</span>
+    <h2>หอควบคุมการแข่ง: อ่านผังให้ได้ผลลัพธ์เหมือนไล่โค้ด</h2>
+    <p>วิธีเดียวที่ไม่พลาดคือ <b>ทำตารางทด</b> — หนึ่งแถวต่อหนึ่งรอบ จดค่าตัวแปรก่อนตรวจเงื่อนไข ผลของเงื่อนไข และสิ่งที่พิมพ์
+      ห้ามอ่านผังด้วยสายตาแล้วเดา เพราะจุดที่ข้อสอบดักคือ <b>ลำดับระหว่างกล่องพิมพ์กับกล่องเปลี่ยนค่า</b></p>
+    <div class="tbl-wrap"><table>
+      <tr><th>รอบที่</th><th>n ก่อนตรวจ</th><th><code>n &gt; 0 ?</code></th><th>พิมพ์</th><th>n หลังกล่อง <code>n = n - 1</code></th></tr>
+      <tr><td>1</td><td>3</td><td>จริง</td><td>3</td><td>2</td></tr>
+      <tr><td>2</td><td>2</td><td>จริง</td><td>2</td><td>1</td></tr>
+      <tr><td>3</td><td>1</td><td>จริง</td><td>1</td><td>0</td></tr>
+      <tr><td>4</td><td>0</td><td>เท็จ → ออกจากวง</td><td>Go!</td><td>—</td></tr>
+    </table></div>
+    <p class="muted" style="margin-top:10px">สังเกตว่าขนมเปียกปูนถูกตรวจ <b>4 ครั้ง</b> แต่ตัววงทำงานเพียง <b>3 รอบ</b> —
+      ข้อสอบชอบถามจำนวนครั้งที่ตรวจเงื่อนไข ไม่ใช่จำนวนรอบ</p>
+
+    <h3 style="margin-top:18px">ห้องทดลอง: Track Runner — ผังงาน | โค้ด C | ผลลัพธ์</h3>
+    <p class="muted">กด <b>เล่น</b> แล้วรถจะวิ่งไปตามลูกศรของผัง พร้อมไฮไลต์กล่องผังและบรรทัดโค้ดที่ตรงกันในเวลาเดียวกัน
+      หรือกด <b>ทีละกล่อง</b> เพื่อเดินเองทีละขั้น — เดินให้จบผังอย่างน้อยหนึ่งครั้งเพื่อรับ XP</p>
+    <div class="btn-row" style="margin-top:8px">
+      <button class="btn sm" id="trPlay">เล่น</button>
+      <button class="btn sm" id="trStep">ทีละกล่อง</button>
+      <button class="btn sm ghost" id="trReset">เริ่มใหม่</button>
+    </div>
+    <div class="runner">
+      <div class="rpane">
+        <div class="rhd">Flowchart · พิมพ์เขียวสนาม</div>
+        <svg id="trSvg" viewBox="0 0 320 460" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="ผังงานลูปนับถอยหลังจาก 3">
+          <defs>
+            <marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+              <path d="M0 0 L10 5 L0 10 z" fill="#8fb0cc"/>
+            </marker>
+          </defs>
+          <g stroke="#8fb0cc" stroke-width="1.6" fill="none" marker-end="url(#ah)">
+            <path d="M160 41 V56"/>
+            <path d="M160 90 V108"/>
+            <path d="M160 170 V194"/>
+            <path d="M160 228 V258"/>
+            <path d="M108 276 H40 V140 H94"/>
+            <path d="M224 140 H284 V356 H220"/>
+            <path d="M160 372 V394"/>
+          </g>
+          <g font-family="IBM Plex Mono,monospace" font-size="10" fill="#8fb0cc">
+            <text x="168" y="186">Yes</text>
+            <text x="232" y="133">No</text>
+            <text x="44" y="206" transform="rotate(-90 44 206)">loop back</text>
+          </g>
+          <g id="tn-start" class="fcnode"><rect class="sh t" x="112" y="8" width="96" height="32" rx="16"/><text class="tx" x="160" y="28" text-anchor="middle">START</text></g>
+          <g id="tn-init" class="fcnode"><rect class="sh p" x="108" y="58" width="104" height="32" rx="3"/><text class="tx" x="160" y="78" text-anchor="middle">n = 3</text></g>
+          <g id="tn-cond" class="fcnode"><path class="sh d" d="M160 110 L224 140 L160 170 L96 140 Z"/><text class="tx" x="160" y="144" text-anchor="middle">n &gt; 0 ?</text></g>
+          <g id="tn-print" class="fcnode"><path class="sh io" d="M118 196 H230 L202 228 H90 Z"/><text class="tx" x="160" y="216" text-anchor="middle">print n</text></g>
+          <g id="tn-dec" class="fcnode"><rect class="sh p" x="108" y="260" width="104" height="32" rx="3"/><text class="tx" x="160" y="280" text-anchor="middle">n = n - 1</text></g>
+          <g id="tn-go" class="fcnode"><path class="sh io" d="M118 340 H230 L202 372 H90 Z"/><text class="tx" x="160" y="360" text-anchor="middle">print "Go!"</text></g>
+          <g id="tn-end" class="fcnode"><rect class="sh t" x="116" y="396" width="88" height="32" rx="16"/><text class="tx" x="160" y="416" text-anchor="middle">END</text></g>
+          <g id="trCar" transform="translate(160,24)"><g transform="translate(-122,-10) scale(.62)"><rect x="6" y="12" width="48" height="10" rx="4" fill="#fbbf24"/><path d="M18 12 L26 5 H38 L44 12 Z" fill="#fde68a"/><circle cx="17" cy="24" r="5" fill="#e4f2ff"/><circle cx="45" cy="24" r="5" fill="#e4f2ff"/></g></g>
+        </svg>
+      </div>
+      <div class="rpane">
+        <div class="rhd">Code · ภาษา C ที่เทียบเท่ากัน</div>
+        <div class="codelines" id="trCode"></div>
+        <div class="varbox" id="trVar">ค่าตัวแปร: <b>n = —</b></div>
+      </div>
+      <div class="rpane">
+        <div class="rhd">Output · ป้ายบอกผลข้างสนาม</div>
+        <div class="outbox" id="trOut"></div>
+        <div class="varbox" id="trNote">กดปุ่มเล่นหรือทีละกล่องเพื่อเริ่ม</div>
+      </div>
+    </div>
+    <div class="status-line" id="trStatus">รถยังจอดอยู่ที่กล่อง START</div>
+    <div class="btn-row"><button class="btn primary" data-quiz="check3">ไปทำแบบฝึกหัดโซนนี้</button></div>
+  </div>
+</section>
+
+<section id="scr-check1" class="screen">
+  <div class="panel">
+    <span class="tag">Checkpoint · Zone 01</span>
+    <h2>ด่านฝึกซ้อม: ป้ายสัญลักษณ์ประจำสนาม</h2>
+    <p class="muted">3 ข้อ เล่นในโหมดอาร์เคด ทำผิดได้ ไม่มีผลต่อคะแนนดาว — จุดประสงค์คือให้แน่ใจว่าเข้าใจก่อนไปโซนถัดไป</p>
+    <div class="status-line" id="check1Result">ยังไม่ได้ลงด่านฝึกซ้อมนี้</div>
+    <div class="btn-row"><button class="btn primary" data-requiz="check1" style="flex:1">เริ่มด่านฝึกซ้อม (สุ่มข้อใหม่ทุกครั้ง)</button></div>
+    <div class="btn-row" id="check1Next" style="display:none">
+      <button class="btn primary" data-goto="scr-preview2">ไปโซนถัดไป</button>
+    </div>
+  </div>
+</section>
+
+<section id="scr-check2" class="screen">
+  <div class="panel">
+    <span class="tag">Checkpoint · Zone 02</span>
+    <h2>ด่านฝึกซ้อม: สามท่าไหลของสนาม</h2>
+    <p class="muted">3 ข้อ เล่นในโหมดอาร์เคด ทำผิดได้ ไม่มีผลต่อคะแนนดาว — จุดประสงค์คือให้แน่ใจว่าเข้าใจก่อนไปโซนถัดไป</p>
+    <div class="status-line" id="check2Result">ยังไม่ได้ลงด่านฝึกซ้อมนี้</div>
+    <div class="btn-row"><button class="btn primary" data-requiz="check2" style="flex:1">เริ่มด่านฝึกซ้อม (สุ่มข้อใหม่ทุกครั้ง)</button></div>
+    <div class="btn-row" id="check2Next" style="display:none">
+      <button class="btn primary" data-goto="scr-preview3">ไปโซนถัดไป</button>
+    </div>
+  </div>
+</section>
+
+<section id="scr-check3" class="screen">
+  <div class="panel">
+    <span class="tag">Checkpoint · Zone 03</span>
+    <h2>ด่านฝึกซ้อม: หอควบคุมการแข่ง</h2>
+    <p class="muted">3 ข้อ เล่นในโหมดอาร์เคด ทำผิดได้ ไม่มีผลต่อคะแนนดาว — จุดประสงค์คือให้แน่ใจว่าเข้าใจก่อนลงแข่งจริง</p>
+    <div class="status-line" id="check3Result">ยังไม่ได้ลงด่านฝึกซ้อมนี้</div>
+    <div class="btn-row"><button class="btn primary" data-requiz="check3" style="flex:1">เริ่มด่านฝึกซ้อม (สุ่มข้อใหม่ทุกครั้ง)</button></div>
+    <div class="btn-row" id="check3Next" style="display:none">
+      <button class="btn primary" id="goPost">ไปแบบทดสอบหลังเรียน</button>
+    </div>
+  </div>
+</section>
+
+<!-- ===== POSTTEST ===== -->
+<section id="scr-posttest" class="screen">
+  <div class="panel">
+    <span class="tag">Checkpoint 04 · Posttest</span>
+    <h2>รอบแข่งจริง (Race Day) — ทดสอบหลังเรียน</h2>
+    <p class="muted">6 ข้อใหม่ (โซนละ 2 ข้อ) เพื่อวัดความเข้าใจหลังผ่านครบทั้ง 3 โซนของสนาม — เล่นในโหมดอาร์เคดเช่นเดียวกับก่อนเรียน เพื่อให้เทียบผลกันได้อย่างเป็นธรรม</p>
+    <div class="howto">
+      <div class="hk"><b>แตะ</b><span>เล่นด้วยการแตะคำตอบอย่างเดียว ไม่มีปุ่มเดิน ไม่มีปุ่มกระโดด</span></div>
+      <div class="hk"><b>ตอบถูก</b><span>รถผ่านโค้งเพิ่มอีก 1 โค้งทันที · ต่อเนื่องหลายข้อได้โบนัส Combo</span></div>
+      <div class="hk"><b>ตอบผิด</b><span>ไม่ตกรอบ ไม่มีแพ้ — อ่านเฉลยแล้วไปข้อถัดไปได้เลย</span></div>
+      <div class="hk"><b>1 2 3 4</b><span>ทางลัดสำหรับคอมพิวเตอร์ (บนมือถือใช้แตะปุ่มใหญ่)</span></div>
+      <div class="hk"><b>จบด่าน</b><span>ตอบครบทุกข้อ = ดูผล พร้อมกราฟเรดาร์บอกจุดแข็ง-จุดอ่อนทันที</span></div>
+      <div class="hk"><b>ดาว</b><span>ตอบถูก 1 ข้อ = 1 ดาว เต็ม 6 ข้อ = 6 ดาว ตัวเลขดาวกับคะแนนจึงตรงกันเสมอ</span></div>
+    </div>
+    <div class="btn-row"><button class="btn primary" id="postLaunch" style="flex:1">ออกสตาร์ทรอบแข่งจริง</button></div>
+  </div>
+</section>
+
+<!-- ===== SUMMARY ===== -->
+<section id="scr-summary" class="screen">
+  <div class="panel">
+    <span class="tag">Race Report</span>
+    <h2>สรุปผลภารกิจ CIRCUIT BLUEPRINT</h2>
+    <p class="muted" id="sumWho">—</p>
+    <div class="cmp-grid">
+      <div class="cmp-col">
+        <small>Pretest</small>
+        <div class="star-row sm" id="sumPreStars"></div>
+        <b id="sumPre">-</b>
+        <small id="sumPreRank">—</small>
+      </div>
+      <div class="cmp-arrow">&#8594;</div>
+      <div class="cmp-col post">
+        <small>Posttest</small>
+        <div class="star-row sm" id="sumPostStars"></div>
+        <b id="sumPost">-</b>
+        <small id="sumPostRank">—</small>
+      </div>
+    </div>
+    <div class="delta" id="sumMsg"></div>
+
+    <h3 style="margin-top:20px">ดาวรายโซน (Posttest)</h3>
+    <p class="muted">ใช้เกณฑ์เดียวกับคะแนนรวมคือ 1 ดาว = ตอบถูก 1 ข้อ แต่ละโซนมี 2 ข้อ จึงเต็ม 2 ดาว — ใช้ดูว่ายังอ่อนโซนไหน</p>
+    <div class="dstars" id="sumDistrictStars"></div>
+
+    <h3 style="margin-top:20px">กราฟทักษะรายด้าน (Pretest vs Posttest)</h3>
+    <p class="muted">แต่ละแกนคำนวณจาก 2 ข้อของโซนนั้นในแบบทดสอบ (0/1/2 → 0%/50%/100%) ยกเว้นแกนภาพรวมที่คิดจากทั้ง 6 ข้อ</p>
+    <div class="chartbox"><canvas id="skillRadarChart"></canvas><svg id="radarFallback" viewBox="0 0 340 300" xmlns="http://www.w3.org/2000/svg"></svg></div>
+
+    <h3 style="margin-top:20px">ถ้วยรางวัลที่ได้รับ</h3>
+    <div class="badges" id="sumBadges"></div>
+
+    <h3 style="margin-top:20px">ข้อเสนอแนะเฉพาะบุคคล</h3>
+    <ul class="advice" id="sumAdvice"></ul>
+
+    <div class="hud" style="margin-top:18px">
+      <div class="stat"><b id="sumXp">0</b><small>XP รวม</small></div>
+      <div class="stat combo"><b id="sumCombo">0</b><small>Combo สูงสุด</small></div>
+      <div class="stat star"><b id="sumStarTotal">0</b><small>ดาวหลังเรียน</small></div>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn primary" id="btnReview">ทบทวนโซนที่ได้ดาวน้อยที่สุด</button>
+      <button class="btn" id="btnAgain">เริ่มภารกิจใหม่</button>
+    </div>
+  </div>
+</section>
+
+</div>
+
+<footer>
+  <p><b>GNR1007</b> · การโปรแกรมคอมพิวเตอร์สำหรับวิศวกร — วันที่ 3 ช่วงที่ 10 (บทที่ 10 Flowchart)</p>
+  <p>ผศ.ดร.กุลวลัญช์ วรุณสิน · สาขาวิศวกรรมคอมพิวเตอร์ คณะวิศวกรรมศาสตร์ มหาวิทยาลัยรามคำแหง</p>
+  <p class="fmono">CIRCUIT BLUEPRINT v1.0 — GNR GRAND PRIX · CLIMB MODE (TAP-ONLY) · MOBILE FIRST · SINGLE-FILE BUILD</p>
+</footer>
+
+<div id="toast" role="status" aria-live="polite"></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<script>
+
+/* ============ 1) UTILITIES ============ */
+const $  = s => document.querySelector(s);
+const $$ = s => Array.from(document.querySelectorAll(s));
+const clamp = (v,a,b) => Math.max(a, Math.min(b, v));
+const pick  = a => a[Math.floor(Math.random()*a.length)];
+const REDUCED = !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
+function shuffle(arr){const a=arr.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
+function pickN(arr,n){ return shuffle(arr).slice(0,n); }
+function esc(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+let toastT=null;
+function toast(msg,ms){const t=$('#toast');t.textContent=msg;t.classList.add('show');clearTimeout(toastT);toastT=setTimeout(()=>t.classList.remove('show'),ms||2600);}
+
+/* ============ 2) SOUND ENGINE (Web Audio, สังเคราะห์เอง) ============ */
+const SFX={on:true,ctx:null,ready:false,master:null,
+  init(){this.ready=true;if(this.ctx)return;try{const AC=window.AudioContext||window.webkitAudioContext;if(!AC)return;this.ctx=new AC();this.master=this.ctx.createGain();this.master.gain.value=0.20;this.master.connect(this.ctx.destination);}catch(e){this.ctx=null;}},
+  note(f,at,dur,type,vol){if(!this.on||!this.ctx)return;const c=this.ctx,o=c.createOscillator(),g=c.createGain();o.type=type||'sine';o.frequency.value=f;const t0=c.currentTime+(at||0);g.gain.setValueAtTime(0.0001,t0);g.gain.exponentialRampToValueAtTime(vol||0.4,t0+0.012);g.gain.exponentialRampToValueAtTime(0.0001,t0+(dur||0.15));o.connect(g);g.connect(this.master);o.start(t0);o.stop(t0+(dur||0.15)+0.03);},
+  noise(dur,vol){if(!this.on||!this.ctx)return;const c=this.ctx,n=Math.floor(c.sampleRate*dur);const buf=c.createBuffer(1,n,c.sampleRate),d=buf.getChannelData(0);for(let i=0;i<n;i++)d[i]=(Math.random()*2-1)*(1-i/n);const src=c.createBufferSource();src.buffer=buf;const f=c.createBiquadFilter();f.type='lowpass';f.frequency.value=1200;const g=c.createGain();g.gain.value=vol||0.3;src.connect(f);f.connect(g);g.connect(this.master);src.start();},
+  play(name){if(!this.ready)return;this.init();if(!this.on||!this.ctx)return;if(this.ctx.state==='suspended')this.ctx.resume();
+    switch(name){
+      case 'click':   this.note(700,0,.06,'square',.16); break;
+      case 'select':  this.note(1100,0,.05,'triangle',.14); break;
+      case 'correct': [523.25,659.25,783.99].forEach((f,i)=>this.note(f,i*.07,.22,'triangle',.42)); break;
+      case 'wrong':   this.note(196,0,.18,'sawtooth',.28); this.note(146.8,.1,.3,'sawtooth',.26); break;
+      case 'combo':   [783.99,1046.5,1318.5].forEach((f,i)=>this.note(f,i*.05,.18,'sine',.38)); break;
+      case 'star':    this.note(120,0,.09,'square',.42); this.noise(.12,.22); this.note(1174.7,.05,.3,'sine',.34); break;
+      case 'unlock':  [392,523.25,659.25,880].forEach((f,i)=>this.note(f,i*.09,.26,'triangle',.34)); break;
+      case 'bell':    this.note(1400,0,.05,'square',.3); this.note(1400,.08,.05,'square',.3); break;
+      case 'ping':    this.note(1046.5,0,.14,'sine',.32); break;
+      case 'tick':    this.note(880,0,.04,'square',.14); break;
+      case 'engine':  this.note(140,0,.22,'sawtooth',.22); this.note(210,.08,.24,'sawtooth',.18); break;
+      case 'alarm':   this.note(320,0,.16,'sawtooth',.3); this.note(240,.16,.22,'sawtooth',.3); break;
+      case 'fanfare': [523.25,659.25,783.99,1046.5,1318.5].forEach((f,i)=>this.note(f,i*.11,.4,'triangle',.42)); break;
+    }}};
+function updSoundBtns(){const label='เสียง: '+(SFX.on?'เปิด':'ปิด');const w=$('#wSound');if(w)w.textContent=label;const b=$('#btnSound');if(b){b.classList.toggle('off',!SFX.on);b.textContent=SFX.on?'SND':'MUTE';b.title=label;}}
+
+/* ============ 3) CONFETTI ============ */
+let confettiRAF=null;
+function confetti(ms){
+  if(REDUCED) return;
+  const cv=$('#confetti'),ctx=cv.getContext('2d');
+  cv.width=innerWidth;cv.height=innerHeight;cv.style.display='block';
+  const cols=['#5cc8ff','#6ee7b7','#fbbf24','#fde68a','#e4f2ff','#fb7185'];
+  const ps=Array.from({length:140},()=>({x:Math.random()*cv.width,y:-20-Math.random()*cv.height*0.6,r:4+Math.random()*6,vy:1.6+Math.random()*3.4,vx:-1.4+Math.random()*2.8,a:Math.random()*Math.PI,va:-0.14+Math.random()*0.28,c:pick(cols)}));
+  const stop=Date.now()+(ms||4000);cancelAnimationFrame(confettiRAF);
+  (function loop(){ctx.clearRect(0,0,cv.width,cv.height);ps.forEach(p=>{p.x+=p.vx;p.y+=p.vy;p.a+=p.va;if(p.y>cv.height+20){p.y=-20;p.x=Math.random()*cv.width;}ctx.save();ctx.translate(p.x,p.y);ctx.rotate(p.a);ctx.fillStyle=p.c;ctx.fillRect(-p.r/2,-p.r/2,p.r,p.r*1.6);ctx.restore();});if(Date.now()<stop)confettiRAF=requestAnimationFrame(loop);else{ctx.clearRect(0,0,cv.width,cv.height);cv.style.display='none';}})();
+}
+
+/* ============ 4) QUESTION BANK ============
+   กติกาคลังข้อสอบของชุดนี้
+   - ทุกข้อมีสิ่งที่ต้องอ่านจริงบนจอ (โค้ด C หรือผังงาน) ถ้าลบทิ้งจะตอบไม่ได้
+   - สิ่งที่ถามต้องปรากฏบนจอครบ ถ้าเทียบสองกรณีจะแสดงทั้งสองฉบับ
+   - โค้ด C ทุกชิ้นผ่านการคอมไพล์และรันด้วย gcc แล้วเทียบกับเฉลย
+   ================================================ */
+function CD(s){ return '<div class="qcode codebox">' + s + '</div>'; }
+
+/* ================= FLOWCHART RENDERER =================
+   วาดผังงานด้วยสัญลักษณ์มาตรฐานจริงเป็น SVG ไม่ใช่ผังแบบตัวอักษร
+   ชนิดกล่อง  t = Terminator วงรี · p = Process สี่เหลี่ยมผืนผ้า
+             d = Decision ขนมเปียกปูน · io = Input/Output สี่เหลี่ยมด้านขนาน
+   สีของเส้นขอบใช้รหัสเดียวกันทั้งเกม เพื่อให้จำรูปคู่กับหน้าที่ได้เร็วขึ้น
+   ====================================================== */
+const FCH = {t:32, p:32, d:48, io:32};
+function fcW(txt,ty){
+  const b = String(txt).length * 6.9;
+  if(ty==='d') return Math.max(104, b+56);
+  if(ty==='t') return Math.max(84,  b+34);
+  return Math.max(92, b+34);
+}
+function fcShape(ty,cx,cy,w,h){
+  const x=+(cx-w/2).toFixed(1), y=+(cy-h/2).toFixed(1), W=+w.toFixed(1), Y2=+(y+h).toFixed(1), X2=+(x+W).toFixed(1);
+  if(ty==='t')  return '<rect class="fs t" x="'+x+'" y="'+y+'" width="'+W+'" height="'+h+'" rx="'+(h/2)+'"/>';
+  if(ty==='p')  return '<rect class="fs p" x="'+x+'" y="'+y+'" width="'+W+'" height="'+h+'" rx="3"/>';
+  if(ty==='d')  return '<path class="fs d" d="M'+cx+' '+y+'L'+X2+' '+cy+'L'+cx+' '+Y2+'L'+x+' '+cy+'Z"/>';
+  const k=12;
+  return '<path class="fs io" d="M'+(x+k)+' '+y+'H'+X2+'L'+(X2-k)+' '+Y2+'H'+x+'Z"/>';
+}
+function fcArrow(p0,p1){
+  const dx=p1[0]-p0[0], dy=p1[1]-p0[1], L=Math.hypot(dx,dy)||1;
+  const ux=dx/L, uy=dy/L, s=6;
+  const bx=p1[0]-ux*s, by=p1[1]-uy*s, px=-uy*s*0.58, py=ux*s*0.58;
+  return '<path class="fa" d="M'+p1[0].toFixed(1)+' '+p1[1].toFixed(1)+'L'+(bx+px).toFixed(1)+' '+(by+py).toFixed(1)+
+         'L'+(bx-px).toFixed(1)+' '+(by-py).toFixed(1)+'Z"/>';
+}
+function fcSVG(W,H,nodes,edges,labels){
+  let s='<svg class="fcv" viewBox="0 0 '+Math.round(W)+' '+Math.round(H)+'" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="ผังงาน">';
+  edges.forEach(e=>{
+    s+='<path class="fe" d="M'+e.map(p=>p[0].toFixed(1)+' '+p[1].toFixed(1)).join('L')+'"/>';
+    s+=fcArrow(e[e.length-2],e[e.length-1]);
+  });
+  (labels||[]).forEach(l=>{
+    const rot=l[4]?' transform="rotate('+l[4]+' '+l[1]+' '+l[2]+')"':'';
+    s+='<text class="fl" x="'+l[1]+'" y="'+l[2]+'" text-anchor="'+(l[3]||'start')+'"'+rot+'>'+esc(l[0])+'</text>';
+  });
+  nodes.forEach(n=>{
+    s+='<g class="fn'+(n.hi?' hi':'')+'">'+fcShape(n.ty,n.x,n.y,n.w,n.h)+
+       '<text class="ft" x="'+n.x+'" y="'+(n.y+4)+'" text-anchor="middle">'+esc(n.tx)+'</text></g>';
+  });
+  return s+'</svg>';
+}
+/* ---- ผังแบบเรียงลำดับ (Sequence) ---- */
+function fcSeq(items,o){
+  o=o||{}; const W=o.W||300, cx=W/2, gap=24;
+  let y=12, nodes=[], edges=[];
+  items.forEach((it,i)=>{
+    const ty=it[0], tx=it[1], h=FCH[ty], w=fcW(tx,ty);
+    y+=h/2; nodes.push({ty,tx,x:cx,y,w,h,hi:it[2]});
+    if(i>0){const p=nodes[i-1]; edges.push([[cx,p.y+p.h/2],[cx,y-h/2]]);}
+    y+=h/2+gap;
+  });
+  return fcSVG(W,y-gap+12,nodes,edges,[]);
+}
+/* ---- ผังแบบวนซ้ำ (Iteration) — back:false จะได้ผังทางแยกที่ไม่วนกลับ ---- */
+function fcLoop(o){
+  const W=o.W||320, cx=W/2, gap=24, lg=22, rg=W-22;
+  let y=12, nodes=[], edges=[], labels=[];
+  const add=(ty,tx)=>{const h=FCH[ty],w=fcW(tx,ty); y+=h/2; const n={ty,tx,x:cx,y,w,h}; nodes.push(n); y+=h/2+gap; return n;};
+  const chain=(a,b)=>edges.push([[cx,a.y+a.h/2],[cx,b.y-b.h/2]]);
+  let prev=add('t','START');
+  (o.pre||[]).forEach(p=>{const n=add(p[0],p[1]); chain(prev,n); prev=n;});
+  const cond=add('d',o.cond); chain(prev,cond); prev=cond;
+  labels.push(['Yes',cx+8,cond.y+cond.h/2+16,'start']);
+  labels.push(['No',cond.x+cond.w/2+7,cond.y-8,'start']);
+  o.body.forEach(p=>{const n=add(p[0],p[1]); chain(prev,n); prev=n;});
+  const last=prev;
+  if(o.back!==false){
+    const by=last.y+last.h/2+13;
+    edges.push([[cx,last.y+last.h/2],[cx,by],[lg,by],[lg,cond.y],[cond.x-cond.w/2,cond.y]]);
+    labels.push(['วนกลับ',lg+9,by-7,'start']);
+    y+=10;
+  }
+  const ex=[];
+  (o.exit||[]).forEach(p=>ex.push(add(p[0],p[1])));
+  ex.push(add('t','END'));
+  for(let i=1;i<ex.length;i++) chain(ex[i-1],ex[i]);
+  if(o.back===false) chain(last,ex[0]);
+  edges.push([[cond.x+cond.w/2,cond.y],[rg,cond.y],[rg,ex[0].y],[ex[0].x+ex[0].w/2,ex[0].y]]);
+  return fcSVG(W,y-gap+12,nodes,edges,labels);
+}
+/* ---- ผังแบบทางแยก (Selection) — สองสายออกจากขนมเปียกปูน ---- */
+function fcBranch(o){
+  const W=o.W||330, cx=W/2, gap=24, off=o.off||84;
+  let y=12, nodes=[], edges=[], labels=[];
+  const put=(ty,tx,X,Y)=>{const h=FCH[ty],w=fcW(tx,ty); const n={ty,tx,x:X,y:Y,w,h}; nodes.push(n); return n;};
+  const addC=(ty,tx)=>{const h=FCH[ty]; y+=h/2; const n=put(ty,tx,cx,y); y+=h/2+gap; return n;};
+  const chain=(a,b)=>edges.push([[a.x,a.y+a.h/2],[b.x,b.y-b.h/2]]);
+  let prev=addC('t','START');
+  (o.pre||[]).forEach(p=>{const n=addC(p[0],p[1]); chain(prev,n); prev=n;});
+  const cond=addC('d',o.cond); chain(prev,cond);
+  const top=y, cols=[{items:o.yes,X:cx-off,lab:'Yes'},{items:o.no,X:cx+off,lab:'No'}];
+  let maxY=top, ends=[];
+  cols.forEach(col=>{
+    let cy=top, p=null;
+    col.items.forEach((it,i)=>{
+      const h=FCH[it[0]]; cy+=h/2;
+      const n=put(it[0],it[1],col.X,cy);
+      if(i===0) edges.push([[cond.x+(col.X<cx?-1:1)*cond.w/2,cond.y],[col.X,cond.y],[col.X,cy-h/2]]);
+      else chain(p,n);
+      p=n; cy+=h/2+gap;
+    });
+    maxY=Math.max(maxY,cy); ends.push(p);
+    labels.push([col.lab, col.X+(col.X<cx?-4:4), cond.y-8, col.X<cx?'end':'start']);
+  });
+  y=maxY;
+  if(o.merge){
+    const jy=y-gap+16;
+    let p=null;
+    o.merge.forEach((it,i)=>{
+      const h=FCH[it[0]]; y+=h/2; const n=put(it[0],it[1],cx,y);
+      if(i===0) ends.forEach(e=>edges.push([[e.x,e.y+e.h/2],[e.x,jy],[cx,jy],[cx,y-h/2]]));
+      else chain(p,n);
+      p=n; y+=h/2+gap;
+    });
+  }
+  return fcSVG(W,y-gap+12,nodes,edges,labels);
+}
+/* ---- ผังเงื่อนไขสองชั้น (if / else if / else) ---- */
+function fcTwoCond(o){
+  const W=360, mx=110, rx=262, rg=W-20;
+  const N=[], E=[], L=[];
+  const put=(ty,tx,X,Y)=>{const h=FCH[ty],w=fcW(tx,ty);const n={ty,tx,x:X,y:Y,w,h};N.push(n);return n;};
+  const st=put('t','START',mx,22), iv=put('p',o.init,mx,80);
+  const c1=put('d',o.c1,mx,146), a1=put('io',o.y1,rx,146);
+  const c2=put('d',o.c2,mx,224), a2=put('io',o.y2,rx,224);
+  const nc=put('io',o.n2,mx,292), en=put('t','END',mx,350);
+  E.push([[mx,38],[mx,64]]); E.push([[mx,96],[mx,122]]);
+  E.push([[mx,170],[mx,200]]); E.push([[mx,248],[mx,276]]); E.push([[mx,308],[mx,334]]);
+  E.push([[mx+c1.w/2,146],[rx-a1.w/2,146]]);
+  E.push([[mx+c2.w/2,224],[rx-a2.w/2,224]]);
+  E.push([[rx+a1.w/2,146],[rg,146],[rg,350],[mx+en.w/2,350]]);
+  E.push([[rx+a2.w/2,224],[rg,224],[rg,350],[mx+en.w/2,350]]);
+  L.push(['Yes',mx+c1.w/2+6,138,'start']); L.push(['Yes',mx+c2.w/2+6,216,'start']);
+  L.push(['No',mx+7,190,'start']); L.push(['No',mx+7,268,'start']);
+  return fcSVG(W,382,N,E,L);
+}
+/* ---- แถบอธิบายสัญลักษณ์ ใช้รูปจริงย่อส่วน ---- */
+function fcChip(ty,label){
+  const m={t:'<rect class="fs t" x="2" y="4" width="34" height="15" rx="7.5"/>',
+           p:'<rect class="fs p" x="2" y="4" width="34" height="15" rx="2"/>',
+           d:'<path class="fs d" d="M19 3L36 11.5L19 20L2 11.5Z"/>',
+           io:'<path class="fs io" d="M10 4H37L29 19H2Z"/>'}[ty];
+  return '<i><svg class="fcmini" viewBox="0 0 38 23" xmlns="http://www.w3.org/2000/svg">'+m+'</svg>'+label+'</i>';
+}
+const FCLEG = '<div class="fclegend">'+fcChip('t','วงรี = เริ่ม/จบ')+fcChip('p','ผืนผ้า = ประมวลผล')+
+  fcChip('d','เปียกปูน = ตัดสินใจ')+fcChip('io','ด้านขนาน = รับ/แสดงข้อมูล')+'</div>';
+function FCG(svg,note){ return FCLEG+'<div class="fcwrap">'+svg+(note?'<div class="fcnote">'+note+'</div>':'')+'</div>'; }
+const FCSP = 'กล่อง <b>print n</b> หมายถึงพิมพ์ค่า n แล้วเว้นวรรคหนึ่งช่อง';
+
+const BANK = {
+  district1:[
+    {q:'พิจารณาโปรแกรมต่อไปนี้'+CD('#include &lt;stdio.h&gt;\n\nint main(void) {\n    int n;\n    scanf("%d", &amp;n);\n    n = n * 2;\n    printf("%d", n);\n    return 0;\n}')+'เมื่อเขียนโปรแกรมนี้เป็นผังงาน ต้องใช้สัญลักษณ์ <b>ด้านขนาน (Input/Output)</b> ทั้งหมดกี่กล่อง',
+     c:['2 กล่อง','1 กล่อง','3 กล่อง','ไม่ต้องใช้เลย'],a:0,
+     e:'ในโค้ดนี้มีคำสั่งรับ-แสดงข้อมูลสองคำสั่ง คือ <code>scanf</code> หนึ่งกล่องและ <code>printf</code> หนึ่งกล่อง ทั้งคู่ต้องวาดเป็นด้านขนาน ส่วนบรรทัด <code>n = n * 2;</code> เป็นการคำนวณจึงเป็นสี่เหลี่ยมผืนผ้า (Process) ไม่ใช่ด้านขนาน'},
+
+    {q:'พิจารณาโปรแกรมต่อไปนี้'+CD('int a = 5, b = 3, sum;\n\nsum = a + b;\nif (sum &gt; 7)\n    printf("BIG");')+'บรรทัด <code>sum = a + b;</code> ต้องวาดด้วยสัญลักษณ์ใดในผังงาน',
+     c:['สี่เหลี่ยมผืนผ้า (Process)','ขนมเปียกปูน (Decision)','ด้านขนาน (Input/Output)','วงรี (Terminator)'],a:0,
+     e:'บรรทัดนี้เป็นการคำนวณแล้วเก็บผลลงตัวแปร จึงเป็น Process ซึ่งวาดเป็นสี่เหลี่ยมผืนผ้า ในโค้ดชุดเดียวกันนี้ บรรทัดที่ต้องเป็นขนมเปียกปูนคือ <code>if (sum &gt; 7)</code> เพราะมีการเปรียบเทียบ และบรรทัด <code>printf</code> ต้องเป็นด้านขนาน'},
+
+    {q:'พิจารณาโปรแกรมต่อไปนี้'+CD('int x = 10;\n\nif (x &gt; 5)      printf("A");\nif (x % 2 == 0) printf("B");\nprintf("C");')+'ผังงานของโปรแกรมนี้ต้องมีขนมเปียกปูน (Decision) กี่ลูก',
+     c:['2 ลูก','1 ลูก','3 ลูก','ไม่มีเลย'],a:0,
+     e:'ขนมเปียกปูนใช้กับการตรวจเงื่อนไข ในโค้ดนี้มี <code>if</code> สองตัวที่แยกกันคือ <code>x &gt; 5</code> และ <code>x % 2 == 0</code> จึงต้องมีเปียกปูนสองลูก ส่วนบรรทัด <code>printf("C");</code> ไม่มีเงื่อนไข จึงเป็นด้านขนานที่อยู่นอกทางแยกทั้งหมด'},
+
+    {q:'พิจารณาผังงานต่อไปนี้ ซึ่งมีการใช้สัญลักษณ์ผิดอยู่หนึ่งกล่อง'+FCG(fcLoop({pre:[['p','read n']],cond:'n > 0 ?',body:[['io','print "POS"']],back:false}))+'กล่องใดใช้สัญลักษณ์ผิด และที่ถูกต้องควรเป็นรูปใด',
+     c:['กล่อง read n ควรเป็นด้านขนาน เพราะเป็นการรับข้อมูลเข้า','กล่อง n &gt; 0 ? ควรเป็นสี่เหลี่ยมผืนผ้า เพราะเป็นการคำนวณ','กล่อง print "POS" ควรเป็นสี่เหลี่ยมผืนผ้า เพราะเป็นการทำงาน','ไม่มีกล่องใดผิด ผังนี้ถูกต้องแล้ว'],a:0,
+     e:'การรับค่าเข้าโปรแกรมจัดเป็น Input จึงต้องวาดด้วยด้านขนานที่เอียง ไม่ใช่สี่เหลี่ยมผืนผ้าซึ่งสงวนไว้สำหรับการคำนวณหรือกำหนดค่า ส่วนกล่องอื่นในผังนี้ถูกต้องแล้ว คือเงื่อนไขเป็นเปียกปูนที่มีทางออกครบสองทาง และการพิมพ์เป็นด้านขนาน'},
+
+    {q:'พิจารณาโปรแกรมต่อไปนี้'+CD('#include &lt;stdio.h&gt;\n\nint main(void) {\n    int r;\n    scanf("%d", &amp;r);\n    if (r &gt; 0)\n        printf("OK");\n    return 0;\n}')+'ผังงานของโปรแกรมนี้มีกล่องทั้งหมดกี่กล่อง เมื่อนับ Start และ End ด้วย และนับ <code>scanf</code> เงื่อนไข และ <code>printf</code> อย่างละหนึ่งกล่อง',
+     c:['5 กล่อง','3 กล่อง','4 กล่อง','6 กล่อง'],a:0,
+     e:'ไล่ตามโค้ดได้กล่องดังนี้ วงรี Start หนึ่ง ด้านขนานรับค่า r หนึ่ง เปียกปูน <code>r &gt; 0</code> หนึ่ง ด้านขนานพิมพ์ OK หนึ่ง และวงรี End หนึ่ง รวมเป็น 5 กล่อง โดยลูกศรไม่นับเป็นกล่อง'},
+
+    {q:'พิจารณาโปรแกรมต่อไปนี้'+CD('int score;\n\nscanf("%d", &amp;score);\nwhile (score &lt; 0) {\n    scanf("%d", &amp;score);\n}\nprintf("%d", score);')+'บรรทัดใดที่ต้องวาดเป็นขนมเปียกปูน (Decision)',
+     c:['บรรทัด while (score &lt; 0)','บรรทัด scanf("%d", &amp;score);','บรรทัด printf("%d", score);','ไม่มีบรรทัดใดเป็นเปียกปูน'],a:0,
+     e:'ในผังงาน ลูป <code>while</code> ไม่ได้มีสัญลักษณ์เฉพาะของตัวเอง แต่เขียนเป็น <b>ขนมเปียกปูนที่มีลูกศรวนกลับ</b> เข้าหาตัวเอง เงื่อนไข <code>score &lt; 0</code> จึงเป็นเปียกปูน ส่วน <code>scanf</code> และ <code>printf</code> เป็นด้านขนานทั้งคู่'},
+
+    {q:'พิจารณาโปรแกรมต่อไปนี้'+CD('int t = 30;\n\nif (t &gt;= 25)\n    printf("HOT");\nelse\n    printf("COLD");')+'ในผังงานของโปรแกรมนี้ ลูกศรที่ออกจากขนมเปียกปูนมีกี่เส้น และแต่ละเส้นไปที่ใด',
+     c:['2 เส้น เส้น Yes ไปกล่องพิมพ์ HOT และเส้น No ไปกล่องพิมพ์ COLD','1 เส้น ไปกล่องพิมพ์ HOT อย่างเดียว','2 เส้น ทั้งสองเส้นไปกล่องพิมพ์ HOT','3 เส้น เพราะต้องมีเส้นไป End ด้วย'],a:0,
+     e:'ขนมเปียกปูนต้องมีทางออกครบสองทางเสมอ ในโค้ดนี้บล็อกของ <code>if</code> คือพิมพ์ HOT จึงเป็นเส้น Yes และบล็อกของ <code>else</code> คือพิมพ์ COLD จึงเป็นเส้น No ผังที่วาดเปียกปูนแล้วมีลูกศรออกเส้นเดียวถือว่าผิดทันที'},
+
+    {q:'พิจารณาโปรแกรมสองฉบับต่อไปนี้ ซึ่งกำหนดค่าให้ตัวแปร n ด้วยวิธีต่างกัน'+CD('/* ฉบับ ก */\nint n;\nscanf("%d", &amp;n);\n\n/* ฉบับ ข */\nint n;\nn = 5;')+'บรรทัดที่กำหนดค่าให้ n ของฉบับ ก และฉบับ ข ต้องวาดด้วยสัญลักษณ์ใดตามลำดับ',
+     c:['ด้านขนาน และ สี่เหลี่ยมผืนผ้า','สี่เหลี่ยมผืนผ้า ทั้งสองฉบับ','ด้านขนาน ทั้งสองฉบับ','สี่เหลี่ยมผืนผ้า และ ด้านขนาน'],a:0,
+     e:'ฉบับ ก รับค่าจากภายนอกด้วย <code>scanf</code> จัดเป็น Input จึงเป็นด้านขนาน ส่วนฉบับ ข กำหนดค่าคงที่ภายในโปรแกรมเอง ไม่มีข้อมูลไหลเข้าออก จึงเป็น Process ที่วาดด้วยสี่เหลี่ยมผืนผ้า — สองบรรทัดนี้ให้ผลคล้ายกันแต่ใช้สัญลักษณ์คนละตัว'},
+
+    {q:'พิจารณาโปรแกรมต่อไปนี้'+CD('int i;\n\nfor (i = 1; i &lt;= 3; i++) {\n    printf("%d ", i);\n}\nprintf("End");')+'ผังงานของโปรแกรมนี้มีกล่องด้านขนานกี่กล่อง (นับตามจำนวนคำสั่งที่ปรากฏในโค้ด ไม่ใช่จำนวนครั้งที่ทำงาน)',
+     c:['2 กล่อง','1 กล่อง','4 กล่อง','3 กล่อง'],a:0,
+     e:'ในโค้ดมีคำสั่ง <code>printf</code> ปรากฏสองแห่ง คือในตัววงหนึ่งแห่งและหลังจบลูปอีกหนึ่งแห่ง จึงวาดเป็นด้านขนานสองกล่อง แม้กล่องในตัววงจะถูกเดินผ่านถึงสามครั้งขณะทำงาน แต่ในผังงานยังคงวาดเพียงกล่องเดียว เพราะผังงานแสดง <b>โครงสร้าง</b> ไม่ใช่จำนวนครั้ง'},
+
+    {q:'พิจารณาโปรแกรมต่อไปนี้'+CD('int k = 5;\n\nwhile (k &gt; 0) {\n    printf("%d ", k);\n    k--;\n}')+'ในผังงานของโปรแกรมนี้ ลูกศรที่ออกจากกล่อง <code class="ic">k--</code> ชี้กลับไปที่กล่องใด',
+     c:['กลับไปที่ขนมเปียกปูน k &gt; 0 ? เพื่อตรวจเงื่อนไขใหม่','กลับไปที่กล่อง k = 5','กลับไปที่ด้านขนานที่พิมพ์ค่า k','ชี้ตรงไปที่วงรี End'],a:0,
+     e:'ลักษณะเด่นของ Iteration ในผังงานคือลูกศรที่วนกลับขึ้นไปหา <b>กล่องเงื่อนไข</b> เสมอ ไม่ใช่กลับไปกล่องกำหนดค่าเริ่มต้น เพราะ <code>k = 5</code> ต้องทำเพียงครั้งเดียว ถ้าลูกศรวนกลับไปที่ <code>k = 5</code> ค่าจะถูกรีเซ็ตทุกรอบและลูปจะไม่มีวันจบ'},
+
+    {q:'พิจารณาโปรแกรมต่อไปนี้'+CD('int a = 4, b = 7;\n\nif (a &gt; 0) {\n    if (b &gt; 5)\n        printf("X");\n}')+'ผังงานของโปรแกรมนี้ต้องมีขนมเปียกปูนกี่ลูก และวางอย่างไร',
+     c:['2 ลูก โดยลูกที่สองอยู่บนเส้น Yes ของลูกแรก','1 ลูก เพราะรวมเงื่อนไขทั้งสองเป็นข้อเดียวได้','2 ลูก โดยวางเรียงต่อกันบนเส้นทางหลักแบบอิสระ','3 ลูก เพราะต้องมีเปียกปูนสำหรับ printf ด้วย'],a:0,
+     e:'โค้ดนี้เป็น <code>if</code> ซ้อนใน <code>if</code> เงื่อนไข <code>b &gt; 5</code> จะถูกตรวจก็ต่อเมื่อ <code>a &gt; 0</code> เป็นจริงแล้วเท่านั้น ในผังงานจึงต้องวางเปียกปูนลูกที่สองไว้บนเส้น Yes ของลูกแรก ถ้าวางเรียงกันแบบอิสระจะกลายเป็น <code>if</code> สองตัวที่แยกกัน ซึ่งมีความหมายต่างออกไป'},
+
+    {q:'ผังงานต่อไปนี้เขียนขึ้นจากโค้ดที่แสดงคู่กัน แต่มีกล่องหนึ่งที่ยังไม่ได้เติมข้อความ'+CD('int w = 4, h = 3, area;\n\narea = w * h;\nprintf("%d", area);')+FCG(fcSeq([['t','START'],['p','w = 4 , h = 3'],['p','?   ?   ?',true],['io','print area'],['t','END']]))+'กล่องที่มีเครื่องหมายคำถามควรเติมข้อความใด',
+     c:['area = w * h','w * h &gt; 0 ?','read area','print w * h'],a:0,
+     e:'กล่องนั้นเป็นสี่เหลี่ยมผืนผ้า จึงต้องบรรจุงานประเภทคำนวณหรือกำหนดค่า และเมื่อเทียบกับโค้ดบรรทัดที่ยังไม่ถูกวาดคือ <code>area = w * h;</code> ตัวเลือก <code>w * h &gt; 0 ?</code> เป็นเงื่อนไขซึ่งต้องอยู่ในเปียกปูน ส่วน <code>read area</code> และ <code>print w * h</code> เป็นงาน Input/Output ซึ่งต้องอยู่ในด้านขนาน'}
+  ],
+
+  district2:[
+    {q:'พิจารณาโปรแกรมต่อไปนี้'+CD('int n = 4;\n\nn = n + 1;\nprintf("%d", n);')+'โครงสร้างการไหลของโปรแกรมนี้ตรงกับแบบใด และพิมพ์ค่าอะไรออกมา',
+     c:['Sequence และพิมพ์ 5','Selection และพิมพ์ 5','Iteration และพิมพ์ 4','Sequence และพิมพ์ 4'],a:0,
+     e:'โค้ดนี้ไม่มีเงื่อนไขและไม่มีลูกศรวนกลับ ทุกกล่องทำงานเรียงลงมาครั้งเดียว จึงเป็น Sequence ล้วน และเมื่อ n เริ่มที่ 4 แล้วบวกหนึ่ง ค่าที่พิมพ์คือ 5'},
+
+    {q:'พิจารณาโปรแกรมสองฉบับต่อไปนี้ ซึ่งต่างกันเฉพาะคำว่า if กับ while'+CD('/* ฉบับ ก */\nint n = 3;\nif (n &gt; 0) {\n    printf("%d ", n);\n    n--;\n}\n\n/* ฉบับ ข */\nint n = 3;\nwhile (n &gt; 0) {\n    printf("%d ", n);\n    n--;\n}')+'ฉบับ ก และฉบับ ข พิมพ์อะไรตามลำดับ',
+     c:['3 และ 3 2 1','3 2 1 และ 3','3 ทั้งสองฉบับ','3 2 1 ทั้งสองฉบับ'],a:0,
+     e:'ในผังงาน ทั้งสองฉบับใช้ขนมเปียกปูนเหมือนกัน แต่ต่างกันที่ <b>ลูกศรวนกลับ</b> ฉบับ ก เป็น Selection ทำในบล็อกครั้งเดียวแล้วไหลลงต่อ จึงพิมพ์ 3 ส่วนฉบับ ข เป็น Iteration มีลูกศรพากลับไปตรวจเงื่อนไขใหม่ทุกรอบ จึงพิมพ์ 3 2 1 แล้วจึงออกจากวงเมื่อ n เป็น 0'},
+
+    {q:'พิจารณาโปรแกรมต่อไปนี้'+CD('int i = 1;\n\nwhile (i &lt;= 3) {\n    printf("%d ", i);\n}\nprintf("Done");')+'ผังงานของโปรแกรมนี้มีข้อบกพร่องอะไร',
+     c:['ในตัววงไม่มีกล่องที่เปลี่ยนค่า i เงื่อนไขจึงเป็นจริงตลอด กลายเป็น Infinite Loop','ขนมเปียกปูนมีทางออกเพียงทางเดียว','ไม่มีกล่อง Start ที่ถูกต้อง','ไม่มีข้อบกพร่อง โปรแกรมพิมพ์ 1 2 3 Done ตามปกติ'],a:0,
+     e:'ค่า i ถูกกำหนดเป็น 1 แล้วไม่มีคำสั่งใดในตัววงเปลี่ยนค่ามันเลย เงื่อนไข <code>i &lt;= 3</code> จึงเป็นจริงทุกครั้งที่ลูกศรวนกลับมาตรวจ โปรแกรมจะพิมพ์เลข 1 ไม่หยุดและไม่มีทางไปถึงบรรทัด Done — โค้ดนี้คอมไพล์ผ่าน คอมไพเลอร์ไม่ฟ้อง จึงตรวจพบได้ด้วยการไล่ผังเท่านั้น'},
+
+    {q:'พิจารณาโปรแกรมต่อไปนี้'+CD('int n = 0;\n\ndo {\n    printf("A");\n    n++;\n} while (n &lt; 0);')+'โปรแกรมพิมพ์อะไร และในผังงาน ขนมเปียกปูนอยู่ตำแหน่งใดเทียบกับตัววง',
+     c:['พิมพ์ A หนึ่งครั้ง และเปียกปูนอยู่ใต้ตัววง คือทำงานก่อนแล้วค่อยตรวจ','ไม่พิมพ์อะไรเลย และเปียกปูนอยู่เหนือตัววง','พิมพ์ A หนึ่งครั้ง และเปียกปูนอยู่เหนือตัววง','พิมพ์ A ไม่หยุด เพราะเงื่อนไขเป็นเท็จ'],a:0,
+     e:'โครงสร้าง <code>do-while</code> วางกล่องเงื่อนไขไว้ <b>ใต้</b> ตัววง ลูกศรจึงพาเข้าไปทำงานหนึ่งรอบก่อนเสมอ จากนั้นจึงตรวจ <code>n &lt; 0</code> ซึ่งขณะนั้น n เป็น 1 ผลจึงเป็นเท็จและออกจากวงทันที ได้ผลลัพธ์ A เพียงตัวเดียว — ต่างจาก <code>while</code> ธรรมดาที่ตรวจก่อนและอาจไม่ได้ทำเลยสักรอบ'},
+
+    {q:'พิจารณาโปรแกรมต่อไปนี้'+CD('int c = 0, i;\n\nfor (i = 0; i &lt; 5; i++) {\n    if (i % 2 == 0)\n        c++;\n}\nprintf("%d", c);')+'โปรแกรมจะพิมพ์อะไร',
+     c:['3','2','5','4'],a:0,
+     e:'ลูปเดินค่า i เป็น 0 1 2 3 4 รวมห้ารอบ และกล่องเปียกปูนภายในวงจะตอบ Yes เมื่อ i เป็นเลขคู่ คือ 0, 2 และ 4 รวมสามครั้ง ค่า c จึงเป็น 3 — สังเกตว่าผังนี้มีเปียกปูนสองลูก ลูกหนึ่งคุมลูปและอีกลูกอยู่ในตัววง'},
+
+    {q:'พิจารณาโปรแกรมต่อไปนี้'+CD('int i, j, cnt = 0;\n\nfor (i = 1; i &lt;= 2; i++)\n    for (j = 1; j &lt;= 3; j++)\n        cnt++;\n\nprintf("%d", cnt);')+'คำสั่ง <code class="ic">cnt++</code> ถูกทำงานทั้งหมดกี่ครั้ง',
+     c:['6 ครั้ง','5 ครั้ง','3 ครั้ง','2 ครั้ง'],a:0,
+     e:'ผังของลูปซ้อนลูปมีเปียกปูนสองลูก ลูกนอกวน 2 รอบ และในแต่ละรอบของลูกนอก ลูกในวนครบ 3 รอบ กล่อง <code class="ic">cnt++</code> จึงถูกเดินผ่าน 2 × 3 = 6 ครั้ง ค่าที่พิมพ์คือ 6'},
+
+    {q:'พิจารณาโปรแกรมต่อไปนี้'+CD('int s = 55;\n\nif (s &gt;= 80)      printf("A");\nelse if (s &gt;= 60) printf("B");\nelse              printf("C");')+'ผังงานของโปรแกรมนี้ต้องใช้ขนมเปียกปูนกี่ลูก และโปรแกรมพิมพ์อะไร',
+     c:['2 ลูก และพิมพ์ C','3 ลูก และพิมพ์ C','2 ลูก และพิมพ์ B','1 ลูก และพิมพ์ C'],a:0,
+     e:'มีการเปรียบเทียบสองครั้งคือ <code>s &gt;= 80</code> และ <code>s &gt;= 60</code> จึงใช้เปียกปูนสองลูก โดยลูกที่สองอยู่บนเส้น No ของลูกแรก ส่วน <code>else</code> ตัวสุดท้ายไม่ต้องมีเปียกปูนของตัวเอง เพราะมันคือเส้น No ของลูกที่สอง เมื่อ s เป็น 55 ทั้งสองเงื่อนไขเป็นเท็จ ผลลัพธ์จึงเป็น C'},
+
+    {q:'พิจารณาโปรแกรมต่อไปนี้'+CD('int i;\n\nfor (i = 5; i &lt; 5; i++) {\n    printf("X");\n}\nprintf("done");')+'โปรแกรมจะพิมพ์อะไร',
+     c:['done เท่านั้น','Xdone','done แล้วตามด้วย X','X ไม่หยุด'],a:0,
+     e:'เมื่อลูกศรมาถึงเปียกปูนครั้งแรก ค่า i เป็น 5 เงื่อนไข <code>i &lt; 5</code> จึงเป็นเท็จตั้งแต่ต้น ผังจึงเดินออกทางเส้น No ทันทีโดยไม่เข้าตัววงเลยแม้แต่รอบเดียว ผลลัพธ์คือ done อย่างเดียว — นี่คือคุณสมบัติของลูปที่ตรวจก่อนทำ ซึ่งอาจทำงานศูนย์รอบได้'},
+
+    {q:'พิจารณาโปรแกรมสองฉบับต่อไปนี้ ซึ่งใช้ค่าเริ่มต้นของ n เท่ากันคือ 0'+CD('/* ฉบับ ก */\nint n = 0;\nwhile (n &gt; 0) {\n    printf("A");\n    n--;\n}\nprintf("|");\n\n/* ฉบับ ข */\nint n = 0;\ndo {\n    printf("A");\n    n--;\n} while (n &gt; 0);\nprintf("|");')+'ฉบับ ก และฉบับ ข พิมพ์อะไรตามลำดับ',
+     c:['| และ A|','A| และ |','| ทั้งสองฉบับ','A| ทั้งสองฉบับ'],a:0,
+     e:'ฉบับ ก วางเปียกปูนไว้เหนือตัววง จึงตรวจก่อนและพบว่า <code>0 &gt; 0</code> เป็นเท็จ ตัววงไม่ถูกทำเลย ได้เพียงเครื่องหมาย | ส่วนฉบับ ข วางเปียกปูนไว้ใต้ตัววง ลูกศรจึงพาเข้าไปพิมพ์ A หนึ่งครั้งก่อน แล้วค่อยตรวจเงื่อนไขซึ่งขณะนั้น n เป็น -1 จึงออกจากวง ได้ A| — ความต่างของตำแหน่งเปียกปูนตัวเดียวเปลี่ยนผลลัพธ์ได้ทันที'},
+
+    {q:'พิจารณาผังงานต่อไปนี้'+FCG(fcLoop({pre:[['p','i = 1']],cond:'i <= 3 ?',body:[['io','print i'],['p','i = i + 1']]}),FCSP)+'ผังนี้ตรงกับโค้ดในข้อใด',
+     c:['<code class="csnip">for (i = 1; i &lt;= 3; i++) printf("%d ", i);</code>','<code class="csnip">for (i = 1; i &lt; 3; i++) printf("%d ", i);</code>','<code class="csnip">i = 1; do { printf("%d ", i); i++; } while (i &lt;= 3);</code>','<code class="csnip">for (i = 3; i &gt;= 1; i--) printf("%d ", i);</code>'],a:0,
+     e:'ผังกำหนดค่าเริ่มต้น i เป็น 1 ตรวจเงื่อนไข <code>i &lt;= 3</code> ก่อนเข้าตัววง แล้วเพิ่มค่าทีละหนึ่งก่อนวนกลับ ซึ่งตรงกับ <code>for</code> ตัวแรกทุกจุด ตัวเลือกที่ใช้ <code>i &lt; 3</code> จะวนน้อยไปหนึ่งรอบ ส่วน <code>do-while</code> วางเปียกปูนไว้ใต้ตัววงซึ่งไม่ตรงกับผังที่ตรวจก่อน และตัวเลือกสุดท้ายนับถอยหลังซึ่งพิมพ์คนละลำดับ'},
+
+    {q:'ต้องการให้โปรแกรมต่อไปนี้พิมพ์ 5 4 3 2 1 แล้วจบ แต่ยังขาดคำสั่งในกล่องหนึ่งของตัววง'+CD('int n = 5;\n\nwhile (n &gt; 0) {\n    printf("%d ", n);\n    ______;\n}')+'ควรเติมคำสั่งใดลงในช่องว่าง',
+     c:['<code class="ic">n--</code>','<code class="ic">n++</code>','n = 5','n = n * 1'],a:0,
+     e:'ในผังงาน ตัววงต้องมีกล่องที่ทำให้ค่าเข้าใกล้จุดหยุด คำสั่ง <code class="ic">n--</code> ลดค่า n ทีละหนึ่ง ลำดับที่พิมพ์จึงเป็น 5 4 3 2 1 แล้วเงื่อนไขเป็นเท็จเมื่อ n เป็น 0 ส่วน <code class="ic">n++</code> จะทำให้ค่ายิ่งห่างจากจุดหยุด และอีกสองตัวเลือกไม่เปลี่ยนค่าอย่างมีทิศทาง ทั้งสามกรณีนี้ทำให้เกิด Infinite Loop'},
+
+    {q:'พิจารณาโปรแกรมต่อไปนี้'+CD('int i, sum = 0;\n\nfor (i = 1; i &lt;= 6; i++) {\n    if (i % 3 == 0)\n        sum = sum + i;\n}\nprintf("%d", sum);')+'โปรแกรมจะพิมพ์อะไร',
+     c:['9','21','6','3'],a:0,
+     e:'ลูปเดินค่า i ตั้งแต่ 1 ถึง 6 และเปียกปูนภายในวงตอบ Yes เฉพาะเมื่อ i หารด้วย 3 ลงตัว คือ i เป็น 3 และ 6 ค่าที่บวกสะสมจึงเป็น 3 + 6 = 9 ตัวเลือก 21 คือผลรวมของทุกค่าตั้งแต่ 1 ถึง 6 ซึ่งจะถูกต้องก็ต่อเมื่อไม่มีเปียกปูนกรองไว้ในตัววง'}
+  ],
+
+  district3:[
+    {q:'ไล่ผังงานต่อไปนี้ทีละกล่องตามลูกศร'+FCG(fcLoop({pre:[['p','n = 3']],cond:'n > 0 ?',body:[['io','print n'],['p','n = n - 1']],exit:[['io','print "Go!"']]}),FCSP)+'ผังนี้พิมพ์อะไรออกมา',
+     c:['3 2 1 Go!','3 2 1 0 Go!','Go!','3 Go!'],a:0,
+     e:'ตารางทดของผังนี้คือ รอบแรก n เป็น 3 เงื่อนไขจริง พิมพ์ 3 แล้วลดเหลือ 2 รอบสองพิมพ์ 2 เหลือ 1 รอบสามพิมพ์ 1 เหลือ 0 เมื่อวนกลับมาตรวจอีกครั้ง <code>0 &gt; 0</code> เป็นเท็จ จึงออกทางเส้น No ไปพิมพ์ Go! ค่า 0 ไม่ถูกพิมพ์เพราะกล่องพิมพ์อยู่หลังเงื่อนไข ไม่ใช่ก่อน'},
+
+    {q:'ไล่ผังงานต่อไปนี้ โดยกำหนดให้ค่าที่รับเข้ามาคือ n = 7'+FCG(fcBranch({pre:[['io','read n']],cond:'n % 2 == 0 ?',yes:[['io','print "Even"'],['t','END']],no:[['io','print "Odd"'],['t','END']]}),'รอบนี้ทดลองด้วยค่าที่รับเข้ามาคือ <b>n = 7</b>')+'ผังนี้พิมพ์อะไรออกมา',
+     c:['Odd','Even','ไม่พิมพ์อะไรเลย','Even Odd'],a:0,
+     e:'ตัวดำเนินการ <code>%</code> คือเศษจากการหาร เมื่อ n เป็น 7 จะได้ <code>7 % 2</code> เท่ากับ 1 ซึ่งไม่เท่ากับ 0 เงื่อนไขจึงเป็นเท็จ ผังเดินออกทางเส้น No ไปพิมพ์ Odd — ผังนี้เป็น Selection ที่มีเปียกปูนหนึ่งลูกและทางออกครบสองทาง'},
+
+    {q:'ไล่ผังงานต่อไปนี้ทีละกล่อง'+FCG(fcLoop({pre:[['p','s = 0'],['p','i = 1']],cond:'i <= 4 ?',body:[['p','s = s + i'],['p','i = i + 1']],exit:[['io','print s']]}))+'ผังนี้พิมพ์ค่าอะไรออกมา',
+     c:['10','6','15','4'],a:0,
+     e:'ไล่ตามตารางทด รอบที่ 1 บวก 1 ได้ s เป็น 1 รอบที่ 2 บวก 2 ได้ 3 รอบที่ 3 บวก 3 ได้ 6 รอบที่ 4 บวก 4 ได้ 10 จากนั้น i เป็น 5 เงื่อนไขเป็นเท็จจึงออกจากวงไปพิมพ์ 10 ตัวเลือก 6 คือผลรวมถึง 3 ซึ่งจะถูกต้องถ้าเงื่อนไขเป็น <code>i &lt; 4</code>'},
+
+    {q:'ไล่ผังงานต่อไปนี้ทีละกล่อง'+FCG(fcLoop({pre:[['p','i = 0'],['p','c = 0']],cond:'i < 10 ?',body:[['p','i = i + 3'],['p','c = c + 1']],exit:[['io','print c']]}))+'ผังนี้พิมพ์ค่าอะไรออกมา',
+     c:['4','3','10','5'],a:0,
+     e:'ค่า i เดินเป็น 0 แล้วเข้าวงเป็น 3 เข้าอีกเป็น 6 เข้าอีกเป็น 9 และเข้าอีกครั้งเป็น 12 รวมเข้าตัววงสี่รอบ ค่า c จึงเป็น 4 เมื่อ i เป็น 12 เงื่อนไข <code>12 &lt; 10</code> เป็นเท็จจึงออกจากวง — จุดที่พลาดบ่อยคือลืมนับรอบที่ i เป็น 9 ซึ่งยังผ่านเงื่อนไขได้'},
+
+    {q:'ไล่ผังงานต่อไปนี้'+FCG(fcBranch({pre:[['p','a = 4'],['p','b = 9']],cond:'a > b ?',yes:[['p','m = a']],no:[['p','m = b']],merge:[['io','print m'],['t','END']]}))+'ผังนี้พิมพ์ค่าอะไรออกมา',
+     c:['9','4','13','5'],a:0,
+     e:'ผังนี้คือวิธีมาตรฐานในการหาค่ามากกว่าระหว่างเลขสองจำนวน เมื่อ a เป็น 4 และ b เป็น 9 เงื่อนไข <code>a &gt; b</code> เป็นเท็จ ผังจึงเดินออกทางเส้น No ไปกำหนดให้ m เท่ากับ b คือ 9 แล้วทั้งสองเส้นทางมาบรรจบกันที่กล่องพิมพ์ค่า m — สังเกตว่าเส้น Yes และ No ต้องกลับมารวมกันก่อนถึงกล่องถัดไปเสมอ'},
+
+    {q:'พิจารณาผังงานสองฉบับต่อไปนี้ ซึ่งเหมือนกันทุกกล่อง ต่างกันเฉพาะค่าเริ่มต้นของ x'+FCG('<div class="fccap">ฉบับ ก</div>'+fcBranch({pre:[['p','x = 6']],cond:'x % 2 == 0 ?',yes:[['io','print "EVEN"'],['t','END']],no:[['io','print "ODD"'],['t','END']]})+'<div class="fccap">ฉบับ ข — เหมือนกันทุกกล่อง เปลี่ยนเฉพาะค่า x</div>'+fcBranch({pre:[['p','x = 5']],cond:'x % 2 == 0 ?',yes:[['io','print "EVEN"'],['t','END']],no:[['io','print "ODD"'],['t','END']]}))+'ฉบับ ก และฉบับ ข พิมพ์อะไรตามลำดับ',
+     c:['EVEN และ ODD','ODD และ EVEN','EVEN ทั้งสองฉบับ','ODD ทั้งสองฉบับ'],a:0,
+     e:'ฉบับ ก ค่า 6 หารด้วย 2 ลงตัว เศษเป็น 0 เงื่อนไขจึงเป็นจริง เดินออกทางเส้น Yes ได้ EVEN ส่วนฉบับ ข ค่า 5 หารด้วย 2 เหลือเศษ 1 เงื่อนไขเป็นเท็จ เดินออกทางเส้น No ได้ ODD — ผังเดียวกันแต่ข้อมูลเข้าต่างกันย่อมให้เส้นทางเดินคนละเส้น นี่คือเหตุผลที่ Decision ต้องมีทางออกครบสองทางเสมอ'},
+
+    {q:'ไล่ผังงานต่อไปนี้ โดยกำหนดให้ score = 72'+FCG(fcTwoCond({init:'score = 72',c1:'score >= 80 ?',y1:'print "A"',c2:'score >= 60 ?',y2:'print "B"',n2:'print "C"'}))+'ผังนี้พิมพ์อะไรออกมา',
+     c:['B','A','C','B และ C'],a:0,
+     e:'เปียกปูนลูกแรกตรวจ <code>72 &gt;= 80</code> ได้เท็จ จึงลงมาทางเส้น No ไปยังเปียกปูนลูกที่สองซึ่งตรวจ <code>72 &gt;= 60</code> ได้จริง จึงเดินออกทางเส้น Yes พิมพ์ B แล้วไปที่ End ทันที กล่องพิมพ์ C อยู่บนเส้น No ของลูกที่สองซึ่งไม่ถูกเดินผ่านเลย — โครงสร้างนี้คือรูปผังของ if / else if / else'},
+
+    {q:'ไล่ผังงานต่อไปนี้ แล้วตอบว่าค่าสุดท้ายของ n ที่ถูกพิมพ์คือเท่าใด'+FCG(fcLoop({pre:[['p','n = 10']],cond:'n > 1 ?',body:[['p','n = n - 3']],exit:[['io','print n']]}))+'ผังนี้พิมพ์ค่าอะไรออกมา',
+     c:['1','0','4','-2'],a:0,
+     e:'ค่า n เดินเป็น 10 แล้วลดเป็น 7 เป็น 4 และเป็น 1 เมื่อวนกลับมาตรวจครั้งที่สี่ เงื่อนไข <code>1 &gt; 1</code> เป็นเท็จ จึงออกจากวงไปพิมพ์ค่าปัจจุบันคือ 1 ตัวเลือก -2 เกิดจากการเผลอลดค่าเพิ่มอีกหนึ่งรอบทั้งที่เงื่อนไขเป็นเท็จแล้ว ซึ่งเป็นจุดพลาดที่พบบ่อยที่สุดของการไล่ลูป'},
+
+    {q:'ไล่ผังงานต่อไปนี้ สังเกตลำดับของกล่องลดค่ากับกล่องพิมพ์ให้ดี'+FCG(fcLoop({pre:[['p','k = 3']],cond:'k > 0 ?',body:[['p','k = k - 1'],['io','print k']]}),FCSP)+'ผังนี้พิมพ์อะไรออกมา',
+     c:['2 1 0','3 2 1','3 2 1 0','2 1'],a:0,
+     e:'ผังนี้ลดค่าก่อนแล้วจึงพิมพ์ รอบแรก k จาก 3 เหลือ 2 แล้วพิมพ์ 2 รอบสองเหลือ 1 พิมพ์ 1 รอบสามเหลือ 0 พิมพ์ 0 เมื่อวนกลับมาตรวจ <code>0 &gt; 0</code> เป็นเท็จจึงจบ ผลจึงเป็น 2 1 0 — ถ้าสลับสองกล่องนี้ให้พิมพ์ก่อนลด ผลจะกลายเป็น 3 2 1 ทันที ลำดับของกล่องในตัววงจึงสำคัญมาก'},
+
+    {q:'ไล่ผังงานต่อไปนี้ทีละกล่อง'+FCG(fcLoop({pre:[['p','p = 1'],['p','i = 1']],cond:'i <= 4 ?',body:[['p','p = p * i'],['p','i = i + 1']],exit:[['io','print p']]}))+'ผังนี้พิมพ์ค่าอะไรออกมา',
+     c:['24','10','12','4'],a:0,
+     e:'ผังนี้คือการหาค่าแฟกทอเรียล ค่า p เดินเป็น 1 คูณ 1 ได้ 1 คูณ 2 ได้ 2 คูณ 3 ได้ 6 คูณ 4 ได้ 24 แล้วจึงออกจากวงไปพิมพ์ 24 ตัวเลือก 10 คือผลรวม 1+2+3+4 ซึ่งจะถูกต้องก็ต่อเมื่อกล่องในวงเป็นการบวกแทนการคูณ'},
+
+    {q:'พิจารณาผังงานต่อไปนี้'+FCG(fcLoop({pre:[['p','i = 1']],cond:'i <= 3 ?',body:[['io','print "*"'],['p','i = i + 1']]}))+'ขนมเปียกปูนในผังนี้ถูกตรวจทั้งหมดกี่ครั้งจนกระทั่งโปรแกรมจบ',
+     c:['4 ครั้ง','3 ครั้ง','2 ครั้ง','5 ครั้ง'],a:0,
+     e:'เปียกปูนถูกตรวจเมื่อ i เป็น 1, 2, 3 ซึ่งตอบ Yes สามครั้ง และถูกตรวจอีกครั้งเมื่อ i เป็น 4 ซึ่งตอบ No แล้วออกจากวง รวมเป็น 4 ครั้ง ขณะที่ตัววงทำงานเพียง 3 รอบ — จำนวนครั้งที่ตรวจเงื่อนไขจะมากกว่าจำนวนรอบอยู่หนึ่งเสมอสำหรับลูปที่ตรวจก่อนทำ และข้อสอบชอบถามตัวเลขนี้'},
+
+    {q:'พิจารณาผังงานต่อไปนี้ สังเกตกล่องภายในตัววงให้ครบ'+FCG(fcLoop({pre:[['p','i = 1']],cond:'i <= 3 ?',body:[['io','print i']],exit:[['io','print "END"']]}),FCSP)+'เมื่อรันผังนี้จะเกิดอะไรขึ้น',
+     c:['พิมพ์เลข 1 ซ้ำไปเรื่อย ๆ ไม่หยุด เพราะไม่มีกล่องเปลี่ยนค่า i','พิมพ์ 1 2 3 END ตามปกติ','พิมพ์ END อย่างเดียว','ไม่พิมพ์อะไรเลย'],a:0,
+     e:'เทียบกับผังลูปที่สมบูรณ์ ผังนี้ขาดกล่อง <code>[ i = i + 1 ]</code> ในตัววง ค่า i จึงค้างอยู่ที่ 1 ตลอด เงื่อนไข <code>i &lt;= 3</code> เป็นจริงทุกครั้งที่ลูกศรวนกลับมาตรวจ ผังจึงพิมพ์เลข 1 ไม่หยุดและไม่มีทางไปถึงกล่อง END — เวลาตรวจผังลูป ให้มองหาสามสิ่งเสมอ คือค่าเริ่มต้น เงื่อนไขออก และกล่องที่เปลี่ยนค่าให้เข้าใกล้จุดหยุด'}
+  ]
+};
+const SKILL_LABELS = {district1:'สัญลักษณ์มาตรฐาน', district2:'โครงสร้างการไหล 3 แบบ', district3:'อ่านผังให้ได้ผลลัพธ์'};
+const DISTRICT_SCREEN = {district1:'scr-preview1', district2:'scr-preview2', district3:'scr-preview3'};
+
+/* ============ 5) STATE + PERSISTENCE ============ */
+const SKEY = 'circuitblueprint_v1_state';
+const state = {
+  name:'', avatar:0, pre:null, post:null,
+  preByD:{district1:0,district2:0,district3:0},
+  postByD:{district1:0,district2:0,district3:0},
+  xp:0, combo:0, maxCombo:0, fastCorrect:false, preTime:0, postTime:0, preIds:[], postIds:[],
+  labs:{lab1:[],lab2:[],lab3:[]},
+  unlocked:['pretest'], visited:{}, screen:'scr-welcome'
+};
+function save(){try{sessionStorage.setItem(SKEY,JSON.stringify(state));}catch(e){}}
+function loadSaved(){try{const raw=sessionStorage.getItem(SKEY);if(!raw)return null;const o=JSON.parse(raw);return (o&&o.name)?o:null;}catch(e){return null;}}
+function clearSaved(){try{sessionStorage.removeItem(SKEY);}catch(e){}}
+
+/* ============ 6) STAR SYSTEM ============ */
+const STAR_TABLE = [
+  {min:6, stars:6, rank:'CHIEF DESIGNER', msg:'อ่านผังงานได้แม่นทุกกล่อง พร้อมต่อยอดไปบทฟังก์ชันและอาร์เรย์ได้ทันที'},
+  {min:5, stars:5, rank:'POLE POSITION',  msg:'แม่นยำสูง เหลืออีกเพียงจุดเดียวก็เต็ม ลองย้อนอ่านข้อที่พลาดอีกครั้ง'},
+  {min:4, stars:4, rank:'RACE ENGINEER',  msg:'ผ่านเกณฑ์ความเข้าใจพื้นฐานแล้ว ยังมีช่องว่างให้ฝึกอีกเล็กน้อย'},
+  {min:3, stars:3, rank:'PIT TRAINEE',    msg:'เริ่มจับหลักได้ แต่ยังหลงบางโซน ควรกลับไปทบทวนตารางสัญลักษณ์'},
+  {min:2, stars:2, rank:'ROOKIE DRIVER',  msg:'พอมีพื้นฐาน แนะนำให้เล่นห้องทดลองให้ครบทั้ง 3 โซนก่อนสอบใหม่'},
+  {min:0, stars:0, rank:'GRID NEWCOMER',  msg:'ยังไม่คุ้นเนื้อหา ไม่เป็นไรเลย นี่คือเหตุผลที่เราต้องวิ่งให้ครบทั้งสนาม'}
+];
+const MAX_STARS = 6;   /* เต็ม 6 ข้อ = เต็ม 6 ดาว · 1 ดาว = ตอบถูก 1 ข้อ */
+function starInfo(score){
+  const t = STAR_TABLE.find(t => score >= t.min) || STAR_TABLE[STAR_TABLE.length-1];
+  return {stars: score, rank: t.rank, msg: t.msg};
+}
+const STAR_SVG_FULL = '<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><defs><linearGradient id="sg" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#fff6d0"/><stop offset="55%" stop-color="#fde68a"/><stop offset="100%" stop-color="#fbbf24"/></linearGradient></defs><path d="M12 2.6l2.9 5.9 6.5.95-4.7 4.58 1.11 6.47L12 17.45 6.19 20.5l1.11-6.47L2.6 9.45l6.5-.95z" fill="url(#sg)" stroke="#fde68a" stroke-width="1" stroke-linejoin="round"/></svg>';
+const STAR_SVG_EMPTY = '<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M12 2.6l2.9 5.9 6.5.95-4.7 4.58 1.11 6.47L12 17.45 6.19 20.5l1.11-6.47L2.6 9.45l6.5-.95z" fill="none" stroke="#8fb0cc" stroke-width="1.4" stroke-linejoin="round"/></svg>';
+function renderStars(host,filled,total,animate){
+  total=total||MAX_STARS;host.innerHTML='';
+  host.setAttribute('aria-label','ได้ '+filled+' ดาว จาก '+total+' ดาว');
+  for(let i=0;i<total;i++){const d=document.createElement('div');const isFull=i<filled;d.className='star '+(isFull?'full':'empty');d.innerHTML=isFull?STAR_SVG_FULL:STAR_SVG_EMPTY;host.appendChild(d);}
+  const kids=Array.from(host.children);
+  if(!animate||REDUCED){kids.forEach(k=>{k.style.opacity=k.classList.contains('empty')?'.32':'1';k.style.transform='none';});return;}
+  kids.forEach((k,i)=>{setTimeout(()=>{k.classList.add('in');if(k.classList.contains('full'))SFX.play('star');},200+i*190);});
+}
+
+/* ============ 7) XP / LEVEL ============ */
+const XP_PER_LEVEL = 120;
+function addXp(n,label){state.xp+=n;updXp();if(label!==false)floaty('+'+n+' XP','#fbbf24');save();}
+function updXp(){const lvl=Math.floor(state.xp/XP_PER_LEVEL)+1;const into=state.xp%XP_PER_LEVEL;const lt=$('#lvlTxt'),xb=$('#xpBar'),xt=$('#xpTxt');if(lt)lt.textContent='LV.'+lvl;if(xb)xb.style.width=(into/XP_PER_LEVEL*100)+'%';if(xt)xt.textContent=state.xp+' XP';}
+function floaty(txt,color){if(REDUCED)return;const el=document.createElement('div');el.className='floaty';el.textContent=txt;el.style.color=color||'#6ee7b7';document.body.appendChild(el);setTimeout(()=>el.remove(),1200);}
+
+/* ============ 8) NAVIGATION ============ */
+const NAVSTOPS = [
+  {key:'pretest',  label:'QUALIFY',  screens:['scr-pretest'], icon:'p'},
+  {key:'d1',       label:'Z1 SIGN',  screens:['scr-preview1','scr-lesson1','scr-check1'], icon:'m', district:'district1'},
+  {key:'d2',       label:'Z2 FLOW',  screens:['scr-preview2','scr-lesson2','scr-check2'], icon:'c', district:'district2'},
+  {key:'d3',       label:'Z3 TRACE', screens:['scr-preview3','scr-lesson3','scr-check3'], icon:'n', district:'district3'},
+  {key:'posttest', label:'RACE DAY', screens:['scr-posttest'], icon:'t'},
+  {key:'summary',  label:'REPORT',   screens:['scr-summary'], icon:'s'}
+];
+const ICONS = {
+  p:'<path d="M4 12 L9 17 L20 5" stroke="currentColor" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>',
+  m:'<rect x="4" y="7" width="16" height="6" rx="3" fill="none" stroke="currentColor" stroke-width="2"/><path d="M12 13 v4" stroke="currentColor" stroke-width="2"/><path d="M12 17 l4 3 -4 3 -4 -3 z" fill="currentColor"/>',
+  c:'<path d="M12 3 L18 9 L12 15 L6 9 Z" fill="none" stroke="currentColor" stroke-width="2"/><path d="M12 15 v3 M8 20 h8" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>',
+  n:'<rect x="3" y="5" width="18" height="12" rx="2" fill="none" stroke="currentColor" stroke-width="2"/><path d="M7 10 h5 M7 13 h8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>',
+  t:'<path d="M6 3 v18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M8 4 h5 v4 h-5 z M13 8 h5 v4 h-5 z M8 8 h5 v4 h-5 z M13 4 h5 v4 h-5 z" fill="currentColor" opacity=".85"/>',
+  s:'<path d="M4 20 V10 M12 20 V4 M20 20 V14" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/>'
+};
+function stopOfScreen(id){ return NAVSTOPS.find(s => s.screens.includes(id)); }
+function renderNav(currentScreen){
+  const host=$('#navrail'); if(!host) return;
+  host.innerHTML=''; const cur=stopOfScreen(currentScreen);
+  NAVSTOPS.forEach(s=>{
+    const isUnlocked=state.unlocked.includes(s.key);
+    const isDone=state.visited[s.key]==='done';
+    const el=document.createElement('div');
+    el.className='navpill'+(isUnlocked?' unlocked':'')+(isDone?' done':'')+(cur&&cur.key===s.key?' current':'');
+    let starTxt='';
+    if(s.district&&state.postByD&&state.post!==null){starTxt='★'.repeat(state.postByD[s.district])+'☆'.repeat(2-state.postByD[s.district]);}
+    el.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true">'+ICONS[s.icon]+'</svg><span>'+s.label+'</span><span class="ps">'+starTxt+'</span>';
+    el.setAttribute('role','button'); el.setAttribute('tabindex',isUnlocked?'0':'-1');
+    el.setAttribute('aria-label',s.label+(isUnlocked?'':' (ยังไม่ปลดล็อก)'));
+    const act=()=>{
+      if(!isUnlocked){el.classList.add('locked-shake');setTimeout(()=>el.classList.remove('locked-shake'),400);toast('โซนนี้ยังไม่ปลดล็อก วิ่งตามลำดับก่อนนะครับ');return;}
+      SFX.play('click'); goto_(s.screens[0]);
+      if(s.key==='summary') showSummary();
+    };
+    el.addEventListener('click',act);
+    el.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();act();}});
+    host.appendChild(el);
+  });
+}
+function unlock(key){ if(!state.unlocked.includes(key)){ state.unlocked.push(key); SFX.play('unlock'); } }
+function goto_(id){
+  $$('.screen').forEach(s=>s.classList.remove('active'));
+  const el=document.getElementById(id); if(!el) return;
+  el.classList.add('active'); state.screen=id;
+  const stop=stopOfScreen(id);
+  if(stop){unlock(stop.key); if(!state.visited[stop.key]) state.visited[stop.key]='seen';}
+  $('#topbar').classList.toggle('show', id!=='scr-welcome');
+  renderNav(id);
+  window.scrollTo({top:0,behavior:REDUCED?'auto':'smooth'});
+  save();
+}
+
+/* ============ 9) QUIZ ENGINE — ARCADE ============ */
+function randomizeChoices(q){const order=shuffle(q.c.map((c,i)=>i));return {q:q.q,e:q.e,c:order.map(i=>q.c[i]),a:order.indexOf(q.a)};}
+function stratifiedSix(exclude){
+  const ex=exclude||[], picks=[];
+  ['district1','district2','district3'].forEach(d=>{
+    const all=BANK[d].map((q,i)=>({q:q,id:d+'#'+i}));
+    let pool=all.filter(o=>ex.indexOf(o.id)<0);
+    if(pool.length<2) pool=all;
+    pickN(pool,2).forEach(o=>picks.push(Object.assign({},randomizeChoices(o.q),{district:d,qid:o.id})));
+  });
+  return shuffle(picks);
+}
+const KEYCAPS=['1','2','3','4'];
+
+/* ============ ARCADE : CLIMB MODE v6 — TAP ONLY (ธีมสนามแข่ง) ============
+   กติกา: ตอบถูก 1 ข้อ = ผ่านโค้งเพิ่ม 1 โค้ง · ตอบผิดไม่ถอยหลัง แค่ค้างที่โค้งเดิม
+   =========================================================================== */
+const ACT={floorWord:'โค้งที่',topWord:'เส้นชัย',groundWord:'กริดสตาร์ท',theme:'circuit'};
+const AC={on:false,mode:null,qs:[],idx:0,answered:0,correct:0,byD:null,score:0,
+  W:0,H:0,raf:null,elapsed:0,last:null,qOpen:false,onDone:null,
+  floor:0,animFrom:0,animTo:0,animT:1,shake:0,glow:0,col:null,dead:false,parts:[],t:0,padT:36};
+
+function acColors(){
+  const cs=getComputedStyle(document.documentElement), g=n=>(cs.getPropertyValue(n)||'').trim();
+  return {bg:g('--bg')||'#04121f',panel:g('--panel2')||'#0e2d49',ember:g('--ember')||'#5cc8ff',
+    corner:g('--corner')||'#6ee7b7',gold:g('--gold')||'#fbbf24',red:g('--red')||'#fb7185',
+    text:g('--text')||'#e4f2ff',muted:g('--muted')||'#8fb0cc'};
+}
+function acResize(){
+  const cv=$('#acv'); if(!cv) return;
+  const dpr=Math.min(2,window.devicePixelRatio||1);
+  AC.W=cv.clientWidth||innerWidth; AC.H=cv.clientHeight||200;
+  const hud=document.querySelector('.ac-hud');
+  AC.padT=Math.min(130,((hud&&hud.offsetHeight)||28)+34);
+  cv.width=Math.max(1,AC.W*dpr); cv.height=Math.max(1,AC.H*dpr);
+  const ctx=cv.getContext('2d'); if(ctx&&ctx.setTransform) ctx.setTransform(dpr,0,0,dpr,0,0);
+}
+function acStepGeom(i){
+  const n=AC.qs.length||1;
+  const padB=30, padT=AC.padT||36;
+  const h=Math.max(60,AC.H-padB-padT);
+  const y=AC.H-padB-(i*(h/n));
+  const w=Math.max(56,Math.min(118,AC.W*0.21));
+  const usable=Math.max(20,AC.W-w-32);
+  const x=16+(n<=1?0:(i/n)*usable);
+  return {x:x,y:y,w:w,h:9};
+}
+function acPuff(x,y,color,n){
+  if(REDUCED) return;
+  for(let k=0;k<(n||14);k++)
+    AC.parts.push({x:x,y:y,vx:(Math.random()-.5)*2.8,vy:-Math.random()*2.8-.3,l:1,c:color,r:1.6+Math.random()*2.2});
+}
+function acStepParts(d){
+  for(let i=AC.parts.length-1;i>=0;i--){
+    const p=AC.parts[i];
+    p.x+=p.vx; p.y+=p.vy; p.vy+=0.055; p.l-=d/900;
+    if(p.l<=0) AC.parts.splice(i,1);
+  }
+}
+function rrect(ctx,x,y,w,h,r){
+  ctx.beginPath();
+  ctx.moveTo(x+r,y); ctx.lineTo(x+w-r,y); ctx.quadraticCurveTo(x+w,y,x+w,y+r);
+  ctx.lineTo(x+w,y+h-r); ctx.quadraticCurveTo(x+w,y+h,x+w-r,y+h);
+  ctx.lineTo(x+r,y+h); ctx.quadraticCurveTo(x,y+h,x,y+h-r);
+  ctx.lineTo(x,y+r); ctx.quadraticCurveTo(x,y,x+r,y); ctx.closePath();
+}
+/* ---- ฉากหลัง: กระดาษพิมพ์เขียว + เส้นสนามจาง ๆ ---- */
+function acDecor(ctx,c){
+  const t=AC.t, W=AC.W, H=AC.H;
+  ctx.globalAlpha=.10; ctx.strokeStyle=c.ember; ctx.lineWidth=1;
+  for(let x=0;x<=W;x+=24){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,H);ctx.stroke();}
+  for(let y=0;y<=H;y+=24){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(W,y);ctx.stroke();}
+  ctx.globalAlpha=.16; ctx.lineWidth=12; ctx.strokeStyle=c.ember; ctx.lineCap='round';
+  ctx.beginPath();
+  ctx.moveTo(-20,H*0.80);
+  ctx.bezierCurveTo(W*0.22,H*0.56,W*0.30,H*0.98,W*0.55,H*0.74);
+  ctx.bezierCurveTo(W*0.78,H*0.52,W*0.84,H*0.90,W+20,H*0.68);
+  ctx.stroke();
+  ctx.globalAlpha=.22; ctx.lineWidth=2; ctx.setLineDash([7,9]); ctx.strokeStyle=c.gold;
+  ctx.stroke(); ctx.setLineDash([]);
+  ctx.globalAlpha=1;
+  /* ไฟสตาร์ท 5 ดวงกะพริบเบา ๆ ใต้แถบ HUD ฝั่งซ้าย */
+  const lx=16, ly=Math.max(14,(AC.padT||36)-14);
+  for(let k=0;k<5;k++){
+    const on=((Math.floor(t/420)+k)%5)<3;
+    ctx.globalAlpha=on?.55:.14; ctx.fillStyle=on?c.red:c.muted;
+    ctx.beginPath(); ctx.arc(lx+k*17,ly,4.2,0,Math.PI*2); ctx.fill();
+  }
+  ctx.globalAlpha=1;
+}
+/* ---- รถแข่งของผู้เล่น ---- */
+function acDrawCar(ctx,c,px,py,tilt){
+  ctx.save();
+  ctx.translate(px,py);
+  if(tilt) ctx.rotate(tilt);
+  ctx.globalAlpha=.35; ctx.fillStyle='#000';
+  ctx.beginPath(); ctx.ellipse(0,-2,21,4,0,0,Math.PI*2); ctx.fill(); ctx.globalAlpha=1;
+  ctx.fillStyle=c.gold; ctx.fillRect(-25,-25,5,9);          /* ปีกหลัง */
+  ctx.fillStyle=c.ember; rrect(ctx,-23,-19,46,12,5); ctx.fill();
+  ctx.fillStyle=c.corner;
+  ctx.beginPath(); ctx.moveTo(-7,-19); ctx.lineTo(-3,-28); ctx.lineTo(8,-28); ctx.lineTo(12,-19); ctx.closePath(); ctx.fill();
+  ctx.fillStyle=c.text;
+  ctx.beginPath(); ctx.arc(-13,-5,5.4,0,Math.PI*2); ctx.fill();
+  ctx.beginPath(); ctx.arc(14,-5,5.4,0,Math.PI*2); ctx.fill();
+  ctx.fillStyle=c.bg;
+  ctx.beginPath(); ctx.arc(-13,-5,2.1,0,Math.PI*2); ctx.fill();
+  ctx.beginPath(); ctx.arc(14,-5,2.1,0,Math.PI*2); ctx.fill();
+  ctx.restore();
+}
+function acDraw(){
+  const cv=$('#acv'); if(!cv) return;
+  const ctx=cv.getContext('2d'); if(!ctx) return;
+  const c=AC.col, n=AC.qs.length;
+  ctx.clearRect(0,0,AC.W,AC.H);
+  const bgGrad=ctx.createLinearGradient(0,0,0,AC.H);
+  bgGrad.addColorStop(0,c.panel); bgGrad.addColorStop(1,c.bg);
+  ctx.fillStyle=bgGrad; ctx.fillRect(0,0,AC.W,AC.H);
+  acDecor(ctx,c);
+
+  const sh=AC.shake>0?Math.sin(AC.shake*1.15)*4:0;
+  ctx.save(); ctx.translate(sh,0);
+
+  ctx.strokeStyle=c.ember; ctx.globalAlpha=.30; ctx.lineWidth=2; ctx.setLineDash([5,6]);
+  ctx.beginPath();
+  for(let i=0;i<=n;i++){const g=acStepGeom(i); const cx=g.x+g.w/2;
+    if(i===0) ctx.moveTo(cx,g.y); else ctx.lineTo(cx,g.y);}
+  ctx.stroke(); ctx.setLineDash([]); ctx.globalAlpha=1;
+
+  for(let i=0;i<=n;i++){
+    const g=acStepGeom(i), reached=i<=AC.floor, isTop=(i===n), isNext=(i===AC.floor+1);
+    if(reached && !isTop){
+      ctx.globalAlpha=.22; ctx.fillStyle=c.corner;
+      ctx.fillRect(g.x-3,g.y-3,g.w+6,g.h+6); ctx.globalAlpha=1;
+    }
+    if(isNext && AC.animT>=1){
+      const pu=.35+Math.sin(AC.t/230)*.22;
+      ctx.globalAlpha=pu; ctx.fillStyle=c.gold;
+      ctx.fillRect(g.x-4,g.y-4,g.w+8,g.h+8); ctx.globalAlpha=1;
+    }
+    ctx.fillStyle=isTop?c.gold:(reached?c.ember:(document.documentElement.getAttribute('data-theme')==='light'?'rgba(16,24,38,.20)':'rgba(255,255,255,.16)'));
+    ctx.fillRect(g.x,g.y,g.w,g.h);
+    ctx.globalAlpha=.45; ctx.fillStyle='#000';
+    ctx.fillRect(g.x,g.y+g.h,g.w,4); ctx.globalAlpha=1;
+    ctx.font='11px Kanit,sans-serif';
+    ctx.fillStyle=reached?c.corner:(isNext?c.gold:c.muted);
+    const lab=isTop?ACT.topWord:(i===0?ACT.groundWord:ACT.floorWord+' '+i);
+    const lw=ctx.measureText(lab).width;
+    const below=isTop||i===0;   /* กริดสตาร์ทและเส้นชัยเขียนใต้แท่น กันตัวรถทับตัวหนังสือ */
+    let lx=Math.max(4,Math.min(g.x+2,AC.W-lw-8));
+    ctx.fillText(lab,lx,below?(g.y+g.h+15):(g.y-6));
+    if(i>0&&i<=AC.floor){
+      ctx.beginPath();ctx.arc(g.x+g.w-9,g.y-13,4.6,0,Math.PI*2);
+      ctx.fillStyle=c.gold;ctx.fill();
+    }
+  }
+  /* ธงตาหมากรุกที่เส้นชัย */
+  const top=acStepGeom(n), fx=top.x+top.w-14, fy=top.y-12;
+  ctx.strokeStyle=c.text; ctx.lineWidth=2;
+  ctx.beginPath(); ctx.moveTo(fx,fy); ctx.lineTo(fx,fy-24); ctx.stroke();
+  const cs=4.5, wob=Math.sin(AC.t/220)*2;
+  for(let r=0;r<3;r++) for(let k=0;k<4;k++){
+    ctx.fillStyle=((r+k)%2)?c.text:'#0b1b2b';
+    ctx.fillRect(fx+1+k*cs+ (r%2?wob*0.4:0), fy-24+r*cs, cs, cs);
+  }
+
+  const t=Math.min(1,AC.animT), e=t<.5?2*t*t:-1+(4-2*t)*t;
+  const a=acStepGeom(AC.animFrom), b=acStepGeom(AC.animTo);
+  const px=a.x+(b.x-a.x)*e + (a.w/2) + (b.w-a.w)/2*e;
+  const arc=Math.sin(Math.PI*t)*(AC.animFrom===AC.animTo?0:26);
+  const py=a.y+(b.y-a.y)*e-arc;
+  if(AC.glow>0){
+    ctx.globalAlpha=Math.min(.5,AC.glow/40);
+    const gg=ctx.createRadialGradient(px,py-18,2,px,py-18,46);
+    gg.addColorStop(0,c.corner); gg.addColorStop(1,'rgba(0,0,0,0)');
+    ctx.fillStyle=gg; ctx.beginPath(); ctx.arc(px,py-18,46,0,Math.PI*2); ctx.fill(); ctx.globalAlpha=1;
+  }
+  const tilt=(AC.animFrom===AC.animTo)?0:-0.18*Math.sin(Math.PI*t);
+  acDrawCar(ctx,c,px,py,tilt);
+  if(state.combo>=3){
+    ctx.font='13px Kanit,sans-serif'; ctx.fillStyle=c.gold;
+    ctx.fillText('x'+state.combo,px+18,py-32);
+  }
+  AC.parts.forEach(p=>{ctx.globalAlpha=Math.max(0,p.l);ctx.fillStyle=p.c;
+    ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,Math.PI*2);ctx.fill();});
+  ctx.globalAlpha=1;
+  ctx.restore();
+
+  ctx.fillStyle=c.muted; ctx.font='12px Kanit,sans-serif'; ctx.textAlign='right';
+  ctx.fillText(AC.W<150?(AC.floor+'/'+n):('ผ่าน'+ACT.floorWord+' '+AC.floor+' / '+n),AC.W-12,AC.H-11);
+  ctx.textAlign='left';
+}
+function acLoop(now){
+  if(!AC.on) return;
+  if(AC.last===null)AC.last=now;
+  const d=now-AC.last; AC.last=now; AC.elapsed+=d; AC.t+=d;
+  if(AC.animT<1) AC.animT=Math.min(1,AC.animT+d/640);
+  if(AC.shake>0) AC.shake=Math.max(0,AC.shake-d/22);
+  if(AC.glow>0) AC.glow=Math.max(0,AC.glow-d/26);
+  acStepParts(d);
+  acDraw(); acHud();
+  AC.raf=requestAnimationFrame(acLoop);
+}
+function acHud(){
+  $('#acProg').textContent=AC.answered+'/'+AC.qs.length;
+  $('#acFloor').textContent=AC.floor;
+  $('#acCombo').textContent=state.combo;
+  $('#acComboChip').classList.toggle('hot',state.combo>=3);
+  const bar=$('#acBar'); if(bar) bar.style.width=(AC.qs.length?(AC.floor/AC.qs.length*100):0)+'%';
+  const s=Math.floor(AC.elapsed/1000);
+  $('#acTime').textContent=Math.floor(s/60)+':'+String(s%60).padStart(2,'0');
+}
+function acStart(mode,qs,tag,onDone){
+  AC.on=true;AC.mode=mode;AC.qs=qs;AC.idx=0;AC.answered=0;AC.correct=0;AC.score=0;
+  AC.byD={district1:0,district2:0,district3:0};
+  AC.elapsed=0;AC.last=null;AC.t=0;AC.qOpen=false;AC.onDone=onDone;AC.col=acColors();
+  AC.floor=0;AC.animFrom=0;AC.animTo=0;AC.animT=1;AC.shake=0;AC.glow=0;AC.dead=false;AC.parts=[];
+  state.combo=0;
+  const ov=$('#arcade'); ov.classList.add('show'); ov.setAttribute('aria-hidden','false');
+  document.body.style.overflow='hidden';
+  $('#acTag').textContent=tag; $('#acEnd').classList.remove('show');
+  acResize(); acHud(); acQuestion();
+  SFX.init(); SFX.play('unlock');
+  cancelAnimationFrame(AC.raf); AC.raf=requestAnimationFrame(acLoop);
+}
+function acClose(){
+  AC.on=false; cancelAnimationFrame(AC.raf);
+  const ov=$('#arcade'); ov.classList.remove('show'); ov.setAttribute('aria-hidden','true');
+  document.body.style.overflow='';
+}
+function acAbort(){
+  if(!AC.on) return;
+  if(AC.answered>0 && !confirm('ออกจากด่านนี้หรือไม่ ผลของรอบนี้จะไม่ถูกบันทึก')) return;
+  acClose();
+}
+function acQuestion(){
+  const q=AC.qs[AC.idx], host=$('#acQCard');
+  AC.qOpen=true; host.dataset.done='';
+  host.innerHTML=
+    '<div class="qmeta"><span>ข้อ '+(AC.idx+1)+'/'+AC.qs.length+'</span>'+
+      (q.district?'<span class="q-type">'+SKILL_LABELS[q.district]+'</span>':'')+'</div>'+
+    '<div class="q-text">'+q.q+'</div>'+
+    '<div class="choices">'+q.c.map((c,ci)=>'<button class="choice" data-ci="'+ci+'"><span class="k">'+KEYCAPS[ci]+'</span><span>'+c+'</span></button>').join('')+'</div>'+
+    '<div class="explain" data-ex></div>'+
+    '<div class="btn-row" id="acNextRow" style="display:none"><button class="btn primary" id="acNextQ" style="flex:1">'+
+      (AC.idx===AC.qs.length-1?'เข้าเส้นชัย · ดูผล':'ข้อถัดไป')+'</button></div>';
+  const t0=Date.now();
+  host.querySelectorAll('.choice').forEach(btn=>{
+    btn.addEventListener('click',()=>{
+      if(host.dataset.done) return;
+      host.dataset.done='1';
+      const ci=+btn.dataset.ci, ex=host.querySelector('[data-ex]');
+      host.querySelectorAll('.choice').forEach(b=>b.disabled=true);
+      if(ci===q.a){
+        btn.classList.add('correct'); AC.correct++;
+        if(q.district) AC.byD[q.district]++;
+        state.combo++; state.maxCombo=Math.max(state.maxCombo,state.combo);
+        const cbonus=Math.min(state.combo-1,4)*5;
+        const gain=(AC.mode==='practice'?12:20+cbonus);
+        addXp(gain,false); AC.score+=100+cbonus*10;
+        AC.animFrom=AC.floor; AC.floor++; AC.animTo=AC.floor; AC.animT=0; AC.glow=40;
+        const g=acStepGeom(AC.floor); acPuff(g.x+g.w/2,g.y,AC.col.corner,16);
+        floaty('ผ่าน'+ACT.floorWord+' '+AC.floor+' · +'+gain+' XP',AC.col.corner);
+        SFX.play(state.combo>=3?'combo':'correct');
+        if((Date.now()-t0)<8000) state.fastCorrect=true;
+      } else {
+        btn.classList.add('wrong');
+        host.querySelectorAll('.choice')[q.a].classList.add('correct');
+        state.combo=0; addXp(4,false); AC.shake=40; SFX.play('wrong');
+        const g=acStepGeom(AC.floor); acPuff(g.x+g.w/2,g.y,AC.col.red,10);
+        floaty('ยังไม่ขยับ — อ่านเฉลยแล้วไปต่อ',AC.col.red);
+      }
+      ex.innerHTML=q.e; ex.classList.add('show');
+      $('#acNextRow').style.display='flex';
+      $('#acNextQ').onclick=()=>{
+        AC.answered++; AC.idx++;
+        if(AC.idx>=AC.qs.length){ AC.qOpen=false; acFinishRound(); }
+        else { acQuestion(); $('.ac-play').scrollTop=0; }
+        acHud(); save();
+      };
+      acHud(); save();
+      try{ $('#acNextRow').scrollIntoView({behavior:REDUCED?'auto':'smooth',block:'nearest'}); }catch(e){}
+    });
+  });
+  acHud();
+}
+function acMiniRadar(){
+  const host=$('#acMini'); if(!host) return;
+  const ks=['district1','district2','district3'];
+  const tot={district1:0,district2:0,district3:0};
+  AC.qs.forEach(q=>{ if(q.district) tot[q.district]++; });
+  const used=ks.filter(k=>tot[k]>0);
+  if(used.length<3){
+    const k=used[0]||'district1';
+    const pct=tot[k]?Math.round(AC.byD[k]/tot[k]*100):0;
+    host.innerHTML='<div class="legend" style="width:100%">ความแม่นรอบนี้ — <b>'+SKILL_LABELS[k]+'</b><br>'+
+      '<span style="display:block;height:12px;border-radius:7px;background:rgba(255,255,255,.10);margin-top:8px;overflow:hidden">'+
+      '<span style="display:block;height:100%;width:'+pct+'%;background:linear-gradient(90deg,var(--corner),var(--gold))"></span></span>'+
+      '<b style="font-size:1.1rem">'+pct+'%</b> ('+AC.byD[k]+'/'+tot[k]+' ข้อ)</div>';
+    return;
+  }
+  const cx=95,cy=88,R=62;
+  const vals=ks.map(k=>tot[k]?AC.byD[k]/tot[k]:0);
+  const pt=(i,r)=>{const an=-Math.PI/2+i*2*Math.PI/3;return [cx+Math.cos(an)*r,cy+Math.sin(an)*r];};
+  let s='<svg viewBox="0 0 190 172" xmlns="http://www.w3.org/2000/svg">';
+  [1,.66,.33].forEach(f=>{
+    s+='<polygon points="'+ks.map((_,i)=>pt(i,R*f).map(v=>v.toFixed(1)).join(',')).join(' ')+
+       '" fill="none" stroke="rgba(255,255,255,.14)" stroke-width="1"/>';});
+  ks.forEach((_,i)=>{const p=pt(i,R);s+='<line x1="'+cx+'" y1="'+cy+'" x2="'+p[0].toFixed(1)+'" y2="'+p[1].toFixed(1)+'" stroke="rgba(255,255,255,.14)"/>';});
+  s+='<polygon points="'+vals.map((v,i)=>pt(i,Math.max(4,R*v)).map(x=>x.toFixed(1)).join(',')).join(' ')+
+     '" fill="var(--corner)" fill-opacity=".30" stroke="var(--corner)" stroke-width="2.5"/>';
+  vals.forEach((v,i)=>{const p=pt(i,Math.max(4,R*v));
+    s+='<circle cx="'+p[0].toFixed(1)+'" cy="'+p[1].toFixed(1)+'" r="4" fill="var(--gold)"/>';});
+  ks.forEach((_,i)=>{const p=pt(i,R+16);
+    s+='<text x="'+p[0].toFixed(1)+'" y="'+p[1].toFixed(1)+'" font-size="12" fill="var(--muted)" text-anchor="middle" font-family="Kanit,sans-serif">'+(i+1)+'</text>';});
+  s+='</svg>';
+  s+='<div class="legend">'+ks.map((k,i)=>'<div><i style="background:var(--gold)"></i>'+(i+1)+'. '+SKILL_LABELS[k]+
+     ' — <b>'+AC.byD[k]+'/'+tot[k]+'</b></div>').join('')+'</div>';
+  host.innerHTML=s;
+}
+function acFinishRound(){
+  if(AC.dead) return; AC.dead=true;
+  const total=AC.qs.length, timeSec=Math.round(AC.elapsed/1000);
+  if(AC.correct===total){ AC.score+=300; confetti(2600); SFX.play('fanfare'); }
+  else SFX.play('bell');
+  $('#acEndTitle').textContent=AC.correct===total?('เข้า'+ACT.topWord+' — CLEAR!'):'จบด่าน';
+  $('#acEndBody').innerHTML='ตอบถูก <b>'+AC.correct+'/'+total+'</b> ข้อ · ผ่าน'+ACT.floorWord+' <b>'+AC.floor+'</b> จาก '+total+
+    ' · คะแนนอาร์เคด <b>'+AC.score+'</b> · เวลา <b>'+Math.floor(timeSec/60)+':'+String(timeSec%60).padStart(2,'0')+'</b>';
+  acMiniRadar();
+  $('#acEnd').classList.add('show');
+  $('#acEndGo').onclick=()=>{
+    $('#acEnd').classList.remove('show'); acClose();
+    if(AC.onDone) AC.onDone({correct:AC.correct,byD:AC.byD,time:timeSec,score:AC.score});
+  };
+}
+$('#acExit').addEventListener('click',acAbort);
+document.addEventListener('keydown',e=>{
+  if(!AC.on||e.target.tagName==='INPUT') return;
+  const k=e.key.toLowerCase();
+  if(k==='escape'){acAbort();return;}
+  const host=$('#acQCard');
+  const idx=KEYCAPS.indexOf(e.key);
+  if(idx>=0){
+    const btn=host.querySelectorAll('.choice')[idx];
+    if(btn&&!btn.disabled){e.preventDefault();btn.click();return;}
+  }
+  if(k==='enter'){const n=$('#acNextQ'); if(n) n.click();}
+});
+window.addEventListener('resize',()=>{ if(AC.on) acResize(); });
+
+/* ---- launchers ---- */
+function startTest(kind){
+  const qs=stratifiedSix(kind==='post' ? (state.preIds||[]) : []);
+  if(kind==='pre'){ state.preIds=qs.map(q=>q.qid); } else { state.postIds=qs.map(q=>q.qid); }
+  save();
+  acStart(kind, qs, (kind==='pre'?'QUALIFYING · ทดสอบก่อนเรียน':'RACE DAY · ทดสอบหลังเรียน'), res=>{
+    if(kind==='pre'){state.pre=res.correct;state.preByD=res.byD;state.preTime=res.time;}
+    else{state.post=res.correct;state.postByD=res.byD;state.postTime=res.time;}
+    save();
+    setTimeout(()=>finishTest(kind,res.correct),350);
+  });
+}
+function finishTest(kind,score){
+  const info=starInfo(score);
+  $('#rvL1').textContent=kind==='pre'?'QUALIFYING COMPLETE':'RACE COMPLETE';
+  $('#rvL2').textContent='RAW SCORE';
+  $('#rvScore').textContent=score+'/6';
+  $('#rvRank').textContent=info.rank;
+  $('#rvSub').textContent=kind==='pre'?'นี่คือเวลาต่อรอบเส้นฐานของคุณ — เดี๋ยวเรามาวัดกันใหม่หลังวิ่งครบทั้ง 3 โซน':info.msg;
+  const rv=$('#reveal'); rv.classList.add('show');
+  ['#rvL1','#rvRank','#rvScore','#rvL2','#rvSub'].forEach(sel=>{const e=$(sel);e.classList.remove('rv-in');e.style.opacity=0;});
+  const go=$('#rvGo'); go.style.display='none';
+  [['#rvL1',0],['#rvRank',1500],['#rvScore',1900],['#rvL2',2000],['#rvSub',2250]].forEach(([sel,delay])=>{
+    setTimeout(()=>{const e=$(sel);e.style.opacity=1;e.classList.add('rv-in');},REDUCED?0:delay);
+  });
+  renderStars($('#rvStars'),info.stars,MAX_STARS,true);
+  if(kind==='post'&&info.stars>=5){setTimeout(()=>{confetti(4200);SFX.play('fanfare');},1500);}
+  go.textContent=kind==='pre'?'เข้าโซนแรก':'ดูรายงานผลภารกิจ';
+  setTimeout(()=>{go.style.display='inline-block';},REDUCED?0:2500);
+  go.onclick=()=>{
+    SFX.play('click'); rv.classList.remove('show');
+    if(kind==='pre'){state.visited['pretest']='done';unlock('d1');goto_('scr-preview1');}
+    else {state.visited['posttest']='done';unlock('summary');showSummary();}
+  };
+}
+function startQuiz(key){
+  const map={check1:'district1',check2:'district2',check3:'district3'};
+  const d=map[key];
+  const qs=pickN(BANK[d],3).map(q=>Object.assign({},randomizeChoices(q),{district:d}));
+  acStart('practice', qs, 'PRACTICE · ด่านฝึกซ้อม ' + SKILL_LABELS[d], res=>{
+    const rs=$('#'+key+'Result');
+    rs.className='status-line '+(res.correct===3?'ok':'');
+    rs.innerHTML='รอบล่าสุด: ตอบถูก <b>'+res.correct+'/3</b> ข้อ · คะแนนอาร์เคด '+res.score+
+      ' · เวลา '+res.time+' วินาที'+(res.correct===3?' — แม่นเต็มสิบ ไปโซนถัดไปได้เลย':' — ลองสุ่มข้อใหม่อีกรอบเพื่อความมั่นใจ');
+    $('#'+key+'Next').style.display='flex';
+    const stop=stopOfScreen('scr-'+key); if(stop) state.visited[stop.key]='done';
+    renderNav(state.screen); save();
+  });
+}
+
+/* ============ 10) LAB HELPERS ============ */
+function markLab(group,key,xp){
+  if(state.labs[group].indexOf(key)<0){ state.labs[group].push(key); addXp(xp||8); save(); return true; }
+  return false;
+}
+function labCount(g){ return state.labs[g].length; }
+
+/* ============ 11) GAME-SPECIFIC LABS ============ */
+
+/* ---- LAB 1 (โซน 1): SYMBOL SORTER — จับคู่สัญลักษณ์กับหน้าที่ ---- */
+const SYMS=[
+  {k:'term',name:'วงรี / แคปซูล',art:'<rect x="3" y="7" width="32" height="14" rx="7" fill="none" stroke="#6ee7b7" stroke-width="2.4"/>',fn:'จุดเริ่มต้นและจุดสิ้นสุดของผัง'},
+  {k:'proc',name:'สี่เหลี่ยมผืนผ้า',art:'<rect x="3" y="7" width="32" height="14" rx="2" fill="none" stroke="#5cc8ff" stroke-width="2.4"/>',fn:'คำนวณหรือกำหนดค่าให้ตัวแปร'},
+  {k:'dec', name:'สี่เหลี่ยมขนมเปียกปูน',art:'<path d="M19 4 L35 14 L19 24 L3 14 Z" fill="none" stroke="#fbbf24" stroke-width="2.4"/>',fn:'ตรวจเงื่อนไข ออกได้ 2 ทาง'},
+  {k:'io',  name:'สี่เหลี่ยมด้านขนาน',art:'<path d="M11 7 H36 L27 21 H2 Z" fill="none" stroke="#fde68a" stroke-width="2.4"/>',fn:'รับค่าเข้าหรือแสดงผลออก'},
+  {k:'flow',name:'ลูกศร',art:'<path d="M4 14 H29 M23 9 L31 14 L23 19" fill="none" stroke="#e4f2ff" stroke-width="2.4" stroke-linecap="round"/>',fn:'บอกทิศทางการไหลของงาน'},
+  {k:'conn',name:'วงกลมเล็ก',art:'<circle cx="19" cy="14" r="7" fill="none" stroke="#8fb0cc" stroke-width="2.4"/>',fn:'จุดเชื่อมผังข้ามจุดหรือข้ามหน้า'}
+];
+const SORT={sel:null,left:0,timer:null,matched:0,running:false};
+function renderSorter(){
+  const sc=$('#symCol'), fc=$('#fnCol');
+  if(!sc||!fc) return;
+  sc.innerHTML=''; fc.innerHTML='';
+  shuffle(SYMS).forEach(s=>{
+    const b=document.createElement('button'); b.type='button'; b.className='symchip'; b.dataset.k=s.k;
+    b.innerHTML='<svg viewBox="0 0 38 28" xmlns="http://www.w3.org/2000/svg">'+s.art+'</svg><span>'+s.name+'</span>';
+    b.addEventListener('click',()=>{
+      if(!SORT.running){toast('กดปุ่มเริ่มจับเวลาก่อนนะครับ');return;}
+      $$('#symCol .symchip').forEach(x=>x.classList.remove('sel'));
+      b.classList.add('sel'); SORT.sel=s.k; SFX.play('select');
+    });
+    sc.appendChild(b);
+  });
+  shuffle(SYMS).forEach(s=>{
+    const b=document.createElement('button'); b.type='button'; b.className='slot'; b.dataset.k=s.k;
+    b.innerHTML='<span>'+s.fn+'</span><span class="sname"></span>';
+    b.addEventListener('click',()=>{
+      if(!SORT.running){toast('กดปุ่มเริ่มจับเวลาก่อนนะครับ');return;}
+      if(b.classList.contains('filled')) return;
+      if(!SORT.sel){toast('เลือกสัญลักษณ์ทางซ้ายก่อน แล้วค่อยแตะช่องหน้าที่');return;}
+      if(SORT.sel===s.k){
+        b.classList.add('filled');
+        b.querySelector('.sname').textContent='ถูกต้อง';
+        const chip=document.querySelector('#symCol .symchip[data-k="'+s.k+'"]');
+        if(chip){chip.classList.remove('sel');chip.classList.add('done');}
+        SORT.sel=null; SORT.matched++; SFX.play('correct');
+        $('#sortScore').textContent=SORT.matched+'/6';
+        if(SORT.matched===6) sortFinish(true);
+      } else {
+        b.classList.add('bad'); SFX.play('wrong');
+        setTimeout(()=>b.classList.remove('bad'),400);
+        const want=SYMS.find(x=>x.k===SORT.sel);
+        $('#sortStatus').className='status-line no';
+        $('#sortStatus').innerHTML='ยังไม่ตรงกัน — <b>'+want.name+'</b> ทำหน้าที่ "'+want.fn+'" ลองอ่านช่องหน้าที่อีกครั้ง';
+      }
+    });
+    fc.appendChild(b);
+  });
+  $('#sortScore').textContent='0/6';
+}
+function sortFinish(win){
+  SORT.running=false; clearInterval(SORT.timer);
+  const st=$('#sortStatus');
+  if(win){
+    st.className='status-line ok';
+    st.innerHTML='จับคู่ครบทั้ง 6 ป้ายภายใน <b>'+(45-SORT.left)+' วินาที</b> — คู่ที่ต้องระวังที่สุดคือสี่เหลี่ยมผืนผ้ากับขนมเปียกปูน จำไว้ว่ามีการเปรียบเทียบเมื่อไรคือเปียกปูนเสมอ';
+    SFX.play('fanfare'); confetti(1800);
+    markLab('lab1','clear'+(SORT.left>=20?'-fast':''),12);
+  } else {
+    st.className='status-line no';
+    st.innerHTML='หมดเวลาที่ <b>'+SORT.matched+'/6</b> คู่ — ไม่เป็นไร กดเริ่มใหม่ได้ทันที ระหว่างนี้ให้ทวนตารางสัญลักษณ์ด้านบนอีกรอบ';
+    SFX.play('alarm');
+  }
+}
+function sortStart(){
+  clearInterval(SORT.timer);
+  SORT.sel=null; SORT.matched=0; SORT.left=45; SORT.running=true;
+  renderSorter();
+  $('#sortTimer').textContent='45'; $('#sortTimer').classList.remove('low');
+  $('#sortStatus').className='status-line';
+  $('#sortStatus').textContent='เริ่มแล้ว — แตะสัญลักษณ์ทางซ้าย แล้วแตะช่องหน้าที่ทางขวาให้ตรงกัน';
+  SFX.play('engine');
+  SORT.timer=setInterval(()=>{
+    SORT.left--;
+    $('#sortTimer').textContent=SORT.left;
+    $('#sortTimer').classList.toggle('low',SORT.left<=10);
+    if(SORT.left<=5&&SORT.left>0) SFX.play('tick');
+    if(SORT.left<=0) sortFinish(false);
+  },1000);
+}
+
+/* ---- LAB 2 (โซน 2): PACE CAR — วางกล่องบนรางแล้วปล่อยรถ ---- */
+const PACE_ROUNDS=[
+  {goal:'รอบที่ 1 · SELECTION — สนามช่วงนี้มีหลุมทราย ต้องรู้ระยะก่อน แล้วจึงตัดสินใจว่าจะเบรกหรือไม่ เรียงกล่องให้ถูกลำดับ',
+   order:['in','dec','pr'],
+   tiles:[{id:'pr', shp:'ผืนผ้า',  txt:'brake = 1  (เบรกและลดเกียร์)'},
+          {id:'in', shp:'ด้านขนาน',txt:'read d  (รับค่าระยะถึงหลุมทราย)'},
+          {id:'dec',shp:'เปียกปูน',txt:'d &lt; 50 ?  (เข้าใกล้หลุมหรือยัง)'}],
+   why:['ยังไม่รู้ระยะถึงหลุมเลย จะตัดสินใจอะไรไม่ได้ — กล่องแรกของผังต้องเป็นด้านขนานที่รับข้อมูลเข้ามาก่อน',
+        'ข้อมูลเข้ามาแล้วแต่ยังไม่มีใครตรวจ — ต้องวางขนมเปียกปูนเพื่อถามเงื่อนไขก่อน มิฉะนั้นรถจะเบรกทุกครั้งโดยไม่สนใจสภาพสนาม',
+        'กล่องสุดท้ายคือการลงมือทำเมื่อเงื่อนไขเป็นจริง จึงต้องเป็นสี่เหลี่ยมผืนผ้าที่สั่งเบรก']},
+  {goal:'รอบที่ 2 · ITERATION — ให้รถวิ่งครบ 3 รอบสนามแล้วจึงเข้าเส้นชัย เรียงกล่องของลูปให้ถูกลำดับ',
+   order:['init','cond','inc'],
+   tiles:[{id:'cond',shp:'เปียกปูน',txt:'lap &lt; 3 ?  (ยังไม่ครบ 3 รอบ)'},
+          {id:'inc', shp:'ผืนผ้า',  txt:'lap = lap + 1  (วิ่งเพิ่มอีก 1 รอบ)'},
+          {id:'init',shp:'ผืนผ้า',  txt:'lap = 0  (ตั้งตัวนับรอบก่อนเข้าวง)'}],
+   why:['ตัวนับต้องถูกตั้งค่าก่อนเข้าวงเสมอ ถ้าเริ่มด้วยการตรวจเงื่อนไขทั้งที่ lap ยังไม่มีค่า ผลลัพธ์จะไม่แน่นอน',
+        'กล่องถัดจากการตั้งค่าคือขนมเปียกปูนที่ตรวจเงื่อนไขออกจากวง ถ้าเอากล่องเพิ่มรอบขึ้นมาก่อน ลูปจะไม่มีทางออกและกลายเป็น Infinite Loop',
+        'กล่องสุดท้ายในวงคือกล่องที่เปลี่ยนค่าให้เข้าใกล้จุดหยุด แล้วลูกศรจึงวนกลับไปที่เปียกปูน']}
+];
+const PACE={round:0,sel:null,slots:[null,null,null],busy:false};
+function paceRender(){
+  const R=PACE_ROUNDS[PACE.round];
+  $('#paceGoal').innerHTML=R.goal;
+  const tr=$('#paceTrack'), pal=$('#pacePalette');
+  Array.from(tr.querySelectorAll('.tslot')).forEach(x=>x.remove());
+  for(let i=0;i<3;i++){
+    const d=document.createElement('div'); d.className='tslot'; d.dataset.i=i;
+    const f=PACE.slots[i];
+    if(f){ const t=R.tiles.find(x=>x.id===f); d.classList.add('filled');
+      d.innerHTML='<span><span class="shp">'+t.shp+'</span>'+t.txt+'</span>'; }
+    else d.innerHTML='<span>ช่องที่ '+(i+1)+'<br><span class="shp">ว่าง</span></span>';
+    d.addEventListener('click',()=>{
+      if(PACE.busy) return;
+      if(PACE.slots[+d.dataset.i]){ PACE.slots[+d.dataset.i]=null; paceRender(); SFX.play('click'); return; }
+      if(!PACE.sel){ toast('เลือกกล่องจากคลังด้านล่างก่อน แล้วค่อยแตะช่องบนราง'); return; }
+      PACE.slots[+d.dataset.i]=PACE.sel; PACE.sel=null; SFX.play('select'); paceRender();
+    });
+    tr.appendChild(d);
+  }
+  pal.innerHTML='';
+  R.tiles.forEach(t=>{
+    const used=PACE.slots.indexOf(t.id)>=0;
+    const b=document.createElement('button'); b.type='button';
+    b.className='ptile'+(used?' used':'')+(PACE.sel===t.id?' sel':'');
+    b.innerHTML='<span class="shp">'+t.shp+'</span><span>'+t.txt+'</span>';
+    b.addEventListener('click',()=>{ if(PACE.busy) return; PACE.sel=t.id; SFX.play('select'); paceRender(); });
+    pal.appendChild(b);
+  });
+  const car=$('#paceCar'); car.classList.remove('crash'); car.style.left='0px';
+}
+function paceRun(){
+  if(PACE.busy) return;
+  const R=PACE_ROUNDS[PACE.round];
+  if(PACE.slots.some(x=>!x)){ toast('ยังวางกล่องไม่ครบทั้ง 3 ช่อง'); return; }
+  PACE.busy=true;
+  const slots=$$('#paceTrack .tslot'), car=$('#paceCar'), st=$('#paceStatus');
+  slots.forEach(s=>s.classList.remove('ok','bad'));
+  st.className='status-line'; st.textContent='ปล่อยรถออกจากพิท...';
+  SFX.play('engine');
+  let i=0, bad=-1;
+  const step=()=>{
+    if(i>=3){
+      car.style.left='calc(100% - 44px)';
+      st.className='status-line ok';
+      st.innerHTML='รถวิ่งผ่านครบทุกช่องและเข้าเส้นชัย — ลำดับของผังถูกต้อง '+
+        (PACE.round===0?'รับข้อมูลเข้าก่อน แล้วจึงตรวจเงื่อนไข แล้วจึงลงมือทำ':'ตั้งค่าตัวนับก่อนเข้าวง ตรวจเงื่อนไขออกจากวง แล้วจึงเปลี่ยนค่าให้เข้าใกล้จุดหยุด');
+      SFX.play('fanfare');
+      markLab('lab2','r'+PACE.round,12);
+      PACE.busy=false;
+      if(PACE.round===0){
+        setTimeout(()=>{ PACE.round=1; PACE.slots=[null,null,null]; PACE.sel=null; paceRender();
+          $('#paceStatus').className='status-line'; $('#paceStatus').textContent='เปิดรอบที่ 2 แล้ว — ลองจัดผังแบบลูปดูบ้าง'; },1400);
+      } else {
+        confetti(1600);
+        toast('ผ่านครบทั้ง 2 รอบของ Pace Car แล้ว');
+      }
+      return;
+    }
+    const okHere = PACE.slots[i]===R.order[i];
+    const s=slots[i];
+    car.style.left=(s.offsetLeft+s.offsetWidth/2-22)+'px';
+    setTimeout(()=>{
+      if(okHere){ s.classList.add('ok'); SFX.play('tick'); i++; step(); }
+      else{
+        bad=i; s.classList.add('bad'); car.classList.add('crash');
+        SFX.play('wrong');
+        st.className='status-line no';
+        st.innerHTML='รถออกนอกโค้งที่ <b>ช่องที่ '+(i+1)+'</b> — '+R.why[i];
+        PACE.busy=false;
+      }
+    },REDUCED?60:560);
+  };
+  step();
+}
+
+/* ---- LAB 3 (โซน 3): TRACK RUNNER — ผังงาน | โค้ด C | ผลลัพธ์ ---- */
+const TR_CODE=['int n = 3;','while (n &gt; 0) {','    printf("%d ", n);','    n = n - 1;','}','printf("Go!");'];
+const TR_POS={start:[160,24],init:[160,74],cond:[160,140],print:[160,212],dec:[160,276],go:[160,356],end:[160,412]};
+const TR_LINE={start:-1,init:0,cond:1,print:2,dec:3,go:5,end:-1};
+const TR_ID={start:'tn-start',init:'tn-init',cond:'tn-cond',print:'tn-print',dec:'tn-dec',go:'tn-go',end:'tn-end'};
+const TR={node:'start',n:null,out:'',steps:0,timer:null,done:false};
+function trRenderCode(line){
+  $('#trCode').innerHTML=TR_CODE.map((c,i)=>
+    '<span class="cl'+(i===line?' on':'')+'"><span class="ln">'+String(i+1).padStart(2,' ')+'  </span>'+c+'</span>').join('');
+}
+function trPaint(msg){
+  Object.keys(TR_ID).forEach(k=>{
+    const el=document.getElementById(TR_ID[k]); if(!el) return;
+    el.classList.remove('on'); if(k===TR.node) el.classList.add('on');
+  });
+  const p=TR_POS[TR.node];
+  const car=document.getElementById('trCar');
+  if(car) car.setAttribute('transform','translate('+p[0]+','+p[1]+')');
+  trRenderCode(TR_LINE[TR.node]);
+  $('#trOut').textContent=TR.out||'(ยังไม่มีผลลัพธ์)';
+  $('#trVar').innerHTML='ค่าตัวแปร: <b>n = '+(TR.n===null?'—':TR.n)+'</b>';
+  if(msg){ $('#trStatus').className='status-line'+(TR.done?' ok':''); $('#trStatus').innerHTML=msg; }
+}
+function trReset(quiet){
+  clearInterval(TR.timer); TR.timer=null;
+  TR.node='start'; TR.n=null; TR.out=''; TR.steps=0; TR.done=false;
+  $('#trNote').textContent='กดปุ่มเล่นหรือทีละกล่องเพื่อเริ่ม';
+  trPaint(quiet?null:'รถกลับมาจอดที่กล่อง START พร้อมออกตัวใหม่');
+}
+function trStep(){
+  if(TR.done) return false;
+  if(TR.steps++>60){ TR.done=true; trPaint('หยุดการไล่ผังเพื่อความปลอดภัย (เกินจำนวนก้าวที่กำหนด)'); return false; }
+  let msg='';
+  switch(TR.node){
+    case 'start': TR.node='init'; msg='ออกตัวจากวงรี START แล้วไหลลงกล่องแรก'; break;
+    case 'init':  TR.n=3; TR.node='cond'; msg='กล่องสี่เหลี่ยมผืนผ้ากำหนด <b>n = 3</b> (ตรงกับโค้ดบรรทัดที่ 1)'; break;
+    case 'cond': {
+      const yes=TR.n>0;
+      msg='ขนมเปียกปูนตรวจ <b>'+TR.n+' &gt; 0</b> → <b>'+(yes?'Yes':'No')+'</b> '+(yes?'เข้าตัววง':'ออกจากวง');
+      TR.node=yes?'print':'go'; break;
+    }
+    case 'print': TR.out+=TR.n+' '; TR.node='dec'; msg='ด้านขนานพิมพ์ค่า n แล้วเว้นวรรค (โค้ดบรรทัดที่ 3)'; break;
+    case 'dec':   TR.n=TR.n-1; TR.node='cond'; msg='กล่องผืนผ้าลดค่าเหลือ <b>n = '+TR.n+'</b> แล้วลูกศรวนกลับไปที่เปียกปูน'; break;
+    case 'go':    TR.out+='Go!'; TR.node='end'; msg='ออกจากวงแล้ว ด้านขนานพิมพ์ <b>Go!</b> (โค้ดบรรทัดที่ 6)'; break;
+    case 'end':
+      TR.done=true;
+      msg='ไล่ผังจบแล้ว ผลลัพธ์ทั้งหมดคือ <b>'+TR.out+'</b> — สังเกตว่าเปียกปูนถูกตรวจ 4 ครั้ง แต่ตัววงทำงานเพียง 3 รอบ';
+      $('#trNote').textContent='ครบหนึ่งรอบผังแล้ว กดเริ่มใหม่เพื่อดูซ้ำได้';
+      if(markLab('lab3','run',12)) toast('ไล่ผังจบครบหนึ่งรอบ ได้รับ XP แล้ว');
+      SFX.play('fanfare');
+      trPaint(msg); return false;
+  }
+  SFX.play(TR.node==='cond'?'ping':'tick');
+  trPaint(msg);
+  return true;
+}
+function trPlay(){
+  if(TR.done) trReset(true);
+  clearInterval(TR.timer);
+  TR.timer=setInterval(()=>{ if(!trStep()) clearInterval(TR.timer); }, REDUCED?120:900);
+}
+
+/* ============ 12) SUMMARY + RADAR ============ */
+const BADGE_DEFS = [
+  {id:'perfect',  name:'CHEQUERED FLAG', desc:'Posttest ถูกครบ 6 ข้อ',              test:s => s.post === 6},
+  {id:'zero2hero',name:'LAP RECORD',     desc:'ดาวเพิ่มขึ้น 3 ดวงขึ้นไป',           test:s => (starInfo(s.post).stars - starInfo(s.pre).stars) >= 3},
+  {id:'fast',     name:'FAST REACTION',  desc:'ตอบถูกภายใน 8 วินาที',              test:s => s.fastCorrect},
+  {id:'labrat',   name:'TRACK DESIGNER', desc:'เล่นห้องทดลองครบทั้งสามโซน',        test:s => s.labs.lab1.length >= 1 && s.labs.lab2.length >= 2 && s.labs.lab3.length >= 1},
+  {id:'combo',    name:'CLEAN RACE',     desc:'ตอบถูกติดกัน 5 ข้อขึ้นไป',           test:s => s.maxCombo >= 5},
+  {id:'sweep',    name:'TRIPLE SECTOR',  desc:'ได้ 2/2 ครบทั้งสามโซน',              test:s => s.postByD.district1 === 2 && s.postByD.district2 === 2 && s.postByD.district3 === 2}
+];
+function weakestDistrict(){const ds=['district1','district2','district3'];return ds.reduce((min,d)=>state.postByD[d]<state.postByD[min]?d:min,ds[0]);}
+function extraTips(postInfo){
+  const tips=[];
+  if(labCount('lab1')<1) tips.push('ยังไม่ได้จับคู่ Symbol Sorter ให้ครบสักรอบ — คู่ที่ออกสอบบ่อยที่สุดคือ <b>สี่เหลี่ยมผืนผ้ากับขนมเปียกปูน</b> การได้จับคู่ภายใต้เวลาจำกัดช่วยให้จำได้เร็วกว่าอ่านตารางเฉย ๆ');
+  if(labCount('lab2')<2) tips.push('ยังผ่าน Pace Car ไม่ครบทั้ง 2 รอบ รอบที่สองคือผังแบบลูป ซึ่งจะช่วยให้เห็นว่าทำไม <b>ตัวนับต้องถูกตั้งค่าก่อนเข้าวง</b> เสมอ');
+  if(labCount('lab3')<1) tips.push('ยังไม่ได้เดิน Track Runner จนจบผังสักครั้ง ลองกดทีละกล่องแล้วสังเกตว่ากล่องผังกับบรรทัดโค้ดสว่างพร้อมกันอย่างไร');
+  if(postInfo.stars===MAX_STARS) tips.push('ได้ครบ 6 ดาวเต็มแล้ว ขั้นต่อไปคือลองวาดผังงานของโปรแกรมที่เคยเขียนเองด้วยมือ แล้วตรวจสามข้อคือ Decision ออกครบ 2 ทาง ลูปมีทางออก และมีกล่องที่เปลี่ยนค่าตัวนับ');
+  return tips;
+}
+function showSummary(){
+  goto_('scr-summary'); state.visited['summary']='done';
+  const preInfo=starInfo(state.pre||0), postInfo=starInfo(state.post||0);
+  const fmtT=s=>Math.floor((s||0)/60)+':'+String((s||0)%60).padStart(2,'0');
+  $('#sumWho').textContent='นักแข่ง: '+(state.name||'ไม่ระบุชื่อ')+' · เวลาในด่านทดสอบ ก่อนเรียน '+fmtT(state.preTime)+
+    ' / หลังเรียน '+fmtT(state.postTime)+' · ภารกิจสำเร็จเมื่อ '+new Date().toLocaleString('th-TH',{dateStyle:'medium',timeStyle:'short'});
+  $('#sumPre').textContent=state.pre+'/6'; $('#sumPost').textContent=state.post+'/6';
+  $('#sumPreRank').textContent=preInfo.rank; $('#sumPostRank').textContent=postInfo.rank;
+  renderStars($('#sumPreStars'),preInfo.stars,MAX_STARS,false);
+  renderStars($('#sumPostStars'),postInfo.stars,MAX_STARS,true);
+  const dStar=postInfo.stars-preInfo.stars, msg=$('#sumMsg');
+  if(dStar>0){msg.className='delta';msg.textContent='ดาวเพิ่มขึ้น +'+dStar+' ดวง (จาก '+preInfo.stars+' เป็น '+postInfo.stars+' ดาว) — พัฒนาการชัดเจนมาก';}
+  else if(dStar===0){msg.className='delta flat';msg.textContent=postInfo.stars>=5?'คงระดับ '+postInfo.stars+' ดาวไว้ได้ทั้งก่อนและหลังเรียน — ความเข้าใจมั่นคงดีมาก':'ดาวยังคงที่ที่ '+postInfo.stars+' ดวง — ยังมีจุดที่ยังไม่คลิก ลองทบทวนหัวข้อที่ระบบแนะนำด้านล่างแล้วสอบใหม่';}
+  else {msg.className='delta down';msg.textContent='รอบนี้ดาวยังไม่ขึ้น ถือเป็นข้อมูลที่มีค่า — ระบบเลือกหัวข้อที่ควรทบทวนก่อนไว้ให้ที่ปุ่มด้านล่างแล้ว';}
+  const dsHost=$('#sumDistrictStars'); dsHost.innerHTML='';
+  ['district1','district2','district3'].forEach(d=>{
+    const got=state.postByD[d], was=state.preByD[d];
+    const row=document.createElement('div'); row.className='dstar-row';
+    const diff=got-was;
+    const diffTxt=diff>0?'<span style="color:var(--corner)">+'+diff+'</span>':diff<0?'<span style="color:var(--red)">'+diff+'</span>':'<span style="color:var(--muted)">คงที่</span>';
+    row.innerHTML='<div class="lbl">'+SKILL_LABELS[d]+'</div><div class="star-row xs" data-d="'+d+'"></div><div class="mono" style="font-size:.78rem">'+got+'/2 '+diffTxt+'</div>';
+    dsHost.appendChild(row);
+    renderStars(row.querySelector('.star-row'),got,2,false);
+  });
+  drawRadar();
+  const bHost=$('#sumBadges'); bHost.innerHTML='';
+  BADGE_DEFS.forEach((b,i)=>{
+    let ok=false; try{ok=!!b.test(state);}catch(e){ok=false;}
+    const el=document.createElement('div');
+    el.className='badge'+(ok?'':' locked'); el.style.animationDelay=(i*0.07)+'s';
+    el.innerHTML='<b>'+(ok?'★':'☆')+'</b><span><b>'+b.name+'</b> — '+b.desc+'</span>';
+    bHost.appendChild(el);
+  });
+  const adv=$('#sumAdvice'); adv.innerHTML='';
+  const tips=[]; const weak=weakestDistrict();
+  if(state.postByD[weak]<2) tips.push('จุดที่ควรทบทวนก่อนคือ <b>'+SKILL_LABELS[weak]+'</b> — กลับไปอ่านสรุปและเล่นห้องทดลองของโซนนั้นซ้ำอีกครั้ง');
+  extraTips(postInfo).forEach(t=>tips.push(t));
+  if(state.maxCombo<3) tips.push('ลองทำด่านฝึกซ้อมประจำโซนซ้ำจนตอบถูกติดกัน 3 ข้อขึ้นไป จะช่วยยืนยันว่าเข้าใจจริงไม่ใช่เดา');
+  if(!tips.length) tips.push('ผลงานอยู่ในเกณฑ์ดี แนะนำให้เล่นซ้ำอีกรอบเพื่อเจอชุดคำถามใหม่ที่ระบบสุ่มให้');
+  tips.forEach(t=>{const li=document.createElement('li');li.innerHTML=t;adv.appendChild(li);});
+  $('#sumXp').textContent=state.xp; $('#sumCombo').textContent=state.maxCombo;
+  $('#sumStarTotal').textContent=postInfo.stars+'/'+MAX_STARS;
+  $('#btnReview').textContent='ทบทวน: '+SKILL_LABELS[weak];
+  $('#btnReview').onclick=()=>{SFX.play('click');goto_(DISTRICT_SCREEN[weak]);};
+  save();
+}
+/* ---- CSV export (สำหรับอาจารย์เก็บคะแนน) ---- */
+function exportCSV(){
+  const rows=[['name','avatar','pretest','posttest','d1_pre','d2_pre','d3_pre','d1_post','d2_post','d3_post','stars_pre','stars_post','pre_time_s','post_time_s','xp','max_combo','labs','timestamp'],
+    [state.name,state.avatar,state.pre,state.post,state.preByD.district1,state.preByD.district2,state.preByD.district3,
+     state.postByD.district1,state.postByD.district2,state.postByD.district3,
+     starInfo(state.pre||0).stars,starInfo(state.post||0).stars,state.preTime||0,state.postTime||0,state.xp,state.maxCombo,
+     labCount('lab1')+'/'+labCount('lab2')+'/'+labCount('lab3'),new Date().toISOString()]];
+  const csv='﻿'+rows.map(r=>r.map(v=>'"'+String(v).replace(/"/g,'""')+'"').join(',')).join('\n');
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8'}));
+  a.download='GNR1007_D3_circuit_'+(state.name||'player').replace(/[^\w฀-๿-]/g,'_')+'.csv';
+  document.body.appendChild(a); a.click(); a.remove();
+  toast('บันทึกไฟล์คะแนน CSV แล้ว ส่งให้อาจารย์ได้เลย');
+}
+let radarChart=null;
+function radarData(){
+  const labels=[SKILL_LABELS.district1,SKILL_LABELS.district2,SKILL_LABELS.district3,'ภาพรวมความแม่นยำ'];
+  const preData=[state.preByD.district1/2*100,state.preByD.district2/2*100,state.preByD.district3/2*100,state.pre/6*100].map(Math.round);
+  const postData=[state.postByD.district1/2*100,state.postByD.district2/2*100,state.postByD.district3/2*100,state.post/6*100].map(Math.round);
+  return {labels,preData,postData};
+}
+function drawRadar(){
+  const {labels,preData,postData}=radarData();
+  const canvas=$('#skillRadarChart'), fb=$('#radarFallback');
+  if(typeof Chart==='undefined'){canvas.style.display='none';fb.style.display='block';drawRadarSVG(labels,preData,postData);return;}
+  canvas.style.display='block'; fb.style.display='none';
+  if(radarChart) radarChart.destroy();
+  radarChart=new Chart(canvas,{type:'radar',
+    data:{labels,datasets:[
+      {label:'Pretest',data:preData,borderColor:'#8fb0cc',backgroundColor:'rgba(143,176,204,0.12)',pointBackgroundColor:'#8fb0cc'},
+      {label:'Posttest',data:postData,borderColor:'#5cc8ff',backgroundColor:'rgba(92,200,255,0.20)',pointBackgroundColor:'#5cc8ff'}]},
+    options:{responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{labels:{color:'#e4f2ff',font:{family:'Kanit'}}}},
+      scales:{r:{min:0,max:100,ticks:{display:false,stepSize:25},grid:{color:'rgba(92,200,255,.18)'},angleLines:{color:'rgba(92,200,255,.18)'},pointLabels:{color:'#8fb0cc',font:{size:10,family:'Kanit'}}}}}});
+}
+function drawRadarSVG(labels,preData,postData){
+  const cx=170,cy=140,R=96,n=labels.length;
+  const pt=(i,v)=>{const ang=-Math.PI/2+i*2*Math.PI/n;const r=R*(v/100);return [cx+r*Math.cos(ang),cy+r*Math.sin(ang)];};
+  let s='';
+  [25,50,75,100].forEach(g=>{s+='<polygon points="'+labels.map((_,i)=>pt(i,g).join(',')).join(' ')+'" fill="none" stroke="rgba(92,200,255,.16)"/>';});
+  labels.forEach((_,i)=>{const [x,y]=pt(i,100);s+='<line x1="'+cx+'" y1="'+cy+'" x2="'+x+'" y2="'+y+'" stroke="rgba(92,200,255,.16)"/>';});
+  s+='<polygon points="'+preData.map((v,i)=>pt(i,v).join(',')).join(' ')+'" fill="rgba(143,176,204,.14)" stroke="#8fb0cc" stroke-width="2"/>';
+  s+='<polygon points="'+postData.map((v,i)=>pt(i,v).join(',')).join(' ')+'" fill="rgba(92,200,255,.20)" stroke="#5cc8ff" stroke-width="2"/>';
+  labels.forEach((lb,i)=>{const [x,y]=pt(i,124);const anchor=x<cx-6?'end':(x>cx+6?'start':'middle');s+='<text x="'+x+'" y="'+(y+4)+'" text-anchor="'+anchor+'" font-size="9" fill="#8fb0cc" font-family="Kanit,sans-serif">'+lb+'</text>';});
+  s+='<g font-size="10"><rect x="18" y="266" width="12" height="4" fill="#8fb0cc"/><text x="36" y="271" fill="#8fb0cc">Pretest</text><rect x="110" y="266" width="12" height="4" fill="#5cc8ff"/><text x="128" y="271" fill="#5cc8ff">Posttest</text></g>';
+  $('#radarFallback').innerHTML=s;
+}
+
+/* ============ 13) AVATARS (หมายเลขรถประจำตัว) ============ */
+const AVATARS = [
+  '<circle cx="26" cy="26" r="24" fill="#0a2036" stroke="#5cc8ff" stroke-width="2"/><rect x="10" y="22" width="32" height="9" rx="4" fill="#5cc8ff"/><path d="M18 22 L23 15 H31 L35 22 Z" fill="#6ee7b7"/><circle cx="17" cy="34" r="4" fill="#e4f2ff"/><circle cx="35" cy="34" r="4" fill="#e4f2ff"/>',
+  '<circle cx="26" cy="26" r="24" fill="#0a2036" stroke="#6ee7b7" stroke-width="2"/><path d="M14 30 a12 12 0 0 1 24 0 z" fill="#6ee7b7"/><rect x="14" y="30" width="24" height="6" rx="3" fill="#e4f2ff"/><rect x="20" y="20" width="12" height="6" rx="3" fill="#04121f"/>',
+  '<circle cx="26" cy="26" r="24" fill="#0a2036" stroke="#fbbf24" stroke-width="2"/><path d="M26 12 L40 24 L26 36 L12 24 Z" fill="none" stroke="#fbbf24" stroke-width="3"/><text x="26" y="29" text-anchor="middle" font-size="12" font-family="monospace" fill="#fbbf24">7</text>',
+  '<circle cx="26" cy="26" r="24" fill="#0a2036" stroke="#fde68a" stroke-width="2"/><g><rect x="14" y="14" width="6" height="6" fill="#e4f2ff"/><rect x="20" y="20" width="6" height="6" fill="#e4f2ff"/><rect x="26" y="14" width="6" height="6" fill="#e4f2ff"/><rect x="32" y="20" width="6" height="6" fill="#e4f2ff"/><rect x="14" y="26" width="6" height="6" fill="#e4f2ff"/><rect x="26" y="26" width="6" height="6" fill="#e4f2ff"/><rect x="20" y="32" width="6" height="6" fill="#e4f2ff"/><rect x="32" y="32" width="6" height="6" fill="#e4f2ff"/></g>',
+  '<circle cx="26" cy="26" r="24" fill="#0a2036" stroke="#fb7185" stroke-width="2"/><rect x="13" y="12" width="26" height="9" rx="3" fill="none" stroke="#fb7185" stroke-width="2.5"/><path d="M26 21 V28" stroke="#fb7185" stroke-width="2.5"/><path d="M26 28 L38 34 L26 40 L14 34 Z" fill="none" stroke="#fb7185" stroke-width="2.5"/>',
+  '<circle cx="26" cy="26" r="24" fill="#0a2036" stroke="#8fb0cc" stroke-width="2"/><path d="M12 38 C12 20 40 20 40 38" fill="none" stroke="#8fb0cc" stroke-width="3"/><circle cx="26" cy="20" r="5" fill="#5cc8ff"/><path d="M14 40 H38" stroke="#fde68a" stroke-width="3" stroke-linecap="round"/>'
+];
+function renderAvatars(){
+  const host=$('#avatarGrid'); host.innerHTML='';
+  AVATARS.forEach((a,i)=>{
+    const b=document.createElement('button'); b.type='button';
+    b.className='avatar-opt'+(i===state.avatar?' sel':'');
+    b.setAttribute('aria-label','รถหมายเลข '+(i+1));
+    b.innerHTML='<svg viewBox="0 0 52 52" xmlns="http://www.w3.org/2000/svg">'+a+'</svg>';
+    b.addEventListener('click',()=>{state.avatar=i;SFX.init();SFX.play('select');renderAvatars();});
+    host.appendChild(b);
+  });
+}
+function updChip(){
+  $('#chipAva').innerHTML='<svg viewBox="0 0 52 52" xmlns="http://www.w3.org/2000/svg">'+AVATARS[state.avatar]+'</svg>';
+  $('#chipTxt').textContent=state.name||'—';
+}
+
+/* ============ 14) EVENT WIRING ============ */
+document.addEventListener('click',e=>{
+  const go=e.target.closest('[data-goto]'); if(go){SFX.play('click');goto_(go.dataset.goto);return;}
+  const qz=e.target.closest('[data-quiz]'); if(qz){SFX.play('click');const k=qz.dataset.quiz;goto_('scr-'+k);return;}
+  const rq=e.target.closest('[data-requiz]'); if(rq){SFX.play('click');startQuiz(rq.dataset.requiz);return;}
+});
+$('#sortStart').addEventListener('click',()=>{SFX.play('click');sortStart();});
+$('#paceRun').addEventListener('click',()=>{SFX.play('click');paceRun();});
+$('#paceClear').addEventListener('click',()=>{SFX.play('click');PACE.slots=[null,null,null];PACE.sel=null;PACE.busy=false;paceRender();
+  $('#paceStatus').className='status-line';$('#paceStatus').textContent='ล้างรางแล้ว วางกล่องใหม่ได้เลย';});
+$('#trPlay').addEventListener('click',()=>{SFX.play('click');trPlay();});
+$('#trStep').addEventListener('click',()=>{clearInterval(TR.timer);TR.timer=null;if(TR.done)trReset(true);trStep();});
+$('#trReset').addEventListener('click',()=>{SFX.play('click');trReset(false);});
+$('#preLaunch').addEventListener('click',()=>{SFX.play('click');startTest('pre');});
+$('#postLaunch').addEventListener('click',()=>{SFX.play('click');startTest('post');});
+$('#goPost').addEventListener('click',()=>{SFX.play('click');state.visited['d3']='done';unlock('posttest');goto_('scr-posttest');});
+$('#btnStart').addEventListener('click',()=>{
+  const nm=$('#playerName').value.trim();
+  if(!nm){$('#nameErr').classList.add('show');$('#playerName').focus();return;}
+  $('#nameErr').classList.remove('show'); state.name=nm;
+  SFX.init(); SFX.play('unlock'); updChip(); updXp();
+  goto_('scr-pretest');
+});
+$('#playerName').addEventListener('input',()=>$('#nameErr').classList.remove('show'));
+$('#playerName').addEventListener('keydown',e=>{if(e.key==='Enter')$('#btnStart').click();});
+$('#wSound').addEventListener('click',()=>{SFX.on=!SFX.on;SFX.init();updSoundBtns();if(SFX.on)SFX.play('select');});
+$('#btnSound').addEventListener('click',()=>{SFX.on=!SFX.on;updSoundBtns();if(SFX.on)SFX.play('select');});
+$('#btnCsv').addEventListener('click',()=>{SFX.play('click');exportCSV();});
+function hardReset(){clearSaved();location.reload();}
+$('#btnReset').addEventListener('click',()=>{if(confirm('ต้องการเริ่มภารกิจใหม่ทั้งหมดหรือไม่ ความคืบหน้าปัจจุบันจะถูกล้าง'))hardReset();});
+$('#btnAgain').addEventListener('click',hardReset);
+const saved=loadSaved();
+if(saved){
+  $('#wResume').style.display='block';
+  $('#wResume').textContent='เล่นต่อ: '+saved.name;
+  $('#wResume').addEventListener('click',()=>{
+    Object.assign(state,saved); SFX.init(); updChip(); updXp();
+    const target=state.screen&&state.screen!=='scr-welcome'?state.screen:'scr-pretest';
+    goto_(target);
+    if(target==='scr-summary') showSummary();
+    toast('กลับมาต่อจากจุดเดิมแล้ว');
+  });
+}
+/* ---- วาดผังงานตัวอย่างของโซน 2 ด้วยสัญลักษณ์จริง ---- */
+$('#fcLegendHost').innerHTML=FCLEG;
+$('#fcDemo1').innerHTML='<div class="fcwrap">'+fcSeq([['t','START'],['p','a = 5'],['p','b = a + 2'],['io','print b'],['t','END']])+'</div>';
+$('#fcDemo2').innerHTML='<div class="fcwrap">'+fcBranch({pre:[['p','t = 30']],cond:'t >= 25 ?',
+  yes:[['io','print "HOT"'],['t','END']],no:[['io','print "COLD"'],['t','END']]})+'</div>';
+$('#fcDemo3').innerHTML='<div class="fcwrap">'+fcLoop({pre:[['p','i = 1']],cond:'i <= 3 ?',
+  body:[['io','print i'],['p','i = i + 1']]})+'</div>';
+
+renderAvatars(); updSoundBtns(); updXp(); renderNav('scr-welcome');
+renderSorter(); paceRender(); trReset(true);
+window.addEventListener('resize',()=>{
+  const cv=$('#confetti');if(cv.style.display==='block'){cv.width=innerWidth;cv.height=innerHeight;}
+  if(AC.on) acResize();
+});
+
+</script>
+
+<script>(function(){
+  var KEY='gnr1007_theme';
+  var btn=document.getElementById('btnTheme');
+  if(!btn) return;
+  function apply(t){document.documentElement.setAttribute('data-theme',t);}
+  btn.addEventListener('click', function(){
+    var cur = document.documentElement.getAttribute('data-theme')==='light' ? 'dark':'light';
+    apply(cur);
+    try{localStorage.setItem(KEY,cur);}catch(e){}
+  });
+})();</script>
+<!-- GNR-CORE:BEGIN -->
+<style id="gnr-core-css">
+:root:not([data-theme="light"]){--ember:#5cc8ff;--corner:#6ee7b7;--gold:#fbbf24;--gold2:#fde68a;--red:#fb7185}
+:root[data-theme="light"]{--ember:#006ca3;--corner:#14764f;--gold:#825e02;--gold2:#7e6502;--red:#d00524;--line:rgba(0,115,173,.26);--ember-dim:rgba(0,115,173,.16)}
+/* ================================================================
+   GNR-CORE v7.0 — ชั้นปรับปรุงร่วมของทุกเกม (ใส่ท้ายสไตล์เดิม จึงมีสิทธิ์เหนือกว่า)
+   1) อ่านง่ายทั้งโหมดมืดและสว่าง  2) แถบสถานะด่านย้ายไปด้านซ้าย
+   3) ช่องรหัสนักศึกษา + ชื่อเล่น   4) หน้าสรุปผลแบบแดชบอร์ดจอเดียว
+   ================================================================ */
+
+/* ---------- 1) ความอ่านง่าย ---------- */
+:root{--muted:#a9b7ca}
+:root[data-theme="light"]{--text:#101826;--muted:#46536a}
+body{font-size:16px}
+.muted{font-size:.92rem}
+input[type=text]::placeholder{color:var(--muted);opacity:.75}
+.navpill{opacity:.62}
+.navpill.unlocked{opacity:1}
+footer .fmono{color:var(--muted)}
+.floaty{text-shadow:0 0 3px var(--bg),0 0 14px var(--bg),0 0 22px currentColor}
+
+:root[data-theme="light"] body::after{opacity:.18}
+:root[data-theme="light"] .btn.primary,
+:root[data-theme="light"] .btn.pink{color:#fff;text-shadow:0 1px 1px rgba(0,0,0,.25)}
+:root[data-theme="light"] .btn:not(.primary):not(.pink){background:rgba(16,24,38,.04)}
+:root[data-theme="light"] .icon-btn{background:rgba(16,24,38,.05)}
+:root[data-theme="light"] .title{background:linear-gradient(100deg,var(--ember),var(--gold) 50%,var(--corner));
+  -webkit-background-clip:text;background-clip:text;color:transparent}
+:root[data-theme="light"] .rv-score{background:linear-gradient(100deg,var(--ember),var(--gold),var(--corner));
+  -webkit-background-clip:text;background-clip:text;color:transparent;filter:none}
+:root[data-theme="light"] .rv-rank{background:linear-gradient(100deg,var(--gold),var(--ember));
+  -webkit-background-clip:text;background-clip:text;color:transparent}
+:root[data-theme="light"] .bar{background:rgba(16,24,38,.10)}
+:root[data-theme="light"] th,:root[data-theme="light"] td,
+:root[data-theme="light"] .qtbl th,:root[data-theme="light"] .qtbl td{border-bottom-color:rgba(16,24,38,.10)}
+:root[data-theme="light"] .choice{background:#fff}
+:root[data-theme="light"] .codebox,:root[data-theme="light"] .qcode{background:#f3f6fb;color:#0f1726;border-color:rgba(16,24,38,.16)}
+:root[data-theme="light"] .explain{background:rgba(255,196,0,.10)}
+:root[data-theme="light"] #acEnd{background:rgba(16,24,38,.55)}
+:root[data-theme="light"] .ac-bar{background:rgba(16,24,38,.12)}
+:root[data-theme="light"] .panel{box-shadow:0 1px 2px rgba(16,24,38,.06),0 14px 38px rgba(16,24,38,.10)}
+:root[data-theme="light"] .avatar-opt{background:#eef2f8}
+.q-text code.ic,.explain code.ic,.choice code.ic,.qmeta code.ic{color:var(--gold)}
+:root[data-theme="light"] .q-text code.ic,:root[data-theme="light"] .explain code.ic,
+:root[data-theme="light"] .choice code.ic{background:rgba(16,24,38,.06)}
+
+/* ---------- 2) ARCADE: แถบสถานะอยู่ด้านซ้าย ใช้พื้นที่น้อยที่สุด ---------- */
+:root{--rail-w:clamp(66px,15vw,212px)}
+#arcade.show{flex-direction:row}
+#arcade .ac-top{flex:0 0 var(--rail-w);width:var(--rail-w);height:auto;min-height:0;max-height:none;
+  border-bottom:0;border-right:1px solid var(--line);display:flex;flex-direction:column;overflow:hidden;position:relative}
+#arcade .ac-hud{order:-1;position:static;inset:auto;display:flex;flex-direction:column;align-items:stretch;gap:4px;
+  padding:7px 6px 6px;flex-wrap:nowrap;pointer-events:auto;background:var(--panel2);border-bottom:1px solid var(--line);z-index:2}
+#arcade .ac-exit{order:-2;margin:0;align-self:stretch;min-width:0;height:30px;min-height:30px;font-size:.66rem}
+#arcade #acTag{order:-1;display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:3;overflow:hidden;
+  white-space:normal;text-align:center;font-size:.6rem;line-height:1.3;padding:3px 4px;border-radius:8px;color:var(--ember);font-weight:600}
+#arcade .ac-chip{justify-content:space-between;border-radius:8px;padding:3px 7px;font-size:.68rem;min-width:0;white-space:nowrap;color:var(--muted)}
+#arcade .ac-chip b{font-size:.82rem;color:var(--text)}
+#arcade .ac-chip.hot b{color:var(--gold)}
+.gnr-cvwrap{position:relative;flex:1 1 auto;min-height:0}
+.gnr-cvwrap #acv{position:absolute;inset:0;width:100%;height:100%;display:block}
+#arcade .ac-play{flex:1 1 auto;min-width:0;padding:14px 16px}
+#arcade .ac-card{width:min(760px,100%)}
+@media (max-width:700px){
+  #arcade .ac-hud{padding:5px 4px;gap:3px}
+  #arcade .ac-chip{flex-direction:column;gap:0;padding:2px 1px;text-align:center;align-items:center;font-size:.56rem;line-height:1.25}
+  #arcade .ac-chip b{font-size:.74rem}
+  #arcade .ac-play{padding:8px 8px 10px}
+  #arcade .ac-card{padding:13px 12px}
+}
+@media (max-height:520px) and (orientation:landscape){
+  #arcade #acTag{display:none}
+  #arcade .ac-hud{gap:2px;padding:4px}
+}
+
+/* ---------- 3) ลงทะเบียน: รหัสนักศึกษา + ชื่อเล่น ---------- */
+.gnr-hint{margin-top:7px;font-size:.78rem;line-height:1.55;color:var(--muted);
+  border-left:3px solid var(--ember);padding:6px 10px;border-radius:0 9px 9px 0;background:rgba(var(--ink-panel-rgb),.45)}
+.gnr-hint b{color:var(--text)}
+.gnr-count{font-family:var(--mono);font-size:.72rem;float:right;color:var(--muted)}
+.gnr-count.ok{color:var(--corner)}
+.gnr-idnote{margin-top:6px;font-size:.8rem;color:var(--corner);min-height:1.2em}
+#gnrSid{font-family:var(--mono);letter-spacing:.14em}
+
+/* ---------- 4) หน้าสรุปผล: แดชบอร์ดจอเดียว ---------- */
+body.gnr-sum footer{display:none}
+body.gnr-sum .wrap{padding-top:10px;padding-bottom:10px}
+#scr-summary.gnr-done>.panel{padding:14px 16px 12px}
+#scr-summary.gnr-done>.panel>*:not(.gnr-head):not(.gnr-dash){display:none !important}
+.gnr-head{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:10px}
+.gnr-head .tag{margin:0}
+.gnr-head h2{margin:0;font-size:1.12rem}
+.gnr-head .gnr-when{margin-left:auto;font-size:.76rem;color:var(--muted);font-family:var(--mono)}
+.gnr-dash{display:grid;grid-template-columns:minmax(250px,1fr) minmax(300px,1.3fr) minmax(270px,1.15fr);gap:12px;
+  height:var(--gnr-dash-h,auto);min-height:0}
+.gnr-col{display:flex;flex-direction:column;gap:10px;min-height:0;min-width:0}
+.gnr-box{background:rgba(var(--ink-panel-rgb),.55);border:1px solid var(--line);border-radius:14px;padding:11px 12px;min-width:0}
+.gnr-box h4{margin:0 0 6px;font-size:.78rem;letter-spacing:.06em;color:var(--ember);font-weight:600;text-transform:uppercase;font-family:var(--mono)}
+.gnr-id{display:grid;grid-template-columns:52px 1fr;gap:10px;align-items:center}
+.gnr-id .ava{width:52px;height:52px;border-radius:14px;background:var(--panel2);border:1px solid var(--line);display:grid;place-items:center}
+.gnr-id .ava svg{width:44px;height:44px}
+.gnr-id .nick{font-size:1.12rem;font-weight:600;line-height:1.25;color:var(--text);word-break:break-word}
+.gnr-id .sid,.gnr-id .nick{text-transform:none !important}
+.gnr-id .sid{font-family:var(--mono);font-size:.95rem;letter-spacing:.12em;color:var(--ember)}
+.gnr-id .sid small{font-family:var(--font);letter-spacing:0;color:var(--muted);font-size:.72rem;margin-right:6px}
+.gnr-id .gm{font-size:.74rem;color:var(--muted);grid-column:1/-1;border-top:1px dashed var(--line);padding-top:6px;margin-top:2px}
+.gnr-dash .cmp-grid{margin:0;gap:6px}
+.gnr-dash .cmp-col{padding:8px 6px}
+.gnr-dash .cmp-col b{font-size:1.3rem;line-height:1.25}
+.gnr-dash .star-row.sm{margin:4px 0 2px;gap:3px}
+.gnr-dash .star-row.sm .star{width:clamp(11px,1.05vw,15px);height:clamp(11px,1.05vw,15px)}
+.gnr-dash .star-row.sm{gap:2px}
+.gnr-dash .cmp-col{min-width:0;overflow:hidden}
+.gnr-dash .star-row.sm{flex-wrap:nowrap}
+.gnr-dash .delta{margin:8px 0 0;font-size:.88rem;line-height:1.45}
+.gnr-dash .hud{margin:0 !important;gap:6px}
+.gnr-dash .hud .stat{padding:5px 6px;min-width:0}
+.gnr-dash .hud .stat b{font-size:.98rem}
+.gnr-dash .hud .stat small{font-size:.58rem}
+.gnr-radar{flex:1 1 auto;display:flex;flex-direction:column;min-height:0}
+.gnr-dash .chartbox{flex:1 1 auto;height:auto;min-height:220px;margin:0}
+.gnr-sw{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.gnr-sw .sw{border-radius:12px;padding:8px 10px;border:1px solid var(--line);min-width:0}
+.gnr-sw .sw h5{margin:0 0 4px;font-size:.8rem;font-weight:600}
+.gnr-sw .sw.good{background:color-mix(in srgb,var(--corner) 11%,transparent);border-color:color-mix(in srgb,var(--corner) 45%,transparent)}
+.gnr-sw .sw.good h5{color:var(--corner)}
+.gnr-sw .sw.weak{background:color-mix(in srgb,var(--red) 9%,transparent);border-color:color-mix(in srgb,var(--red) 40%,transparent)}
+.gnr-sw .sw.weak h5{color:var(--red)}
+.gnr-sw ul{list-style:none;margin:0;padding:0;display:grid;gap:3px}
+.gnr-sw li{font-size:.8rem;line-height:1.4;display:flex;justify-content:space-between;gap:6px}
+.gnr-sw li span:last-child{font-family:var(--mono);font-size:.74rem;color:var(--muted);white-space:nowrap}
+.gnr-sw .none{font-size:.78rem;color:var(--muted)}
+.gnr-cheer{border-radius:14px;padding:12px 14px;border:1px solid color-mix(in srgb,var(--gold) 50%,transparent);
+  background:linear-gradient(135deg,color-mix(in srgb,var(--gold) 16%,transparent),color-mix(in srgb,var(--ember) 8%,transparent))}
+.gnr-cheer .big{font-size:1.02rem;font-weight:600;line-height:1.45;color:var(--text);margin:0 0 4px}
+.gnr-cheer p{margin:0;font-size:.84rem;line-height:1.55;color:var(--text)}
+.gnr-cheer .lvl{display:inline-block;font-family:var(--mono);font-size:.68rem;letter-spacing:.08em;color:var(--gold);margin-bottom:3px}
+.gnr-tabs{display:flex;gap:4px;flex-wrap:wrap}
+.gnr-tabs button{flex:1 1 auto;font-family:var(--font);font-size:.76rem;padding:6px 8px;border-radius:9px;cursor:pointer;
+  border:1px solid var(--line);background:transparent;color:var(--muted);min-height:32px}
+.gnr-tabs button.on{background:var(--ember);color:var(--bg);border-color:var(--ember);font-weight:600}
+.gnr-tabbody{flex:1 1 auto;min-height:90px;overflow:auto;padding-right:2px}
+.gnr-tabbody>*{display:none !important;margin-top:0 !important}
+.gnr-tabbody>.on{display:grid !important}
+.gnr-tabbody .advice li{display:block;font-size:.82rem;padding:7px 10px;line-height:1.55}
+.gnr-tabbody .advice li::before{margin-right:6px}
+.gnr-tabbody .badges{justify-content:flex-start;margin:0}
+.gnr-tabbody .badge{font-size:.72rem;padding:4px 10px}
+.gnr-tabbody .dstar-row,.gnr-tabbody .axisrow{padding:6px 10px;font-size:.8rem}
+.gnr-dash .btn-row{margin-top:0;gap:8px}
+.gnr-dash .btn-row .btn{flex:1 1 auto;padding:9px 12px;min-height:40px;font-size:.84rem}
+.gnr-note{font-size:.7rem;color:var(--muted);line-height:1.4}
+@media (max-width:980px){
+  .gnr-dash{grid-template-columns:1fr 1fr;height:auto}
+  .gnr-col.c{grid-column:1/-1}
+  .gnr-dash .chartbox{height:260px;flex:none}
+  .gnr-tabbody{max-height:260px}
+}
+@media (max-width:640px){
+  .gnr-dash{grid-template-columns:1fr;gap:10px}
+  .gnr-col{display:contents}
+  .gnr-id{order:1} .gnr-score{order:2} .gnr-cheer{order:3} .gnr-radar{order:4} .gnr-sw{order:5}
+  .gnr-dash .hud{order:6} .gnr-tabs{order:7} .gnr-tabbody{order:8} .gnr-dash .btn-row{order:9} .gnr-note{order:10}
+  .gnr-head .gnr-when{margin-left:0;width:100%}
+  .gnr-dash .chartbox{height:250px;min-height:250px}
+  .gnr-tabbody{max-height:none}
+}
+.gnr-dash .cmp-grid{grid-template-columns:minmax(0,1fr) auto minmax(0,1fr) !important}
+.gnr-dash .cmp-arrow{transform:none !important;padding:0 !important}
+@media print{
+  #topbar,.gnr-tabs,.gnr-dash .btn-row{display:none !important}
+  .gnr-dash{height:auto}
+}
+
+/* ---------- ผังงาน SVG (เกม 7, 10) ในโหมดสว่าง ---------- */
+:root[data-theme="light"] .fs.t{fill:rgba(15,122,85,.08);stroke:#0f7a55}
+:root[data-theme="light"] .fs.p{fill:rgba(3,105,161,.07);stroke:#0369a1}
+:root[data-theme="light"] .fs.d{fill:rgba(180,120,0,.09);stroke:#a16207}
+:root[data-theme="light"] .fs.io{fill:rgba(154,52,18,.06);stroke:#b45309}
+:root[data-theme="light"] .fs.c{fill:rgba(71,85,105,.07);stroke:#475569}
+:root[data-theme="light"] .ft{fill:#0f1726}
+:root[data-theme="light"] .fl{fill:#334155}
+:root[data-theme="light"] .fe{stroke:#64748b}
+:root[data-theme="light"] .fa{fill:#64748b}
+:root[data-theme="light"] .fn.hi .fs{stroke:#b45309;fill:rgba(251,191,36,.22)}
+:root[data-theme="light"] .fn.hi .ft{fill:#7c2d12}
+:root[data-theme="light"] .fclegend{background:rgba(16,24,38,.04)}
+.navpill{opacity:.85}
+.navpill:not(.unlocked){border-style:dashed}
+:root[data-theme="light"] .choice.correct .k,:root[data-theme="light"] .choice.wrong .k{color:#fff}
+:root[data-theme="light"] body::before{background:
+  radial-gradient(900px 600px at 12% -10%,var(--ember-dim),transparent 60%),
+  radial-gradient(800px 600px at 92% 8%,rgba(251,191,36,.08),transparent 60%),
+  linear-gradient(180deg,var(--bg),var(--bg-grad-mid,#e9edf3) 60%,var(--bg))}
+
+/* ---------- 5) จอคอมพิวเตอร์: ทุกหน้าอยู่ในจอเดียว ไม่ต้องเลื่อน (UI v7.1, 2 ต.ค. 2569) ----------
+   - หน้าแรก: ภาพ/ชื่อเกมซ้าย บัตรลงทะเบียนขวา
+   - หน้าบทเรียน/ห้องทดลอง: ขยายความกว้างและจัดเนื้อหาเป็น 2 คอลัมน์ (gnr_core.js จัดกลุ่มหัวข้อให้ไม่ขาดกลางตาราง)
+   - footer ย่อเหลือแถบบาง มือถือและแท็บเล็ตแนวตั้งยังเป็นแบบเดิมทุกอย่าง */
+.gnr-flow,.gnr-blk{display:contents}
+@media (min-width:1100px){
+  footer{margin-top:8px;padding:7px 16px 9px}
+  footer p{display:inline;font-size:.72rem;line-height:1.5}
+  footer p+p::before{content:" · "}
+  footer .fmono{font-size:.62rem}
+  #scr-welcome .hero{min-height:calc(100dvh - 96px);display:grid;grid-template-columns:minmax(0,1fr) minmax(420px,500px);
+    grid-template-rows:auto auto auto auto;align-content:center;align-items:center;column-gap:clamp(28px,4vw,64px);
+    max-width:1240px;margin:0 auto;padding:16px 24px;text-align:center}
+  #scr-welcome .hero>*{grid-column:1}
+  #scr-welcome .hero>.login-card{grid-column:2;grid-row:1/span 4;width:100%;margin:0;align-self:center}
+  #scr-welcome .cityart{width:auto;max-width:100%;height:min(300px,34dvh);justify-self:center}
+  #scr-welcome .title{font-size:clamp(1.6rem,2.6vw,2.5rem)}
+  #scr-welcome .subtitle{margin:4px auto 0}
+  #scr-welcome .feature-row{margin-top:14px}
+}
+@media (min-width:1200px){
+  body.gnr-wide .wrap,body.gnr-wide .topbar-in{max-width:min(1760px,96vw)}
+  body.gnr-wide .wrap{padding-top:10px;padding-bottom:8px}
+  .screen.gnr-cols>.panel{padding:16px 22px}
+  .screen.gnr-cols>.panel>h2{margin-bottom:6px}
+  .gnr-flow{display:block;column-count:2;column-gap:30px;column-fill:balance}
+  .gnr-blk{display:block;break-inside:avoid;page-break-inside:avoid;padding-bottom:2px}
+  .gnr-blk>:first-child{margin-top:0}
+  .gnr-flow .tbl-wrap,.gnr-flow .codebox{max-width:100%}
+}
+@media (min-width:1200px) and (min-height:900px){ .gnr-flow{column-gap:40px} }
+@media (min-width:1100px) and (max-height:760px){
+  .wrap{padding-top:8px;padding-bottom:6px}
+  .panel{padding:16px 20px}
+  .howto{margin-top:8px}
+}
+@media (min-width:1100px) and (max-height:820px){
+  .gnr-flow .stage svg{max-height:30dvh;width:auto;max-width:100%;margin:0 auto}
+  .gnr-flow .codebox,.gnr-flow pre{line-height:1.45}
+  .gnr-flow .tbl-wrap td,.gnr-flow .tbl-wrap th{padding-top:6px;padding-bottom:6px}
+}
+@media (min-width:1200px){ body.gnr-wide #pitGrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px} body.gnr-wide #pitGrid>*{margin:0} }
+</style>
+<script>window.GNR_CFG={game:'game7',title:'CIRCUIT BLUEPRINT',padExtra:34};</script>
+<script id="gnr-core-js">
+/* ================================================================
+   GNR-CORE v7.0 — สคริปต์ร่วมของทุกเกม (โหลดหลังสคริปต์หลักของเกม)
+   ใช้ตัวแปรระดับโกลบอลของเกม: state, AC, ACT, acColors, acResize, acStepGeom,
+   showSummary, radarData, radarChart, goto_, exportCSV, MAX_STARS
+   ================================================================ */
+(function(){
+  'use strict';
+  var CFG = window.GNR_CFG || {game:'game', title:'GNR1007', padExtra:16};
+  var ID_KEY = 'gnr1007_student', RES_KEY = 'gnr1007_results', SECRET = 'ru2569', MASK = 'xxxxxxxxxx';
+  function $(s){ return document.querySelector(s); }
+  function el(tag, cls, html){ var e=document.createElement(tag); if(cls) e.className=cls; if(html!=null) e.innerHTML=html; return e; }
+  function escH(s){ return String(s==null?'':s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];}); }
+  function css(n){ return (getComputedStyle(document.documentElement).getPropertyValue(n)||'').trim(); }
+  function isLight(){ return document.documentElement.getAttribute('data-theme')==='light'; }
+  function rgba(hex,a){
+    var h=(hex||'').replace('#','');
+    if(h.length===3) h=h.split('').map(function(c){return c+c;}).join('');
+    if(!/^[0-9a-f]{6}$/i.test(h)) return hex;
+    var n=parseInt(h,16); return 'rgba('+(n>>16&255)+','+(n>>8&255)+','+(n&255)+','+a+')';
+  }
+
+  /* ---------------- ตัวตนผู้เรียน ---------------- */
+  function checkId(raw){
+    var v=(raw||'').trim();
+    if(v.toLowerCase()===SECRET) return {ok:true, sid:MASK, via:'code'};
+    var d=v.replace(/[\s-]/g,'');
+    if(!d) return {ok:false, msg:'กรุณากรอกรหัสนักศึกษา 10 หลัก'};
+    if(/^\d+$/.test(d)){
+      if(d.length!==10) return {ok:false, msg:'รหัสนักศึกษาต้องมี 10 หลัก (ตอนนี้ '+d.length+' หลัก)'};
+      if(!/^[5-7]\d{9}$/.test(d)) return {ok:false, msg:'รหัสนักศึกษาต้องขึ้นต้นด้วยปีที่เข้าศึกษา เช่น 69xxxxxxxx'};
+      return {ok:true, sid:d, via:'id'};
+    }
+    return {ok:false, msg:'กรอกได้เฉพาะตัวเลข 10 หลัก หรือรหัสลับที่ได้รับจากผู้สอน'};
+  }
+  function getId(){ try{ var o=JSON.parse(sessionStorage.getItem(ID_KEY)||'null'); return (o&&o.sid)?o:null; }catch(e){ return null; } }
+  function setId(o){ try{ sessionStorage.setItem(ID_KEY, JSON.stringify(o)); }catch(e){} }
+  window.GNRID = {check:checkId, get:getId, set:function(raw,nick){ var r=checkId(raw); if(r.ok) setId({sid:r.sid,via:r.via,raw:raw,nick:nick||''}); return r; }};
+
+  function setupLogin(){
+    var nameIn=$('#playerName'); if(!nameIn) return;
+    var nameLbl=document.querySelector('label[for="playerName"]');
+    var host=nameLbl||nameIn;
+    var box=el('div','gnr-idbox',
+      '<label for="gnrSid">รหัสนักศึกษา <span class="gnr-count" id="gnrCount">0/10</span></label>'+
+      '<input type="text" id="gnrSid" maxlength="12" autocomplete="off" spellcheck="false" placeholder="เช่น 69xxxxxxxx">'+
+      '<div class="gnr-hint">กรอก <b>รหัสนักศึกษา 10 หลัก</b> เป็นตัวเลขล้วน ขึ้นต้นด้วยปีที่เข้าศึกษา ตัวอย่าง <b>69</b>xxxxxxxx (รหัสปี 2569)</div>'+
+      '<div class="err" id="gnrSidErr"></div><div class="gnr-idnote" id="gnrIdNote"></div>');
+    box.style.marginBottom='14px';
+    host.parentNode.insertBefore(box, host);
+    if(nameLbl) nameLbl.textContent='ชื่อเล่น (แสดงบนใบรายงานผล)';
+    nameIn.placeholder='เช่น ต้นกล้า';
+    var sid=$('#gnrSid'), cnt=$('#gnrCount'), err=$('#gnrSidErr'), note=$('#gnrIdNote');
+    function live(){
+      var v=sid.value.trim(), d=v.replace(/[\s-]/g,'');
+      err.classList.remove('show');
+      if(v.toLowerCase()===SECRET){ cnt.textContent='รหัสลับ'; cnt.className='gnr-count ok'; note.textContent='ใช้รหัสลับ · ใบรายงานผลจะแสดงรหัสเป็น '+MASK; return; }
+      cnt.textContent=(/^\d*$/.test(d)?d.length:'-')+'/10';
+      var r=checkId(v); cnt.className='gnr-count'+(r.ok?' ok':'');
+      note.textContent=r.ok?'รูปแบบรหัสนักศึกษาถูกต้อง':'';
+    }
+    sid.addEventListener('input', live);
+    sid.addEventListener('keydown', function(e){ if(e.key==='Enter'){ e.preventDefault(); nameIn.focus(); } });
+    var cur=getId();
+    if(cur){ sid.value=cur.raw||(cur.via==='id'?cur.sid:''); if(cur.nick && !nameIn.value) nameIn.value=cur.nick; live(); }
+    /* ตรวจก่อนเริ่มเกม (จับใน capture phase เพื่อให้ทำงานก่อนตัวจัดการเดิมของเกม) */
+    document.addEventListener('click', function(e){
+      var b=e.target.closest && e.target.closest('#btnStart,#wResume'); if(!b) return;
+      var r=checkId(sid.value);
+      if(!r.ok){
+        e.stopPropagation(); e.preventDefault();
+        err.textContent=r.msg; err.classList.remove('show'); void err.offsetWidth; err.classList.add('show');
+        sid.focus(); return;
+      }
+      var nick=nameIn.value.trim();
+      if(!nick){ var prev=getId(); nick=(prev&&prev.nick)||''; }
+      setId({sid:r.sid, via:r.via, raw:sid.value.trim(), nick:nick});
+    }, true);
+  }
+
+  /* ---------------- ปุ่มกลับหน้ารวม + สลับธีมบนหน้าแรกของเกม ---------------- */
+  var ICON_THEME='<svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.9" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><path d="M12 3.5a8.5 8.5 0 0 1 0 17z" fill="currentColor"/></svg>';
+  var ICON_HOME='<svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3.5 11 12 4l8.5 7"/><path d="M6 9.5V20h12V9.5"/></svg>';
+  function toggleTheme(){
+    var t=isLight()?'dark':'light';
+    document.documentElement.setAttribute('data-theme',t);
+    try{ localStorage.setItem('gnr1007_theme',t); }catch(e){}
+    setTimeout(onTheme,30);
+  }
+  function setupChrome(){
+    var bt=$('#btnTheme'); if(bt){ bt.innerHTML=ICON_THEME; }
+    var right=document.querySelector('.tb-right');
+    if(right && !$('#btnHome')){
+      var h=el('a','icon-btn',ICON_HOME); h.id='btnHome'; h.href='index.html'; h.title='กลับหน้ารวมเกม'; h.setAttribute('aria-label','กลับหน้ารวมเกม');
+      h.style.textDecoration='none'; right.insertBefore(h,right.firstChild);
+    }
+    var wel=$('#scr-welcome');
+    if(wel && !$('#gnrWelBar')){
+      var bar=el('div','', '<a class="icon-btn" href="index.html" title="กลับหน้ารวมเกม" aria-label="กลับหน้ารวมเกม" style="text-decoration:none">'+ICON_HOME+'</a>'+
+        '<button class="icon-btn" type="button" id="gnrWelTheme" title="สลับโหมดสว่าง/มืด" aria-label="สลับโหมดสว่างหรือมืด">'+ICON_THEME+'</button>');
+      bar.id='gnrWelBar'; bar.style.cssText='position:absolute;top:14px;right:14px;display:flex;gap:8px;z-index:5';
+      wel.style.position='relative'; wel.appendChild(bar);
+      $('#gnrWelTheme').addEventListener('click',toggleTheme);
+    }
+  }
+
+  /* ---------------- ARCADE: แถบสถานะด้านซ้าย ---------------- */
+  function setupArcade(){
+    var cv=$('#acv'); if(!cv || cv.parentNode.classList.contains('gnr-cvwrap')) return;
+    var w=el('div','gnr-cvwrap'); cv.parentNode.insertBefore(w,cv); w.appendChild(cv);
+    var exit=$('#acExit'); if(exit){ exit.textContent='ออก (ESC)'; }
+    if(typeof acResize==='function'){
+      acResize=function(){
+        var c=$('#acv'); if(!c) return;
+        var dpr=Math.min(2,window.devicePixelRatio||1);
+        AC.W=c.clientWidth||120; AC.H=c.clientHeight||300;
+        AC.padT=(CFG.padExtra||16)+14;
+        c.width=Math.max(1,AC.W*dpr); c.height=Math.max(1,AC.H*dpr);
+        var ctx=c.getContext('2d'); if(ctx&&ctx.setTransform) ctx.setTransform(dpr,0,0,dpr,0,0);
+        shortWords(ctx);
+      };
+    }
+    if(typeof acStepGeom==='function'){
+      acStepGeom=function(i){
+        var n=AC.qs.length||1, padB=30, padT=AC.padT||36, W=AC.W;
+        var h=Math.max(60,AC.H-padB-padT), y=AC.H-padB-(i*(h/n));
+        if(W<200){ /* รางแคบ: ขั้นบันไดสลับซ้าย-ขวา ไต่ขึ้นแนวตั้ง */
+          var ww=Math.max(30,Math.min(96,W*0.5)), room=Math.max(0,W-ww-12);
+          return {x:6+((i%2)?room:0), y:y, w:ww, h:9};
+        }
+        var w2=Math.max(56,Math.min(118,W*0.30)), usable=Math.max(20,W-w2-24);
+        return {x:12+(n<=1?0:(i/n)*usable), y:y, w:w2, h:9};
+      };
+    }
+  }
+  function shortWords(ctx){
+    if(typeof ACT==='undefined') return;
+    if(!ACT._o) ACT._o={top:ACT.topWord, ground:ACT.groundWord};
+    var room=AC.W-12;
+    try{ ctx.font='11px Kanit,sans-serif'; }catch(e){}
+    function fit(s,alt){ try{ return ctx.measureText(s).width<=room?s:alt; }catch(e){ return s; } }
+    ACT.topWord=fit(ACT._o.top,'ยอด');
+    ACT.groundWord=fit(ACT._o.ground,'เริ่ม');
+  }
+
+  /* ---------------- ข้อความใน SVG (ภาพประกอบบทเรียน) ให้อ่านได้ในโหมดสว่าง ----------------
+     ภาพประกอบเดิมออกแบบบนพื้นมืด จึงใช้สีข้อความสว่างแบบฝังตาย เมื่ออยู่บนพื้นขาวจะจางมาก
+     วิธีแก้: หาสีพื้นใต้ข้อความจริง (รูปทรงที่วาดก่อนและครอบข้อความอยู่) แล้วเข้มสีเฉพาะที่ความต่างสีต่ำ */
+  var _cvs=document.createElement('canvas').getContext('2d');
+  function toRGB(c){
+    if(!c||c==='none'||c==='transparent') return null;
+    try{ _cvs.fillStyle='#000'; _cvs.fillStyle=c; c=_cvs.fillStyle; }catch(e){ return null; }
+    var m=/^#([0-9a-f]{6})$/i.exec(c);
+    if(m){ var n=parseInt(m[1],16); return [n>>16&255,n>>8&255,n&255,1]; }
+    m=/rgba?\(([^)]+)\)/.exec(c); if(!m) return null;
+    var p=m[1].split(',').map(parseFloat); return [p[0],p[1],p[2],p.length>3?p[3]:1];
+  }
+  function L(c){ function f(v){ v/=255; return v<=0.03928?v/12.92:Math.pow((v+0.055)/1.055,2.4);} return 0.2126*f(c[0])+0.7152*f(c[1])+0.0722*f(c[2]); }
+  function CR(a,b){ var x=L(a),y=L(b); return (Math.max(x,y)+0.05)/(Math.min(x,y)+0.05); }
+  function mix(top,bot,a){ return [top[0]*a+bot[0]*(1-a),top[1]*a+bot[1]*(1-a),top[2]*a+bot[2]*(1-a),1]; }
+  function darkenTo(c,bg,target){
+    var r=c.slice(); for(var i=0;i<40 && CR(r,bg)<target;i++){ r=[r[0]*0.88,r[1]*0.88,r[2]*0.88,1]; } return 'rgb('+r.slice(0,3).map(Math.round).join(',')+')';
+  }
+  function fixSvgText(root){
+    var light=isLight(), page=[250,251,253,1];
+    Array.prototype.forEach.call((root||document).querySelectorAll('svg text'),function(t){
+      if(t.closest('#arcade')||t.closest('.chartbox')) return;
+      if(t.hasAttribute('data-ofill')){ t.style.fill=''; }
+      if(!light) return;
+      var cs=getComputedStyle(t), fg=toRGB(cs.fill); if(!fg) return;
+      var svg=t.ownerSVGElement; if(!svg) return;
+      var bb; try{ bb=t.getBBox(); }catch(e){ return; } if(!bb.width) return;
+      var cx=bb.x+bb.width/2, cy=bb.y+bb.height/2, bg=page;
+      var shapes=svg.querySelectorAll('rect,circle,ellipse,path,polygon');
+      for(var i=0;i<shapes.length;i++){
+        var s=shapes[i];
+        if(!(s.compareDocumentPosition(t)&Node.DOCUMENT_POSITION_FOLLOWING)) continue;
+        var sb; try{ sb=s.getBBox(); }catch(e){ continue; }
+        if(cx<sb.x||cx>sb.x+sb.width||cy<sb.y||cy>sb.y+sb.height) continue;
+        var sc=getComputedStyle(s), f=toRGB(sc.fill); if(!f||f[3]===0) continue;
+        var a=f[3]*(parseFloat(sc.fillOpacity)||1)*(parseFloat(sc.opacity)||1);
+        if(sb.width*sb.height<60) continue;
+        bg=mix(f,bg,Math.min(1,a));
+      }
+      if(CR(fg,bg)>=3.2) return;
+      if(L(bg)>0.4){ t.setAttribute('data-ofill','1'); t.style.fill=darkenTo(fg,bg,4.5); }
+    });
+  }
+  var svgT=null; function queueSvgFix(){ clearTimeout(svgT); svgT=setTimeout(function(){ try{ fixSvgText(); }catch(e){} },60); }
+
+  /* ---------------- สีกราฟตามธีม ---------------- */
+  function wrapLabel(s){
+    s=String(s); if(s.length<=12) return s;
+    var words=[];
+    try{ var seg=new Intl.Segmenter('th',{granularity:'word'}); for(var it of seg.segment(s)) words.push(it.segment); }
+    catch(e){ words=s.split(/(\s+)/); }
+    var lines=[''], lim=Math.max(10,Math.ceil(s.length/2)+1);
+    words.forEach(function(w){ var cur=lines[lines.length-1]; if(cur && (cur+w).trim().length>lim){ lines.push(w.trim()); } else { lines[lines.length-1]=cur+w; } });
+    return lines.map(function(x){return x.trim();}).filter(Boolean);
+  }
+  function styleChart(){
+    var tx=css('--text')||'#e6edf6', mu=css('--muted')||'#8ca0b8', em=css('--ember')||'#22d3ee', gd=css('--gold')||'#fbbf24';
+    var grid=isLight()?'rgba(16,24,38,.16)':'rgba(255,255,255,.16)';
+    try{
+      if(typeof radarChart!=='undefined' && radarChart && typeof Chart!=='undefined'){
+        /* สร้างกราฟใหม่ทั้งตัวด้วยสีตามธีม (ไม่แก้ options เดิมผ่าน proxy ของ Chart.js) */
+        var cv=radarChart.canvas, d=radarData(), old=radarChart.data.datasets;
+        var labels=d.labels.map(wrapLabel);
+        var l0=(old[0]&&old[0].label)||'Pretest', l1=(old[1]&&old[1].label)||'Posttest';
+        var pc=(CFG.game==='game10')?gd:em;
+        radarChart.destroy();
+        radarChart=new Chart(cv,{type:'radar',
+          data:{labels:labels,datasets:[
+            {label:l0,data:d.preData,borderColor:mu,backgroundColor:rgba(mu,.12),pointBackgroundColor:mu,borderDash:[5,4],borderWidth:2},
+            {label:l1,data:d.postData,borderColor:pc,backgroundColor:rgba(pc,.22),pointBackgroundColor:pc,borderWidth:2.5}]},
+          options:{responsive:true,maintainAspectRatio:false,animation:{duration:500},
+            layout:{padding:{left:16,right:16,top:2,bottom:0}},
+            plugins:{legend:{position:'bottom',labels:{color:tx,font:{family:'Kanit',size:12},boxWidth:14}}},
+            scales:{r:{min:0,max:100,ticks:{display:true,stepSize:50,backdropColor:'rgba(0,0,0,0)',color:mu,font:{size:9}},
+              grid:{color:grid},angleLines:{color:grid},pointLabels:{color:tx,font:{family:'Kanit',size:11}}}}}});
+      }
+    }catch(e){ console.warn('gnr chart',e); }
+    var fb=$('#radarFallback'); if(fb) Array.prototype.forEach.call(fb.querySelectorAll('text'),function(t){ if(!/Posttest|หลัง/.test(t.textContent)) t.setAttribute('fill',tx); });
+  }
+  function onTheme(){
+    try{ if(typeof AC!=='undefined' && AC.on && typeof acColors==='function') AC.col=acColors(); }catch(e){}
+    styleChart(); queueSvgFix();
+  }
+
+  /* ---------------- หน้าสรุปผลแบบแดชบอร์ด ---------------- */
+  function maxQ(){ try{ return (typeof MAX_STARS!=='undefined')?MAX_STARS:6; }catch(e){ return 6; } }
+  function pct(a,b){ return b?Math.round(a/b*100):0; }
+  function axes(){
+    try{
+      var d=radarData(), out=[];
+      d.labels.forEach(function(l,i){ if(/ภาพรวม/.test(l)) return; out.push({label:l, pre:d.preData[i]||0, post:d.postData[i]||0}); });
+      return out;
+    }catch(e){ return []; }
+  }
+  function cheer(nick, pre, post, max, weakName){
+    var p=pct(post,max), d=post-pre, lvl, big, body;
+    if(p>=100){ lvl='ความพร้อมสอบ: พร้อมมาก'; big='ยอดเยี่ยม '+nick+' — ถูกครบทุกข้อ';
+      body='คุณเข้าใจหัวข้อนี้ครบถ้วนแล้ว ความแม่นยำระดับนี้คือสิ่งที่ข้อสอบ กว ด้านการเขียนโปรแกรมต้องการ ลองเล่นซ้ำเพื่อเจอชุดคำถามใหม่ หรืออธิบายให้เพื่อนฟัง เพราะการสอนผู้อื่นคือการทบทวนที่ดีที่สุด'; }
+    else if(p>=67){ lvl='ความพร้อมสอบ: พร้อม'; big='ดีมาก '+nick+' — อีกนิดเดียวก็เต็ม';
+      body='พื้นฐานของคุณแน่นแล้ว เหลือเพียง <b>'+escH(weakName)+'</b> ที่ต้องเก็บให้ครบ ทบทวนอีกเพียงรอบเดียวก็พร้อมเข้าห้องสอบอย่างมั่นใจ'; }
+    else if(p>=34){ lvl='ความพร้อมสอบ: กำลังพัฒนา'; big='กำลังมาถูกทาง '+nick;
+      body='คุณจับแก่นของหัวข้อนี้ได้แล้วบางส่วน เริ่มจาก <b>'+escH(weakName)+'</b> ก่อน อ่านเฉลยทีละข้อแล้วลองใหม่ ทุกรอบที่เล่นซ้ำคือคะแนนที่เพิ่มขึ้นในห้องสอบจริง'; }
+    else { lvl='ความพร้อมสอบ: เริ่มต้น'; big='ทุกคนเริ่มจากจุดนี้ '+nick;
+      body='คะแนนรอบนี้คือแผนที่บอกว่าควรเริ่มตรงไหน ไม่ใช่ตัวตัดสินความสามารถ กลับไปที่ <b>'+escH(weakName)+'</b> ทำห้องทดลองให้ครบ แล้วกลับมาทดสอบอีกครั้ง ความเข้าใจเกิดจากการลงมือซ้ำ'; }
+    var add = d>0 ? ' · พัฒนาขึ้น <b>+'+d+' ข้อ</b> จากก่อนเรียน แสดงว่าการเรียนรอบนี้ได้ผลจริง'
+            : d===0 ? (p>=67?' · รักษามาตรฐานได้คงที่ทั้งก่อนและหลังเรียน':' · คะแนนยังคงที่ ลองเปลี่ยนวิธีทบทวนด้วยการทำห้องทดลองซ้ำ')
+            : ' · คะแนนลดลงเล็กน้อยเป็นเรื่องปกติเมื่อเจอคำถามชุดใหม่ อย่าเพิ่งท้อ';
+    return '<span class="lvl">'+lvl+'</span><p class="big">'+escH(big)+'</p><p>'+body+add+'</p>';
+  }
+  function saveResult(id, pre, post, max){
+    try{
+      var all=JSON.parse(localStorage.getItem(RES_KEY)||'{}'); var k=id.sid||MASK;
+      all[k]=all[k]||{}; var old=all[k][CFG.game]||{};
+      all[k][CFG.game]={pre:pre, post:post, max:max, best:Math.max(post, old.best||0), nick:id.nick||'', at:new Date().toISOString(), plays:(old.plays||0)+1};
+      localStorage.setItem(RES_KEY, JSON.stringify(all));
+    }catch(e){}
+  }
+  var built=false;
+  function buildDash(){
+    var sec=$('#scr-summary'); if(!sec) return null;
+    var panel=sec.querySelector('.panel'); if(!panel) return null;
+    if(built) return panel;
+    built=true;
+    var tag=panel.querySelector('.tag'), h2=panel.querySelector('h2');
+    var head=el('div','gnr-head'); if(tag) head.appendChild(tag); if(h2) head.appendChild(h2);
+    head.appendChild(el('span','gnr-when','')); panel.insertBefore(head, panel.firstChild);
+    var dash=el('div','gnr-dash');
+    var a=el('div','gnr-col a'), b=el('div','gnr-col b'), c=el('div','gnr-col c');
+    /* คอลัมน์ A: ตัวตน + ก่อน/หลังเรียน */
+    var idb=el('div','gnr-box gnr-id','<div class="ava" id="gnrAva"></div><div><div class="nick" id="gnrNick">—</div><div class="sid"><small>รหัสนักศึกษา</small><span id="gnrSidShow">—</span></div></div><div class="gm" id="gnrGame"></div>');
+    a.appendChild(idb);
+    var sc=el('div','gnr-box gnr-score','<h4>คะแนน Pretest → Posttest</h4>');
+    ['.cmp-grid','#sumMsg'].forEach(function(s){ var x=panel.querySelector(s); if(x) sc.appendChild(x); });
+    a.appendChild(sc);
+    var hud=panel.querySelector('.hud'); if(hud) a.appendChild(hud);
+    /* คอลัมน์ B: เรดาร์ + จุดเด่น/จุดด้อย */
+    var rb=el('div','gnr-box gnr-radar','<h4>เรดาร์ทักษะรายด้าน</h4>');
+    var cb=panel.querySelector('.chartbox'); if(cb) rb.appendChild(cb);
+    b.appendChild(rb);
+    b.appendChild(el('div','gnr-sw','<div class="sw good"><h5>จุดเด่น</h5><div id="gnrGood"></div></div><div class="sw weak"><h5>ควรเสริม</h5><div id="gnrWeak"></div></div>'));
+    /* คอลัมน์ C: กำลังใจ + แท็บรายละเอียด + ปุ่ม */
+    c.appendChild(el('div','gnr-cheer',''));
+    var tabs=el('div','gnr-tabs'), body=el('div','gnr-tabbody');
+    var panes=[['คำแนะนำ','#sumAdvice'],['รายหัวข้อ','#sumDistrictStars'],['รายบท','#sumAxisRows'],['เหรียญตรา','#sumBadges']];
+    if(panel.querySelector('#sumPlan')){
+      var pw=el('div','gnr-plan'); pw.style.cssText='gap:10px';
+      ['#sumPlan','#sumPitLinks'].forEach(function(s){ var x=panel.querySelector(s); if(x){ x.style.display='grid'; pw.appendChild(x);} });
+      panes.push(['แผนซ้อม',pw]);
+    }
+    panes.forEach(function(p,i){
+      var node=(typeof p[1]==='string')?panel.querySelector(p[1]):p[1]; if(!node) return;
+      body.appendChild(node);
+      var bt=el('button','',p[0]); bt.type='button';
+      bt.addEventListener('click',function(){ Array.prototype.forEach.call(tabs.children,function(x){x.classList.remove('on');}); Array.prototype.forEach.call(body.children,function(x){x.classList.remove('on');}); bt.classList.add('on'); node.classList.add('on'); });
+      tabs.appendChild(bt);
+    });
+    if(tabs.firstChild){ tabs.firstChild.classList.add('on'); body.firstChild.classList.add('on'); }
+    c.appendChild(tabs); c.appendChild(body);
+    var br=panel.querySelector('.btn-row');
+    if(br){ var hm=el('a','btn','หน้ารวมเกม'); hm.href='index.html'; hm.style.textAlign='center'; hm.style.textDecoration='none'; br.appendChild(hm); c.appendChild(br); }
+    c.appendChild(el('div','gnr-note','ภาพหน้าจอนี้ใช้เป็นหลักฐานผลการฝึกได้ · ปุ่ม CSV ด้านบนบันทึกคะแนนพร้อมรหัสนักศึกษาส่งอาจารย์'));
+    dash.appendChild(a); dash.appendChild(b); dash.appendChild(c);
+    panel.appendChild(dash);
+    sec.classList.add('gnr-done');
+    var st=document.createElement('style'); st.textContent='.gnr-tabbody>.badges.on{display:flex !important;flex-wrap:wrap;gap:6px}';
+    document.head.appendChild(st);
+    return panel;
+  }
+  function fitDash(){
+    var d=document.querySelector('.gnr-dash'); if(!d) return;
+    if(window.innerWidth<=980){ d.style.removeProperty('--gnr-dash-h'); return; }
+    var top=d.getBoundingClientRect().top+window.scrollY;
+    var h=Math.max(430, window.innerHeight-top-22);
+    d.style.setProperty('--gnr-dash-h', h+'px');
+  }
+  function enhanceSummary(){
+    var panel=buildDash(); if(!panel) return;
+    var id=getId()||{sid:MASK, nick:''};
+    var nick=(typeof state!=='undefined' && state.name)||id.nick||'ผู้เล่น';
+    var max=maxQ(), pre=+(state.pre||0), post=+(state.post||0);
+    $('#gnrNick').textContent=nick;
+    $('#gnrSidShow').textContent=id.sid||MASK;
+    var ava=$('#chipAva'); $('#gnrAva').innerHTML=ava?ava.innerHTML:'';
+    var who=$('#sumWho');
+    $('#gnrGame').textContent=CFG.title+' · GNR1007'+(who&&who.textContent?' · '+who.textContent.split('·').slice(1).join('·').trim():'');
+    document.querySelector('.gnr-when').textContent=new Date().toLocaleString('th-TH',{dateStyle:'medium',timeStyle:'short'});
+    var ax=axes(), good=ax.filter(function(x){return x.post>=100;}), weak=ax.filter(function(x){return x.post<=50;});
+    good.sort(function(p,q){return q.post-p.post;}); weak.sort(function(p,q){return p.post-q.post;});
+    function li(x){ var dd=x.post-x.pre; return '<li><span>'+escH(x.label)+'</span><span>'+x.post+'%'+(dd?(' ('+(dd>0?'+':'')+dd+')'):'')+'</span></li>'; }
+    var best=ax.slice().sort(function(p,q){return q.post-p.post;})[0];
+    $('#gnrGood').innerHTML=good.length?'<ul>'+good.slice(0,4).map(li).join('')+'</ul>':'<div class="none">ยังไม่มีหัวข้อที่ได้เต็ม'+(best?' · ใกล้ที่สุดคือ '+escH(best.label)+' ('+best.post+'%)':'')+'</div>';
+    $('#gnrWeak').innerHTML=weak.length?'<ul>'+weak.slice(0,4).map(li).join('')+'</ul>':'<div class="none">ไม่มีหัวข้อที่ต่ำกว่า 50% ยอดเยี่ยมมาก</div>';
+    var weakName=weak.length?weak[0].label:(ax.slice().sort(function(p,q){return p.post-q.post;})[0]||{label:'หัวข้อที่ได้คะแนนน้อยที่สุด'}).label;
+    document.querySelector('.gnr-cheer').innerHTML=cheer(nick, pre, post, max, weakName);
+    saveResult({sid:id.sid, nick:nick}, pre, post, max);
+    styleChart();
+    requestAnimationFrame(function(){ fitDash(); setTimeout(function(){ fitDash(); try{ if(radarChart) radarChart.resize(); }catch(e){} },120); });
+  }
+
+  /* ---------------- ห่อฟังก์ชันเดิมของเกม ---------------- */
+  function wrap(){
+    if(typeof showSummary==='function'){
+      var _s=showSummary;
+      showSummary=function(){ var r=_s.apply(this,arguments); try{ enhanceSummary(); }catch(e){ console.warn('gnr summary',e); } return r; };
+    }
+    if(typeof drawRadar==='function'){
+      var _d=drawRadar;
+      drawRadar=function(){ var r=_d.apply(this,arguments); styleChart(); return r; };
+    }
+    if(typeof goto_==='function'){
+      var _g=goto_;
+      goto_=function(id){ var r=_g.apply(this,arguments); document.body.classList.toggle('gnr-sum', id==='scr-summary'); queueSvgFix(); return r; };
+    }
+    if(typeof exportCSV==='function'){
+      var _x=exportCSV;
+      exportCSV=function(){
+        var id=getId(), old=state.name;
+        state.name=(old||'')+' | '+((id&&id.sid)||MASK);
+        try{ return _x.apply(this,arguments); } finally { state.name=old; }
+      };
+    }
+  }
+
+  document.addEventListener('click',function(e){ if(e.target.closest && e.target.closest('#btnTheme')) setTimeout(onTheme,30); });
+  window.addEventListener('resize',function(){ if(document.body.classList.contains('gnr-sum')) fitDash(); });
+
+  setupChrome(); setupLogin(); setupArcade(); wrap();
+  if(window.MutationObserver){ new MutationObserver(function(ms){ for(var i=0;i<ms.length;i++){ var n=ms[i].target; if(n.closest && !n.closest('#arcade') && !n.closest('.chartbox')){ queueSvgFix(); return; } } }).observe(document.body,{childList:true,subtree:true}); }
+  queueSvgFix();
+  var foot=document.querySelector('footer .fmono'); if(foot) foot.textContent+=' · UI v7.1';
+})();
+
+/* ---------- 5) จอคอมพิวเตอร์: จัดหน้าบทเรียนเป็น 2 คอลัมน์ (UI v7.1) ----------
+   ห่อเนื้อหาเป็นกลุ่ม (หัวข้อ h3 ติดกับเนื้อหาถัดไป · ห้องทดลองทั้งชุดเป็นกลุ่มเดียว) แล้วให้ CSS แบ่งคอลัมน์
+   ย้ายโหนดเดิม ไม่คัดลอก จึงไม่กระทบ id/ตัวจัดการเหตุการณ์ของเกม · จอเล็กกว่า 1200px กลุ่มเป็น display:contents (เหมือนเดิม) */
+(function(){
+  'use strict';
+  var IDS=/^scr-(lesson\d|pitwalk)$/;
+  function blk(){ var d=document.createElement('div'); d.className='gnr-blk'; return d; }
+  function isText(n){ return n.tagName==='P' || n.classList.contains('status-line') || n.classList.contains('readout-line'); }
+  function build(sec){
+    var panel=sec.querySelector(':scope>.panel'); if(!panel||panel.querySelector('.gnr-flow')) return;
+    var kids=[].slice.call(panel.children), i=0;
+    while(i<kids.length && (kids[i].classList.contains('tag')||/^H[12]$/.test(kids[i].tagName))) i++;   /* หัวเรื่องอยู่นอกคอลัมน์ */
+    var end=kids.length; if(end>i && kids[end-1].classList.contains('btn-row')) end--;                     /* ปุ่มไปต่อท้ายสุดอยู่นอกคอลัมน์ */
+    var body=kids.slice(i,end); if(body.length<3) return;
+    var flow=document.createElement('div'); flow.className='gnr-flow';
+    panel.insertBefore(flow, kids[end]||null);
+    var cur=null, keep=0, lab=false;
+    body.forEach(function(n){
+      if(n.tagName==='H3'){ lab=/ห้องทดลอง|LAB|ทดลอง/i.test(n.textContent); cur=blk(); if(lab) cur.classList.add('gnr-lab'); flow.appendChild(cur); cur.appendChild(n); keep=1; return; }
+      if(lab){ cur.appendChild(n); return; }
+      if(cur && keep){ cur.appendChild(n); if(!isText(n)) keep=0; return; }
+      if(isText(n) && cur && cur.lastElementChild && isText(cur.lastElementChild)){ cur.appendChild(n); return; }
+      cur=blk(); flow.appendChild(cur); cur.appendChild(n);
+      if(isText(n)) keep=1; else keep=0;   /* ย่อหน้าบรรยายติดกับภาพ/ตารางที่ตามมา */
+    });
+    sec.classList.add('gnr-cols');
+  }
+  /* ย่อทั้งหน้าลงเล็กน้อย (ไม่ต่ำกว่า 80% · จอกว้าง >= 1700px ไม่ต่ำกว่า 75%) เมื่อเนื้อหายาวเกินจอไม่มาก เพื่อให้ไม่ต้องเลื่อน · เฉพาะจอคอม (กว้าง >= 1100px และใช้เมาส์) */
+  var MINZ=0.8, fitT=0, fitting=false;
+  function desk(){ return innerWidth>=1100 && !(window.matchMedia && matchMedia('(pointer:coarse)').matches); }
+  function fit(){
+    if(fitting) return; fitting=true;
+    var a=document.querySelector('.screen.active'), z=1;
+    [].slice.call(document.querySelectorAll('.screen')).forEach(function(s){ if(s!==a) s.style.zoom=''; });
+    if(a && desk() && !document.body.classList.contains('gnr-sum')){
+      a.style.zoom='';
+      var doc=document.documentElement.scrollHeight, h=a.getBoundingClientRect().height, over=doc-innerHeight;
+      if(over>2 && h>0){ z=Math.max(innerWidth>=1700?0.75:MINZ, Math.floor((h-over-6)/h*100)/100); }
+      a.style.zoom = z<1 ? String(z) : '';
+    } else if(a){ a.style.zoom=''; }
+    fitting=false;
+  }
+  function queueFit(){ clearTimeout(fitT); fitT=setTimeout(fit,60); }
+  window.GNR_fit=fit;
+  function sync(){
+    var a=document.querySelector('.screen.active');
+    document.body.classList.toggle('gnr-wide', !!(a && IDS.test(a.id)));
+    queueFit();
+  }
+  window.addEventListener('resize',queueFit);
+  if(window.ResizeObserver){ var ro=new ResizeObserver(function(){ if(!fitting) queueFit(); }); [].slice.call(document.querySelectorAll('.screen')).forEach(function(s){ var p=s.querySelector(':scope>.panel'); if(p) ro.observe(p); }); }
+  [].slice.call(document.querySelectorAll('.screen')).forEach(function(s){ if(/^scr-lesson\d$/.test(s.id)) build(s); });   /* pitwalk: ขยายกว้าง + การ์ด 2 คอลัมน์ด้วย CSS */
+  sync();
+  if(window.MutationObserver){ var mo=new MutationObserver(sync); [].slice.call(document.querySelectorAll('.screen')).forEach(function(s){ mo.observe(s,{attributes:true,attributeFilter:['class']}); }); }
+})();
+</script>
+<!-- GNR-CORE:END -->
+</body>
+</html>
